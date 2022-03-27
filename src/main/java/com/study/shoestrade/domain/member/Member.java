@@ -1,5 +1,6 @@
 package com.study.shoestrade.domain.member;
 
+import com.study.shoestrade.domain.interest.InterestProduct;
 import com.study.shoestrade.domain.trade.Trade;
 import lombok.*;
 
@@ -10,10 +11,11 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SequenceGenerator(name = "MEMBER_SEQ_GENERATOR", sequenceName = "MEMBER_SEQ")
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
     @Column(name = "member_id")
     private Long id;
 
@@ -46,9 +48,11 @@ public class Member {
     @OneToMany(mappedBy = "purchaser")
     private List<Trade> purchaseList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<InterestProduct> interestProductList = new ArrayList<>();
 
     @Builder
-    public Member(Long id, String email, String password, String name, String phone, Address address, int shoeSize, Grade grade, int point, Account account, List<Trade> sellList, List<Trade> purchaseList) {
+    public Member(Long id, String email, String password, String name, String phone, Address address, int shoeSize, Grade grade, int point, Account account, List<Trade> sellList, List<Trade> purchaseList, List<InterestProduct> interestProductList) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -61,5 +65,6 @@ public class Member {
         this.account = account;
         this.sellList = sellList;
         this.purchaseList = purchaseList;
+        this.interestProductList = interestProductList;
     }
 }
