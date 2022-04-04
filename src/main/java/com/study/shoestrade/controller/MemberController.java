@@ -1,0 +1,51 @@
+package com.study.shoestrade.controller;
+
+import com.study.shoestrade.common.response.ResponseService;
+import com.study.shoestrade.common.result.Result;
+import com.study.shoestrade.common.result.SingleResult;
+import com.study.shoestrade.dto.member.request.MemberJoinDto;
+import com.study.shoestrade.dto.member.response.MemberDto;
+import com.study.shoestrade.service.MailService;
+import com.study.shoestrade.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@RequiredArgsConstructor
+@RestController
+public class MemberController {
+
+    private final MemberService memberService;
+    private final ResponseService responseService;
+
+    private final MailService mailService;
+
+    @PostMapping("/join")
+    public SingleResult<MemberDto> join(@RequestBody MemberJoinDto memberJoinDto){
+        log.info("MemberController -> join");
+        
+        MemberDto memberDto = memberService.joinMember(memberJoinDto);
+        return responseService.getSingleResult(memberDto);
+    }
+
+    // 인증번호 이메일 발송
+    @PostMapping("/join/mail")
+    public Result mail(@RequestParam("email") String email){
+        String key = mailService.sendMail(email);
+        mailService.saveKey(email, key);
+        return responseService.getSuccessResult();
+    }
+
+    // 인증번호 확인
+    @PostMapping("/join/mailCheck")
+    public Result mailCheck(@RequestParam("email") String email, @RequestParam("key") String key){
+        mailService.checkKey(email, key);
+        // 삭제 추가
+        return responseService.getSuccessResult();
+    }
+
+}
