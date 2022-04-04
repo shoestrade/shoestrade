@@ -30,10 +30,11 @@ public class BrandServiceImpl implements BrandService {
      */
     @Override
     @Transactional
-    public long saveBrand(String name) throws BrandDuplicationException {
+    public BrandDto saveBrand(String name) throws BrandDuplicationException {
         log.info("info log={}", "BrandService - saveBrand 실행");
         duplicateBrandName(name);
-        return brandRepository.save(Brand.builder().name(name).build()).getId();
+
+        return BrandDto.create(brandRepository.save(Brand.builder().name(name).build()));
     }
 
     /**

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BrandService {
 
-    long saveBrand(String name);
+    BrandDto saveBrand(String name);
 
     void updateBrand(BrandDto brandDto);
 

@@ -2,7 +2,6 @@ package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.dto.BrandDto;
-import com.study.shoestrade.exception.BrandDuplicationException;
 import com.study.shoestrade.repository.BrandRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 
 @ExtendWith(MockitoExtension.class)
-class BrandServiceImplTest {
+class BrandServiceTest {
 
     @InjectMocks
     private BrandServiceImpl brandService;

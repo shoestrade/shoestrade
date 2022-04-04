@@ -49,7 +49,6 @@ public class BrandController {
     @PostMapping
     public Result saveBrand(@RequestParam String name) {
         log.info("info = {}", "GetBrandController - saveBrand 실행");
-        log.info("name = {}", name);
         return responseService.getSingleResult(brandService.saveBrand(name));
     }
 
