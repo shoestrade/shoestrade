@@ -48,7 +48,7 @@ public class BrandServiceImpl implements BrandService {
         log.info("info log={}", "BrandService - updateBrand 실행");
         duplicateBrandName(brandDto.getName());
 
-        Brand findBrand = brandRepository.findById(brandDto.getId()).orElseThrow(() -> new BrandEmptyResultDataAccessException(0));
+        Brand findBrand = brandRepository.findById(brandDto.getId()).orElseThrow(() -> new BrandEmptyResultDataAccessException(1));
         findBrand.changeBrandName(brandDto.getName());
     }
 
@@ -64,7 +64,7 @@ public class BrandServiceImpl implements BrandService {
         try {
             brandRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new BrandEmptyResultDataAccessException(0);
+            throw new BrandEmptyResultDataAccessException(1);
         }
     }
 
@@ -77,10 +77,10 @@ public class BrandServiceImpl implements BrandService {
     public List<BrandDto> findBrandAll() {
         log.info("info log={}", "BrandService - findBrandAll 실행");
 
-        return brandRepository.findAll()
-                .stream()
-                .map(BrandDto::create)
-                .collect(Collectors.toList());
+            return brandRepository.findAll()
+                    .stream()
+                    .map(BrandDto::create)
+                    .collect(Collectors.toList());
     }
 
     /**
@@ -93,10 +93,10 @@ public class BrandServiceImpl implements BrandService {
     public List<BrandDto> findByBrandName(String name) {
         log.info("info log={}", "BrandService - findByBrandNameList 실행");
 
-        return brandRepository.findByNameContains(name)
-                .stream()
-                .map(BrandDto::create)
-                .collect(Collectors.toList());
+            return brandRepository.findByNameContains(name)
+                    .stream()
+                    .map(BrandDto::create)
+                    .collect(Collectors.toList());
     }
 
 
@@ -106,6 +106,8 @@ public class BrandServiceImpl implements BrandService {
      * @param name 중복검사 할 브랜드 이름
      */
     private void duplicateBrandName(String name) {
+        log.info("info = {}", "BrandService - duplicateBrandName 실행");
+
         brandRepository.findByName(name).ifPresent(
                 b -> {
                     throw new BrandDuplicationException();
