@@ -15,6 +15,12 @@ public interface ProductService {
      */
     ProductDto saveProduct(ProductDto productDto);
 
+    /**
+     * 상품 삭제
+     *
+     * @param productId 삭제할 상품 id
+     */
+    void deleteProduct(Long productId);
 
     /**
      * 상품 전체 검색
@@ -26,6 +32,7 @@ public interface ProductService {
 
     /**
      * 상품 이름으로 검색
+     *
      * @param name 상품명
      * @return 검색 결과
      */
@@ -34,6 +41,7 @@ public interface ProductService {
 
     /**
      * 선택된 브랜드 내에 있는 상품 이름으로 검색
+     *
      * @param productSearchDto 검색어, 브랜드 이름 리스트
      * @return 검색 결과
      */

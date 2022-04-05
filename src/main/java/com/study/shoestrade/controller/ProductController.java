@@ -32,6 +32,19 @@ public class ProductController {
     }
 
     /**
+     * 상품 삭제
+     *
+     * @param productId 삭제할 상품 id
+     * @return 등록 완료된 상품 정보
+     */
+    @PostMapping("delete/{productId}")
+    public Result deleteProduct(@PathVariable Long productId) {
+        log.info("info = {}", "ProductController - deleteProduct 실행");
+        productService.deleteProduct(productId);
+        return responseService.getSuccessResult();
+    }
+
+    /**
      * 상품 전체 검색
      *
      * @return 검색된 결과

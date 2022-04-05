@@ -35,7 +35,7 @@ public class Product {
     @JoinColumn(name = "product_id")
     private List<ProductImage> imageList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductSize> productSizeList = new ArrayList<>();
 
     @Builder

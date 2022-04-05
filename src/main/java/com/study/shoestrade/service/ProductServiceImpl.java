@@ -14,6 +14,7 @@ import com.study.shoestrade.repository.ProductRepository;
 import com.study.shoestrade.repository.ProductSizeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +63,22 @@ public class ProductServiceImpl implements ProductService {
 
         productSizeRepository.saveAll(list);
         return ProductDto.create(saveProduct);
+    }
+
+    /**
+     * 상품 삭제
+     *
+     * @param productId 삭제할 상품 id
+     */
+    @Override
+    @Transactional
+    public void deleteProduct(Long productId) {
+        log.info("info = {}", "ProductService - deleteProduct 실행");
+        try {
+            productRepository.deleteById(productId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ProductEmptyResultDataAccessException(1);
+        }
     }
 
     /**
