@@ -5,6 +5,7 @@ import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.exception.BrandDuplicationException;
 import com.study.shoestrade.exception.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.ProductDuplicationException;
+import com.study.shoestrade.exception.ProductEmptyResultDataAccessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,4 +37,8 @@ public class ExceptionAdvice {
         return responseService.getFailureResult(-1, "이미 존재하는 상품 이름입니다.");
     }
 
+    @ExceptionHandler(ProductEmptyResultDataAccessException.class)
+    protected Result productEmptyResultDataAccessException() {
+        return responseService.getFailureResult(-1, "상품을 찾을 수 없습니다.");
+    }
 }

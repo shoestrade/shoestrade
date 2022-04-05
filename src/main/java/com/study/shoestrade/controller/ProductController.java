@@ -51,4 +51,11 @@ public class ProductController {
         log.info("info = {}", "ProductController - findProductByName 실행");
         return responseService.getListResult(productService.findProductByName(name));
     }
+
+    @PostMapping("/update")
+    public Result updateProduct(@RequestBody ProductDto productDto) {
+        log.info("info = {}", "ProductController - updateProduct 실행");
+        productService.updateProduct(productDto);
+        return responseService.getSuccessResult();
+    }
 }

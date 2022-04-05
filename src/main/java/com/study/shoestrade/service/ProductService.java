@@ -30,4 +30,11 @@ public interface ProductService {
      */
     List<ProductDto> findProductByName(String name);
 
+
+    /**
+     * 상품 정보 변경
+     * @param productDto 변경할 정보
+     */
+    void updateProduct(ProductDto productDto);
+
 }
