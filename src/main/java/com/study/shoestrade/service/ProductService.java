@@ -1,6 +1,7 @@
 package com.study.shoestrade.service;
 
 import com.study.shoestrade.dto.ProductDto;
+import com.study.shoestrade.dto.ProductSearchDto;
 
 import java.util.List;
 
@@ -25,14 +26,22 @@ public interface ProductService {
 
     /**
      * 상품 이름으로 검색
-     *
+     * @param name 상품명
      * @return 검색 결과
      */
     List<ProductDto> findProductByName(String name);
 
 
     /**
+     * 선택된 브랜드 내에 있는 상품 이름으로 검색
+     * @param productSearchDto 검색어, 브랜드 이름 리스트
+     * @return 검색 결과
+     */
+    List<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto);
+
+    /**
      * 상품 정보 변경
+     *
      * @param productDto 변경할 정보
      */
     void updateProduct(ProductDto productDto);

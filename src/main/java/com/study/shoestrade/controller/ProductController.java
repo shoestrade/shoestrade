@@ -4,6 +4,7 @@ import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.ListResult;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.dto.ProductDto;
+import com.study.shoestrade.dto.ProductSearchDto;
 import com.study.shoestrade.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,7 @@ public class ProductController {
     /**
      * 상품 이름으로 검색
      *
+     * @param name 검색어
      * @return 검색된 결과
      */
     @GetMapping("/{name}")
@@ -52,6 +54,24 @@ public class ProductController {
         return responseService.getListResult(productService.findProductByName(name));
     }
 
+    /**
+     * 선택된 브랜드 내에 상품 이름으로 검색
+     *
+     * @param productSearchDto 검색어, 선택된 브랜드 이름 리스트
+     * @return 검색된 결과
+     */
+    @GetMapping("/search")
+    public ListResult<ProductDto> findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto) {
+        log.info("info = {}", "ProductController - findProductByNameAndBrandList 실행");
+        return responseService.getListResult(productService.findProductByNameInBrand(productSearchDto));
+    }
+
+    /**
+     * 상품 정보 수정
+     *
+     * @param productDto 변경할 상품 정보
+     * @return 변경 성공 여부
+     */
     @PostMapping("/update")
     public Result updateProduct(@RequestBody ProductDto productDto) {
         log.info("info = {}", "ProductController - updateProduct 실행");
