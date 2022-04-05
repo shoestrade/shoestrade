@@ -2,6 +2,7 @@ package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
+import com.study.shoestrade.domain.product.ProductSize;
 import com.study.shoestrade.dto.BrandDto;
 import com.study.shoestrade.dto.ProductDto;
 import com.study.shoestrade.dto.ProductSearchDto;
@@ -10,11 +11,13 @@ import com.study.shoestrade.exception.ProductDuplicationException;
 import com.study.shoestrade.exception.ProductEmptyResultDataAccessException;
 import com.study.shoestrade.repository.BrandRepository;
 import com.study.shoestrade.repository.ProductRepository;
+import com.study.shoestrade.repository.ProductSizeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final BrandRepository brandRepository;
+    private final ProductSizeRepository productSizeRepository;
 
     /**
      * 상품 등록
@@ -45,8 +49,19 @@ public class ProductServiceImpl implements ProductService {
         );
 
         Product product = productDto.toEntity(brand);
+        Product saveProduct = productRepository.save(product);
 
-        return ProductDto.create(productRepository.save(product));
+        List<ProductSize> list = new ArrayList<>();
+
+        for (int i = 0; i <= 80; i += 5) {
+            list.add(ProductSize.builder()
+                    .size(220 + i)
+                    .product(saveProduct)
+                    .build());
+        }
+
+        productSizeRepository.saveAll(list);
+        return ProductDto.create(saveProduct);
     }
 
     /**
