@@ -74,21 +74,6 @@ class BrandRepositoryTest {
     }
 
     @Test
-    @DisplayName("브랜드_이름으로_여러개_검색_테스트")
-    public void 브랜드_이름_여러개_검색() {
-        // given
-        brandRepository.save(brand1);
-        brandRepository.save(brand2);
-        brandRepository.save(brand3);
-
-        // when
-        List<Brand> list = brandRepository.findByNameContains("스");
-
-        // then
-        assertThat(list.size()).isEqualTo(2);
-    }
-
-    @Test
     @DisplayName("브랜드_삭제_테스트")
     public void 브랜드_삭제_테스트() {
         // given
@@ -100,22 +85,5 @@ class BrandRepositoryTest {
 
         // then
         assertThat(brandRepository.findById(brand1.getId()).orElse(null)).isNull();
-    }
-
-    @Test
-    @DisplayName("브랜드_전체삭제_테스트")
-    public void 브랜드_전체삭제_테스트() {
-
-        // given
-        brandRepository.save(brand1);
-        brandRepository.save(brand2);
-
-        // when
-        brandRepository.deleteAll();
-
-        List<Brand> BrandList = brandRepository.findAll();
-
-        // then
-        assertThat(BrandList.size()).isEqualTo(0);
     }
 }

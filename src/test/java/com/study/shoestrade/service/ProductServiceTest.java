@@ -5,7 +5,6 @@ import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.dto.ProductDto;
 import com.study.shoestrade.repository.BrandRepository;
 import com.study.shoestrade.repository.ProductRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -44,6 +42,7 @@ class ProductServiceTest {
                 .build();
 
         Brand brand = Brand.builder()
+                .id(1L)
                 .name("브랜드1").build();
 
         Product product = productDto.toEntity(brand);
