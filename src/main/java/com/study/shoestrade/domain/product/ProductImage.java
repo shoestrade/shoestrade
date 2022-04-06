@@ -14,14 +14,19 @@ import javax.persistence.*;
 public class ProductImage {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRODUCT_IMAGE_SEQ_GENERATOR")
-    @Column(name = "productImage_id")
+    @Column(name = "productImage_id" )
     private Long id;
 
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     @Builder
-    public ProductImage(Long id, String name) {
+    public ProductImage(Long id, String name, Product product) {
         this.id = id;
         this.name = name;
+        this.product = product;
     }
 }

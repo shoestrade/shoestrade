@@ -4,6 +4,7 @@ import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.ListResult;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.dto.ProductDto;
+import com.study.shoestrade.dto.ProductImageAddDto;
 import com.study.shoestrade.dto.ProductSearchDto;
 import com.study.shoestrade.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -89,6 +90,19 @@ public class ProductController {
     public Result updateProduct(@RequestBody ProductDto productDto) {
         log.info("info = {}", "ProductController - updateProduct 실행");
         productService.updateProduct(productDto);
+        return responseService.getSuccessResult();
+    }
+
+
+    /**
+     * 상품 이미지 등록
+     * @param productImageAddDto 등록할 상품 id, 이미지 정보
+     * @return 등록 성공 여부
+     */
+    @PostMapping("/image")
+    public Result addImageProduct(@RequestBody ProductImageAddDto productImageAddDto) {
+        log.info("info = {}", "ProductController - addImageProduct");
+        productService.addProductImage(productImageAddDto);
         return responseService.getSuccessResult();
     }
 }

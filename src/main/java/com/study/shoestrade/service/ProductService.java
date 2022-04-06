@@ -1,6 +1,7 @@
 package com.study.shoestrade.service;
 
 import com.study.shoestrade.dto.ProductDto;
+import com.study.shoestrade.dto.ProductImageAddDto;
 import com.study.shoestrade.dto.ProductSearchDto;
 
 import java.util.List;
@@ -53,5 +54,12 @@ public interface ProductService {
      * @param productDto 변경할 정보
      */
     void updateProduct(ProductDto productDto);
+
+    /**
+     * 상품 이미지 등록
+     *
+     * @param productImageAddDto 등록할 상품 id, 이미지 정보
+     */
+    void addProductImage(ProductImageAddDto productImageAddDto);
 
 }

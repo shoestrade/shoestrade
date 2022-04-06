@@ -31,8 +31,7 @@ public class Product {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @OneToMany
-    @JoinColumn(name = "product_id")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductImage> imageList = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
