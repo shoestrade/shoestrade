@@ -1,6 +1,7 @@
 package com.study.shoestrade.service;
 
-import com.study.shoestrade.dto.ProductDto;
+import com.study.shoestrade.dto.ProductLoadDto;
+import com.study.shoestrade.dto.ProductSaveDto;
 import com.study.shoestrade.dto.ProductImageAddDto;
 import com.study.shoestrade.dto.ProductSearchDto;
 
@@ -14,7 +15,7 @@ public interface ProductService {
      * @param productDto 등록할 상품 정보
      * @return 등록한 상품 id
      */
-    ProductDto saveProduct(ProductDto productDto);
+    ProductSaveDto saveProduct(ProductSaveDto productDto);
 
     /**
      * 상품 삭제
@@ -28,7 +29,7 @@ public interface ProductService {
      *
      * @return 검색 결과
      */
-    List<ProductDto> findProductAll();
+    List<ProductLoadDto> findProductAll();
 
 
     /**
@@ -37,7 +38,7 @@ public interface ProductService {
      * @param name 상품명
      * @return 검색 결과
      */
-    List<ProductDto> findProductByName(String name);
+    List<ProductLoadDto> findProductByName(String name);
 
 
     /**
@@ -46,14 +47,14 @@ public interface ProductService {
      * @param productSearchDto 검색어, 브랜드 이름 리스트
      * @return 검색 결과
      */
-    List<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto);
+    List<ProductLoadDto> findProductByNameInBrand(ProductSearchDto productSearchDto);
 
     /**
      * 상품 정보 변경
      *
      * @param productDto 변경할 정보
      */
-    void updateProduct(ProductDto productDto);
+    void updateProduct(ProductSaveDto productDto);
 
     /**
      * 상품 이미지 등록

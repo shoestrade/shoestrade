@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ProductDto {
+public class ProductSaveDto {
 
     private Long id;
     private String name;
@@ -19,7 +19,7 @@ public class ProductDto {
     private long brandId;
 
     @Builder
-    public ProductDto(Long id, String name, String code, String color, int releasePrice, int interest, long brandId) {
+    public ProductSaveDto(Long id, String name, String code, String color, int releasePrice, int interest, long brandId) {
         this.id = id;
         this.name = name;
         this.code = code;
@@ -29,8 +29,9 @@ public class ProductDto {
         this.brandId = brandId;
     }
 
-    public static ProductDto create(Product product) {
-        return ProductDto.builder()
+
+    public static ProductSaveDto create(Product product) {
+        return ProductSaveDto.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .code(product.getCode())

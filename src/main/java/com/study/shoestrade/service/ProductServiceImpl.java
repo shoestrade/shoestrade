@@ -37,21 +37,21 @@ public class ProductServiceImpl implements ProductService {
     /**
      * 상품 등록
      *
-     * @param productDto 등록할 상품 정보
+     * @param productSaveDto 등록할 상품 정보
      * @return 등록한 상품 id
      */
     @Override
     @Transactional
-    public ProductDto saveProduct(ProductDto productDto) {
+    public ProductSaveDto saveProduct(ProductSaveDto productSaveDto) {
         log.info("info = {}", "ProductService - saveProduct 실행");
 
-        DuplicateProduct(productDto.getName());
+        DuplicateProduct(productSaveDto.getName());
 
-        Brand brand = brandRepository.findById(productDto.getBrandId()).orElseThrow(() ->
+        Brand brand = brandRepository.findById(productSaveDto.getBrandId()).orElseThrow(() ->
                 new BrandEmptyResultDataAccessException(1)
         );
 
-        Product product = productDto.toEntity(brand);
+        Product product = productSaveDto.toEntity(brand);
         Product saveProduct = productRepository.save(product);
 
         List<ProductSize> list = new ArrayList<>();
@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         productSizeRepository.saveAll(list);
-        return ProductDto.create(saveProduct);
+        return ProductSaveDto.create(saveProduct);
     }
 
     /**
@@ -89,12 +89,12 @@ public class ProductServiceImpl implements ProductService {
      * @return 검색 결과
      */
     @Override
-    public List<ProductDto> findProductAll() {
+    public List<ProductLoadDto> findProductAll() {
         log.info("info = {}", "ProductService - findProductAll 실행");
 
         return productRepository.findAll()
                 .stream()
-                .map(ProductDto::create)
+                .map(ProductLoadDto::create)
                 .collect(Collectors.toList());
     }
 
@@ -105,12 +105,12 @@ public class ProductServiceImpl implements ProductService {
      * @return 검색 결과
      */
     @Override
-    public List<ProductDto> findProductByName(String name) {
+    public List<ProductLoadDto> findProductByName(String name) {
         log.info("info = {}", "ProductService - findProductByName 실행");
 
         return productRepository.findByNameContains(name)
                 .stream()
-                .map(ProductDto::create)
+                .map(ProductLoadDto::create)
                 .collect(Collectors.toList());
     }
 
@@ -122,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
      * @return 검색 결과
      */
     @Override
-    public List<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto) {
+    public List<ProductLoadDto> findProductByNameInBrand(ProductSearchDto productSearchDto) {
         log.info("info = {}", "ProductService - productSearchDto 실행");
 
         return productRepository.findByNameContainsAndBrandNameIn(productSearchDto.getName(),
@@ -131,7 +131,7 @@ public class ProductServiceImpl implements ProductService {
                                 .map(BrandDto::getName)
                                 .collect(Collectors.toList())
                 ).stream()
-                .map(ProductDto::create)
+                .map(ProductLoadDto::create)
                 .collect(Collectors.toList());
     }
 
@@ -142,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void updateProduct(ProductDto productDto) {
+    public void updateProduct(ProductSaveDto productDto) {
         log.info("info = {}", "ProductService - updateProduct 실행");
 
         Product product = productRepository.findById(productDto.getId()).orElseThrow(() ->

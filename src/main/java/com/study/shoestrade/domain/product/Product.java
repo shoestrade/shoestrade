@@ -1,6 +1,6 @@
 package com.study.shoestrade.domain.product;
 
-import com.study.shoestrade.dto.ProductDto;
+import com.study.shoestrade.dto.ProductSaveDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,13 +50,13 @@ public class Product {
         this.productSizeList = productSizeList;
     }
 
-    public void changeProduct(ProductDto productDto) {
-        this.id = productDto.getId();
-        this.name = productDto.getName();
-        this.code = productDto.getCode();
-        this.color = productDto.getColor();
-        this.releasePrice = productDto.getReleasePrice();
-        this.interest = productDto.getInterest();
+    public void changeProduct(ProductSaveDto productSaveDto) {
+        this.id = productSaveDto.getId();
+        this.name = productSaveDto.getName();
+        this.code = productSaveDto.getCode();
+        this.color = productSaveDto.getColor();
+        this.releasePrice = productSaveDto.getReleasePrice();
+        this.interest = productSaveDto.getInterest();
     }
 
     public void changeProductBrand(Brand brand) {

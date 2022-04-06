@@ -3,7 +3,8 @@ package com.study.shoestrade.controller;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.ListResult;
 import com.study.shoestrade.common.result.Result;
-import com.study.shoestrade.dto.ProductDto;
+import com.study.shoestrade.dto.ProductLoadDto;
+import com.study.shoestrade.dto.ProductSaveDto;
 import com.study.shoestrade.dto.ProductImageAddDto;
 import com.study.shoestrade.dto.ProductSearchDto;
 import com.study.shoestrade.service.ProductService;
@@ -27,7 +28,7 @@ public class ProductController {
      * @return 등록 완료된 상품 정보
      */
     @PostMapping
-    public Result saveProduct(@RequestBody ProductDto productDto) {
+    public Result saveProduct(@RequestBody ProductSaveDto productDto) {
         log.info("info = {}", "ProductController - deleteBrand 실행");
         return responseService.getSingleResult(productService.saveProduct(productDto));
     }
@@ -51,7 +52,7 @@ public class ProductController {
      * @return 검색된 결과
      */
     @GetMapping
-    public ListResult<ProductDto> findProductAll() {
+    public ListResult<ProductLoadDto> findProductAll() {
         log.info("info = {}", "ProductController - findProductAll 실행");
         return responseService.getListResult(productService.findProductAll());
     }
@@ -63,7 +64,7 @@ public class ProductController {
      * @return 검색된 결과
      */
     @GetMapping("/{name}")
-    public ListResult<ProductDto> findProductByName(@PathVariable String name) {
+    public ListResult<ProductLoadDto> findProductByName(@PathVariable String name) {
         log.info("info = {}", "ProductController - findProductByName 실행");
         return responseService.getListResult(productService.findProductByName(name));
     }
@@ -75,7 +76,7 @@ public class ProductController {
      * @return 검색된 결과
      */
     @GetMapping("/search")
-    public ListResult<ProductDto> findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto) {
+    public ListResult<ProductLoadDto> findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto) {
         log.info("info = {}", "ProductController - findProductByNameAndBrandList 실행");
         return responseService.getListResult(productService.findProductByNameInBrand(productSearchDto));
     }
@@ -83,13 +84,13 @@ public class ProductController {
     /**
      * 상품 정보 수정
      *
-     * @param productDto 변경할 상품 정보
+     * @param productSaveDto 변경할 상품 정보
      * @return 변경 성공 여부
      */
     @PostMapping("/update")
-    public Result updateProduct(@RequestBody ProductDto productDto) {
+    public Result updateProduct(@RequestBody ProductSaveDto productSaveDto) {
         log.info("info = {}", "ProductController - updateProduct 실행");
-        productService.updateProduct(productDto);
+        productService.updateProduct(productSaveDto);
         return responseService.getSuccessResult();
     }
 
