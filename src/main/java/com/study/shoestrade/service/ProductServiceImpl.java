@@ -2,14 +2,15 @@ package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
+import com.study.shoestrade.domain.product.ProductImage;
 import com.study.shoestrade.domain.product.ProductSize;
-import com.study.shoestrade.dto.BrandDto;
-import com.study.shoestrade.dto.ProductDto;
-import com.study.shoestrade.dto.ProductSearchDto;
+import com.study.shoestrade.dto.*;
 import com.study.shoestrade.exception.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.ProductDuplicationException;
 import com.study.shoestrade.exception.ProductEmptyResultDataAccessException;
+import com.study.shoestrade.exception.ProductImageDuplicationException;
 import com.study.shoestrade.repository.BrandRepository;
+import com.study.shoestrade.repository.ProductImageRepository;
 import com.study.shoestrade.repository.ProductRepository;
 import com.study.shoestrade.repository.ProductSizeRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final BrandRepository brandRepository;
     private final ProductSizeRepository productSizeRepository;
+    private final ProductImageRepository productImageRepository;
 
     /**
      * 상품 등록
@@ -161,7 +163,34 @@ public class ProductServiceImpl implements ProductService {
 
 
     /**
-     * 이름 중복 여부
+     * 상품 이미지 등록
+     *
+     * @param productImageAddDto 등록할 상품 id, 이미지 정보
+     */
+    @Override
+    @Transactional
+    public void addProductImage(ProductImageAddDto productImageAddDto) {
+        Product product = productRepository.findById(productImageAddDto.getId()).orElseThrow(() ->
+                new ProductEmptyResultDataAccessException(productImageAddDto.getId().toString(), 1)
+        );
+
+        DuplicateProductImage(productImageAddDto.getImageList()
+                        .stream()
+                        .map(ProductImageDto::getName)
+                        .collect(Collectors.toList()),
+                product.getId()
+        );
+
+        product.getImageList().addAll(
+                productImageAddDto.getImageList()
+                        .stream()
+                        .map(productImageDto -> productImageDto.toEntity(product))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    /**
+     * 상품 이름 중복 여부
      *
      * @param name 중복검사 할 상품 이름
      */
@@ -170,8 +199,29 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.findByName(name).ifPresent(
                 p -> {
-                    throw new ProductDuplicationException();
+                    throw new ProductDuplicationException(name);
                 }
         );
     }
+
+    /**
+     * 상품 이미지 이름 중복 여부
+     *
+     * @param names     중복검사 할 이미지 이름
+     * @param productId 상품 id
+     */
+    private void DuplicateProductImage(List<String> names, Long productId) {
+        log.info("info = {}", "ProductService - DuplicateProductImage 실행");
+
+        List<ProductImage> findNames = productImageRepository.findByProductIdAndNameIn(productId, names);
+
+        if (!findNames.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            findNames.forEach(productImage -> {
+                sb.append(productImage.getName()).append(" ");
+            });
+            throw new ProductImageDuplicationException(sb.toString());
+        }
+    }
+
 }

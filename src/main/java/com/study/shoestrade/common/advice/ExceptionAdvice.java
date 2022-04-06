@@ -21,26 +21,32 @@ public class ExceptionAdvice {
 //    }
 
     @ExceptionHandler(BrandDuplicationException.class)
-    protected Result brandDuplicationException() {
+    protected Result brandDuplicationException(BrandDuplicationException e) {
         log.info("info = {}", "Exception - BrandDuplicationException 발생");
-        return responseService.getFailureResult(-1, "이미 존재하는 브랜드 이름입니다.");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 이미 존재하는 브랜드 이름입니다.");
     }
 
     @ExceptionHandler(BrandEmptyResultDataAccessException.class)
-    protected Result brandEmptyResultDataAccessException() {
+    protected Result brandEmptyResultDataAccessException(BrandEmptyResultDataAccessException e) {
         log.info("info = {}", "Exception - BrandEmptyResultDataAccessException 발생");
-        return responseService.getFailureResult(-1, "해당되는 브랜드를 찾을 수 없습니다.");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 브랜드를 찾을 수 없습니다.");
     }
 
     @ExceptionHandler(ProductDuplicationException.class)
-    protected Result productDuplicationException() {
+    protected Result productDuplicationException(ProductDuplicationException e) {
         log.info("info = {}", "Exception - ProductDuplicationException 발생");
-        return responseService.getFailureResult(-1, "이미 존재하는 상품 이름입니다.");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 이미 존재하는 상품 이름입니다.");
     }
 
     @ExceptionHandler(ProductEmptyResultDataAccessException.class)
-    protected Result productEmptyResultDataAccessException() {
+    protected Result productEmptyResultDataAccessException(ProductDuplicationException e) {
         log.info("info = {}", "Exception - ProductEmptyResultDataAccessException 발생");
-        return responseService.getFailureResult(-1, "해당되는 상품을 찾을 수 없습니다.");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 상품을 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(ProductImageDuplicationException.class)
+    protected Result productImageDuplicationException(ProductImageDuplicationException e) {
+        log.info("info = {}", "Exception - ProductImageDuplicationException 발생");
+        return responseService.getFailureResult(-1, "이미지 이름 (" + e.getMessage() + ") 이 중복됩니다.");
     }
 }

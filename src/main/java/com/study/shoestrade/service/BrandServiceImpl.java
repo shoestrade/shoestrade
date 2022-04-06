@@ -30,7 +30,7 @@ public class BrandServiceImpl implements BrandService {
      */
     @Override
     @Transactional
-    public BrandDto saveBrand(String name) throws BrandDuplicationException {
+    public BrandDto saveBrand(String name){
         log.info("info log={}", "BrandService - saveBrand 실행");
         duplicateBrandName(name);
 
@@ -48,7 +48,9 @@ public class BrandServiceImpl implements BrandService {
         log.info("info log={}", "BrandService - updateBrand 실행");
         duplicateBrandName(brandDto.getName());
 
-        Brand findBrand = brandRepository.findById(brandDto.getId()).orElseThrow(() -> new BrandEmptyResultDataAccessException(1));
+        Brand findBrand = brandRepository.findById(brandDto.getId()).orElseThrow(
+                () -> new BrandEmptyResultDataAccessException(brandDto.getId().toString(), 1)
+        );
         findBrand.changeBrandName(brandDto.getName());
     }
 
@@ -64,7 +66,7 @@ public class BrandServiceImpl implements BrandService {
         try {
             brandRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new BrandEmptyResultDataAccessException(1);
+            throw new BrandEmptyResultDataAccessException(id.toString(), 1);
         }
     }
 
@@ -77,10 +79,10 @@ public class BrandServiceImpl implements BrandService {
     public List<BrandDto> findBrandAll() {
         log.info("info log={}", "BrandService - findBrandAll 실행");
 
-            return brandRepository.findAll()
-                    .stream()
-                    .map(BrandDto::create)
-                    .collect(Collectors.toList());
+        return brandRepository.findAll()
+                .stream()
+                .map(BrandDto::create)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -93,10 +95,10 @@ public class BrandServiceImpl implements BrandService {
     public List<BrandDto> findByBrandName(String name) {
         log.info("info log={}", "BrandService - findByBrandNameList 실행");
 
-            return brandRepository.findByNameContains(name)
-                    .stream()
-                    .map(BrandDto::create)
-                    .collect(Collectors.toList());
+        return brandRepository.findByNameContains(name)
+                .stream()
+                .map(BrandDto::create)
+                .collect(Collectors.toList());
     }
 
 
@@ -110,7 +112,7 @@ public class BrandServiceImpl implements BrandService {
 
         brandRepository.findByName(name).ifPresent(
                 b -> {
-                    throw new BrandDuplicationException();
+                    throw new BrandDuplicationException(name);
                 }
         );
     }
