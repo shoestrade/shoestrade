@@ -174,17 +174,14 @@ public class ProductServiceImpl implements ProductService {
                 new ProductEmptyResultDataAccessException(productImageAddDto.getId().toString(), 1)
         );
 
-        DuplicateProductImage(productImageAddDto.getImageList()
-                        .stream()
-                        .map(ProductImageDto::getName)
-                        .collect(Collectors.toList()),
+        DuplicateProductImage(productImageAddDto.getImageNameList(),
                 product.getId()
         );
 
         product.getImageList().addAll(
-                productImageAddDto.getImageList()
+                productImageAddDto.getImageNameList()
                         .stream()
-                        .map(productImageDto -> productImageDto.toEntity(product))
+                        .map(name -> ProductImageDto.builder().name(name).build().toEntity(product))
                         .collect(Collectors.toList())
         );
     }

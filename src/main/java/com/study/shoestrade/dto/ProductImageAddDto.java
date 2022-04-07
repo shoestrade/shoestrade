@@ -12,11 +12,11 @@ public class ProductImageAddDto {
 
     Long id;
 
-    List<ProductImageDto> imageList;
+    List<String> imageNameList;
 
     @Builder
-    public ProductImageAddDto(Long id, List<ProductImageDto> imageList) {
+    public ProductImageAddDto(Long id, List<String> imageNameList) {
         this.id = id;
-        this.imageList = imageList;
+        this.imageNameList = imageNameList;
     }
 }
