@@ -2,7 +2,6 @@ package com.study.shoestrade.repository;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
-import com.study.shoestrade.dto.BrandDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,9 @@ class ProductRepositoryTest {
                 .releasePrice(100000)
                 .build();
 
-
         // when
         Product findProduct = productRepository.save(product);
+
         // then
         assertThat(findProduct).isEqualTo(product);
     }
@@ -46,7 +45,7 @@ class ProductRepositoryTest {
     @DisplayName("선택된_브랜드_내에_상품_검색_테스트")
     public void 선택된_브랜드_내에_상품_검색() {
         // given
-        Brand brand = brandRepository.save(Brand.builder().name("브랜드1").build());
+        Brand brand = brandRepository.save(Brand.builder().id(1L).name("브랜드1").build());
         Product product = Product.builder()
                 .name("상품명1")
                 .code("상품코드1")
@@ -55,11 +54,11 @@ class ProductRepositoryTest {
 
         productRepository.save(product);
 
-        List<String> list = new ArrayList<>();
-        list.add(brand.getName());
+        List<Long> list = new ArrayList<>();
+        list.add(brand.getId());
 
         // when
-        List<Product> findList = productRepository.findByNameContainsAndBrandNameIn("상품명1", list);
+        List<Product> findList = productRepository.findByNameContainsAndBrand_IdIn("상품명1", list);
 
         // then
         assertThat(findList)

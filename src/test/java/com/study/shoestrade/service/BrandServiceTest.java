@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 
@@ -44,11 +45,24 @@ class BrandServiceTest {
             .build();
 
     @Test
+    @DisplayName("브랜드_등록_테스트")
+    void 브랜드_등록() {
+        // given
+        given(brandRepository.save(any())).willReturn(brand1);
+
+        // when
+        BrandDto findBrandDto = brandService.saveBrand(brand1.getName());
+
+        // then
+        assertThat(findBrandDto).isEqualTo(BrandDto.create(brand1));
+    }
+
+
+    @Test
     @DisplayName("브랜드_수정_테스트")
     void 브랜드_수정() {
         // given
         given(brandRepository.findById(brand1.getId())).willReturn(Optional.ofNullable(brand1));
-
 
         BrandDto updateBrand = BrandDto.builder()
                 .id(1L)
@@ -75,7 +89,6 @@ class BrandServiceTest {
         given(brandRepository.findAll()).willReturn(list);
 
         // when
-
         List<BrandDto> findList = brandService.findBrandAll();
 
         // then
@@ -90,9 +103,23 @@ class BrandServiceTest {
 
         // when
         // then
-        assertThatCode(() -> {
-            brandService.deleteByBrandId(brand1.getId());
-        }).doesNotThrowAnyException();
+        assertThatCode(() -> brandService.deleteByBrandId(brand1.getId())).doesNotThrowAnyException();
     }
 
+    @Test
+    @DisplayName("브랜드_이름으로_검색_테스트")
+    void 브랜드_이름_검색() {
+        // given
+        List<Brand> list = new ArrayList<>();
+
+        list.add(brand1);
+
+        given(brandRepository.findByNameContains(any())).willReturn(list);
+
+        // when
+        List<BrandDto> findList = brandService.findByBrandName("나이키");
+
+        // then
+        assertThat(findList).isEqualTo(list.stream().map(BrandDto::create).collect(Collectors.toList()));
+    }
 }
