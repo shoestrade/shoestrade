@@ -56,4 +56,8 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<InterestProduct> interestProductList = new ArrayList<>();
 
+    public void changePassword(String password){
+        this.password = password;
+    }
+
 }
