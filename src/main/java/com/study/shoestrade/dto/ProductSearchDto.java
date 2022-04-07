@@ -11,5 +11,5 @@ public class ProductSearchDto {
 
     private String name;
 
-    private List<BrandDto> brandList;
+    private List<Long> brandIdList;
 }

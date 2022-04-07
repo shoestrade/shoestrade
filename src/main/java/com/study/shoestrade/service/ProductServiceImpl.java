@@ -125,11 +125,8 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductLoadDto> findProductByNameInBrand(ProductSearchDto productSearchDto) {
         log.info("info = {}", "ProductService - productSearchDto 실행");
 
-        return productRepository.findByNameContainsAndBrandNameIn(productSearchDto.getName(),
-                        productSearchDto.getBrandList()
-                                .stream()
-                                .map(BrandDto::getName)
-                                .collect(Collectors.toList())
+        return productRepository.findByNameContainsAndBrand_IdIn(productSearchDto.getName(),
+                        productSearchDto.getBrandIdList()
                 ).stream()
                 .map(ProductLoadDto::create)
                 .collect(Collectors.toList());
