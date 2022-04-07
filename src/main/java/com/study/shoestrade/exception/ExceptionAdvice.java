@@ -3,7 +3,9 @@ package com.study.shoestrade.exception;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
+import com.study.shoestrade.exception.member.LoginFailureException;
 import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
+import com.study.shoestrade.exception.member.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,5 +24,15 @@ public class ExceptionAdvice {
     @ExceptionHandler(MailAuthNotEqualException.class)
     public Result mailAuthNotEqualException(){
         return responseService.getFailureResult(-101, "인증번호가 틀렸습니다.");
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    public Result memberNotFoundException(){
+        return responseService.getFailureResult(-102, "존재하지 않은 회원입니다.");
+    }
+
+    @ExceptionHandler(LoginFailureException.class)
+    public Result loginFailureException(){
+        return responseService.getFailureResult(-103, "비밀번호가 틀렸습니다.");
     }
 }

@@ -2,9 +2,13 @@ package com.study.shoestrade.dto.member.request;
 
 
 import com.study.shoestrade.domain.member.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
+@Builder
 public class MemberJoinDto {
 
     private String email;

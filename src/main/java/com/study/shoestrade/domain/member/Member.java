@@ -43,9 +43,9 @@ public class Member {
     @Embedded
     private Account account;
 
-    // Member role 추기
-    @Embedded
-    private Role role;
+    // Member role 추가
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.MEMBER;
 
     @OneToMany(mappedBy = "seller")
     private List<Trade> sellList = new ArrayList<>();

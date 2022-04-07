@@ -4,15 +4,14 @@ import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
 import com.study.shoestrade.dto.member.request.MemberJoinDto;
+import com.study.shoestrade.dto.member.request.MemberLoginRequestDto;
 import com.study.shoestrade.dto.member.response.MemberDto;
+import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
 import com.study.shoestrade.service.MailService;
 import com.study.shoestrade.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,4 +47,19 @@ public class MemberController {
         return responseService.getSuccessResult();
     }
 
+    // 로그인
+    @PostMapping("/login")
+    public SingleResult<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto requestDto){
+        log.info("login");
+        MemberLoginResponseDto responseDto = memberService.login(requestDto);
+        return responseService.getSingleResult(responseDto);
+    }
+
+    // 로그아웃
+    @GetMapping("/logout")
+    public Result logout(){
+        log.info("logout");
+        memberService.logout();
+        return responseService.getSuccessResult();
+    }
 }
