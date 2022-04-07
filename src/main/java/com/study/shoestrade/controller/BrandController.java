@@ -46,19 +46,18 @@ public class BrandController {
      * @param name 검색어
      * @return 등록완료 결과
      */
-    @PostMapping
-    public Result saveBrand(@RequestParam String name) {
+    @PostMapping("/{name}")
+    public Result saveBrand(@PathVariable String name) {
         log.info("info = {}", "GetBrandController - saveBrand 실행");
         return responseService.getSingleResult(brandService.saveBrand(name));
     }
-
 
     /**
      * 브랜드 삭제
      * @param id 삭제할 브랜드 id
      * @return 삭제 결과
      */
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public Result deleteBrand(@PathVariable Long id) {
         log.info("info = {}", "GetBrandController - deleteBrand 실행");
         brandService.deleteByBrandId(id);

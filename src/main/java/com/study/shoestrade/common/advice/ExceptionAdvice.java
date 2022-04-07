@@ -39,7 +39,7 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(ProductEmptyResultDataAccessException.class)
-    protected Result productEmptyResultDataAccessException(ProductDuplicationException e) {
+    protected Result productEmptyResultDataAccessException(ProductEmptyResultDataAccessException e) {
         log.info("info = {}", "Exception - ProductEmptyResultDataAccessException 발생");
         return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 상품을 찾을 수 없습니다.");
     }

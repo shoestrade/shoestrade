@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
         DuplicateProduct(productSaveDto.getName());
 
         Brand brand = brandRepository.findById(productSaveDto.getBrandId()).orElseThrow(() ->
-                new BrandEmptyResultDataAccessException(1)
+                new BrandEmptyResultDataAccessException(productSaveDto.getBrandId().toString(), 1)
         );
 
         Product product = productSaveDto.toEntity(brand);
@@ -79,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             productRepository.deleteById(productId);
         } catch (EmptyResultDataAccessException e) {
-            throw new ProductEmptyResultDataAccessException(1);
+            throw new ProductEmptyResultDataAccessException(productId.toString(), 1);
         }
     }
 
@@ -151,7 +151,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Brand brand = brandRepository.findById(productDto.getBrandId()).orElseThrow(() ->
-                new BrandEmptyResultDataAccessException(1)
+                new BrandEmptyResultDataAccessException(productDto.getBrandId().toString(), 1)
         );
 
         product.changeProduct(productDto);
@@ -167,11 +167,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void addProductImage(ProductImageAddDto productImageAddDto) {
-        Product product = productRepository.findById(productImageAddDto.getId()).orElseThrow(() ->
-                new ProductEmptyResultDataAccessException(productImageAddDto.getId().toString(), 1)
+        Product product = productRepository.findById(productImageAddDto.getProductId()).orElseThrow(() ->
+                new ProductEmptyResultDataAccessException(productImageAddDto.getProductId().toString(), 1)
         );
 
-        DuplicateProductImage(productImageAddDto.getImageNameList(),
+        duplicateProductImage(productImageAddDto.getImageNameList(),
                 product.getId()
         );
 
@@ -204,7 +204,7 @@ public class ProductServiceImpl implements ProductService {
      * @param names     중복검사 할 이미지 이름
      * @param productId 상품 id
      */
-    private void DuplicateProductImage(List<String> names, Long productId) {
+    private void duplicateProductImage(List<String> names, Long productId) {
         log.info("info = {}", "ProductService - DuplicateProductImage 실행");
 
         List<ProductImage> findNames = productImageRepository.findByProductIdAndNameIn(productId, names);
@@ -217,5 +217,4 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductImageDuplicationException(sb.toString());
         }
     }
-
 }

@@ -10,13 +10,13 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductImageAddDto {
 
-    Long id;
+    Long productId;
 
     List<String> imageNameList;
 
     @Builder
-    public ProductImageAddDto(Long id, List<String> imageNameList) {
-        this.id = id;
+    public ProductImageAddDto(Long productId, List<String> imageNameList) {
+        this.productId = productId;
         this.imageNameList = imageNameList;
     }
 }

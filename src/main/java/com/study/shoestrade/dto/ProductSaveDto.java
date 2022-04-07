@@ -16,10 +16,10 @@ public class ProductSaveDto {
     private String color;
     private int releasePrice;
     private int interest;
-    private long brandId;
+    private Long brandId;
 
     @Builder
-    public ProductSaveDto(Long id, String name, String code, String color, int releasePrice, int interest, long brandId) {
+    public ProductSaveDto(Long id, String name, String code, String color, int releasePrice, int interest, Long brandId) {
         this.id = id;
         this.name = name;
         this.code = code;

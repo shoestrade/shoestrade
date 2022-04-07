@@ -39,7 +39,7 @@ public class ProductController {
      * @param productId 삭제할 상품 id
      * @return 등록 완료된 상품 정보
      */
-    @PostMapping("delete/{productId}")
+    @DeleteMapping("/{productId}")
     public Result deleteProduct(@PathVariable Long productId) {
         log.info("info = {}", "ProductController - deleteProduct 실행");
         productService.deleteProduct(productId);
@@ -87,8 +87,8 @@ public class ProductController {
      * @param productSaveDto 변경할 상품 정보
      * @return 변경 성공 여부
      */
-    @PostMapping("/update")
-    public Result updateProduct(@RequestBody ProductSaveDto productSaveDto) {
+    @PostMapping("/{id}")
+    public Result updateProduct(@PathVariable String id, @RequestBody ProductSaveDto productSaveDto) {
         log.info("info = {}", "ProductController - updateProduct 실행");
         productService.updateProduct(productSaveDto);
         return responseService.getSuccessResult();
@@ -97,6 +97,7 @@ public class ProductController {
 
     /**
      * 상품 이미지 등록
+     *
      * @param productImageAddDto 등록할 상품 id, 이미지 정보
      * @return 등록 성공 여부
      */
