@@ -5,7 +5,7 @@ import com.study.shoestrade.dto.member.request.MemberLoginRequestDto;
 import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
 import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
-import com.study.shoestrade.exception.member.LoginFailureException;
+import com.study.shoestrade.exception.member.WrongPasswordException;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.repository.MemberRepository;
 import com.study.shoestrade.domain.member.Member;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +61,7 @@ public class MemberService {
        Member member = memberRepository.findByEmail(requestDto.getEmail()).orElseThrow(MemberNotFoundException::new);
 
        if(!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())){
-           throw new LoginFailureException();
+           throw new WrongPasswordException();
        }
 
        session.setAttribute("MEMBER_EMAIL", member.getEmail());
@@ -154,4 +153,25 @@ public class MemberService {
         return message;
     }
 
+    /**
+     * 추가 필요
+     * 진행중인 거래가 있으면 회원 탈퇴 불가능
+     * 포인트가 있으면 확인 필요
+     */
+    // 회원 탈퇴
+    public MemberLoginResponseDto deleteMember(MemberLoginRequestDto requestDto){
+       log.info("MemberService -> deleteMember 실행");
+
+        Member findMember = memberRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(MemberNotFoundException::new);
+
+        if(!passwordEncoder.matches(requestDto.getPassword(), findMember.getPassword())){
+            throw new WrongPasswordException();
+        }
+
+       memberRepository.deleteByEmail(findMember.getEmail());
+       return MemberLoginResponseDto.builder()
+               .email(requestDto.getEmail())
+               .build();
+    }
 }

@@ -3,7 +3,7 @@ package com.study.shoestrade.exception;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
-import com.study.shoestrade.exception.member.LoginFailureException;
+import com.study.shoestrade.exception.member.WrongPasswordException;
 import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +31,8 @@ public class ExceptionAdvice {
         return responseService.getFailureResult(-102, "존재하지 않은 회원입니다.");
     }
 
-    @ExceptionHandler(LoginFailureException.class)
-    public Result loginFailureException(){
+    @ExceptionHandler(WrongPasswordException.class)
+    public Result wrongPasswordException(){
         return responseService.getFailureResult(-103, "비밀번호가 틀렸습니다.");
     }
 }

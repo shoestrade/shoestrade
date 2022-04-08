@@ -80,4 +80,14 @@ public class MemberController {
         MemberFindResponseDto responseDto = memberService.findPassword(requestDto);
         return responseService.getSingleResult(responseDto);
     }
+
+    // 회원 탈퇴
+    @DeleteMapping("/my/withdrawal")
+    public SingleResult<MemberLoginResponseDto> withdrawalMember(@RequestBody MemberLoginRequestDto requestDto){
+        log.info("MemberController -> withdrawalMember 실행");
+
+        MemberLoginResponseDto responseDto = memberService.deleteMember(requestDto);
+        memberService.logout();
+        return responseService.getSingleResult(responseDto);
+    }
 }

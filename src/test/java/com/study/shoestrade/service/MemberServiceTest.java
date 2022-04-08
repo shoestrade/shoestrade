@@ -6,7 +6,8 @@ import com.study.shoestrade.dto.member.request.MemberJoinDto;
 import com.study.shoestrade.dto.member.request.MemberLoginRequestDto;
 import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
-import com.study.shoestrade.exception.member.LoginFailureException;
+import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
+import com.study.shoestrade.exception.member.WrongPasswordException;
 import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.repository.MemberRepository;
@@ -145,7 +146,7 @@ class MemberServiceTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.login(requestDto))
-                .isInstanceOf(LoginFailureException.class);
+                .isInstanceOf(WrongPasswordException.class);
     }
 
     @Test
@@ -230,6 +231,77 @@ class MemberServiceTest {
         // when, then
         assertThatThrownBy(() -> memberService.findPassword(requestDto))
                 .isInstanceOf(MemberNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("회원이 존재하고 비밀번호가 일치하면 회원탈퇴가 성공한다.")
+    public void 회원탈퇴_성공() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .email("tt12@gmail.com")
+                .phone("01011111111")
+                .password("PW")
+                .build();
+
+        MemberLoginRequestDto requestDto = MemberLoginRequestDto.builder()
+                .email("tt12@gmail.com")
+                .password("PW")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(any(), any())).willReturn(true);
+
+        // when
+        MemberLoginResponseDto responseDto = memberService.deleteMember(requestDto);
+
+        // then
+        assertThat(responseDto.getEmail()).isEqualTo(member.getEmail());
+        assertThat(responseDto.getRole()).isNull();
+        assertThat(responseDto.getId()).isNull();
+    }
+
+    @Test
+    @DisplayName("이메일이 일치하지 않으면 MemberNotFoundException 예외가 발생한다.")
+    public void 회원탈퇴_실패1() {
+        // given
+        MemberLoginRequestDto requestDto = MemberLoginRequestDto.builder()
+                .email("tt12@gmail.com")
+                .password("PW")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> memberService.deleteMember(requestDto))
+                .isInstanceOf(MemberNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("이메일이 일치하지만 비밀번호가 일치하지 않으면 WrongPasswordException 예외가 발생한다.")
+    public void 회원탈퇴_실패2() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .email("tt12@gmail.com")
+                .phone("01011111111")
+                .password("PW")
+                .build();
+
+        MemberLoginRequestDto requestDto = MemberLoginRequestDto.builder()
+                .email("tt12@gmail.com")
+                .password("PW")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(any(), any())).willReturn(false);
+
+        // when, then
+        assertThatThrownBy(() -> memberService.deleteMember(requestDto))
+                .isInstanceOf(WrongPasswordException.class);
     }
 
 }
