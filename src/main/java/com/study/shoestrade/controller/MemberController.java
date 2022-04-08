@@ -10,7 +10,7 @@ import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
 import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
 import com.study.shoestrade.service.MailService;
-import com.study.shoestrade.service.MemberService;
+import com.study.shoestrade.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,16 +20,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class MemberController {
 
-    private final MemberService memberService;
+    private final LoginService loginService;
     private final ResponseService responseService;
-
     private final MailService mailService;
 
     @PostMapping("/join")
     public SingleResult<MemberDto> join(@RequestBody MemberJoinDto memberJoinDto){
         log.info("MemberController -> join");
         
-        MemberDto memberDto = memberService.joinMember(memberJoinDto);
+        MemberDto memberDto = loginService.joinMember(memberJoinDto);
         return responseService.getSingleResult(memberDto);
     }
 
@@ -53,7 +52,7 @@ public class MemberController {
     @PostMapping("/login")
     public SingleResult<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto requestDto){
         log.info("login");
-        MemberLoginResponseDto responseDto = memberService.login(requestDto);
+        MemberLoginResponseDto responseDto = loginService.login(requestDto);
         return responseService.getSingleResult(responseDto);
     }
 
@@ -61,7 +60,7 @@ public class MemberController {
     @DeleteMapping("/logout")
     public Result logout(){
         log.info("logout");
-        memberService.logout();
+        loginService.logout();
         return responseService.getSuccessResult();
     }
 
@@ -69,7 +68,7 @@ public class MemberController {
     @PostMapping("login/find_email")
     public SingleResult<MemberFindResponseDto> findEmail(@RequestBody MemberFindRequestDto requestDto){
         log.info("MemberController -> findEmail 실행");
-        MemberFindResponseDto responseDto = memberService.findEmail(requestDto);
+        MemberFindResponseDto responseDto = loginService.findEmail(requestDto);
         return responseService.getSingleResult(responseDto);
     }
 
@@ -77,7 +76,7 @@ public class MemberController {
     @PostMapping("/login/find_password")
     public SingleResult<MemberFindResponseDto> findPassword(@RequestBody MemberFindRequestDto requestDto){
         log.info("MemberController -> findPassword 실행");
-        MemberFindResponseDto responseDto = memberService.findPassword(requestDto);
+        MemberFindResponseDto responseDto = loginService.findPassword(requestDto);
         return responseService.getSingleResult(responseDto);
     }
 
@@ -86,8 +85,8 @@ public class MemberController {
     public SingleResult<MemberLoginResponseDto> withdrawalMember(@RequestBody MemberLoginRequestDto requestDto){
         log.info("MemberController -> withdrawalMember 실행");
 
-        MemberLoginResponseDto responseDto = memberService.deleteMember(requestDto);
-        memberService.logout();
+        MemberLoginResponseDto responseDto = loginService.deleteMember(requestDto);
+        loginService.logout();
         return responseService.getSingleResult(responseDto);
     }
 }

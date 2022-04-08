@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class MemberService {
+public class LoginService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;

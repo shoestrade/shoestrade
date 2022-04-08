@@ -29,10 +29,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class MemberServiceTest {
+class LoginServiceTest {
 
     @InjectMocks
-    MemberService memberService;
+    LoginService loginService;
     @Mock
     MemberRepository memberRepository;
     @Mock
@@ -62,7 +62,7 @@ class MemberServiceTest {
         given(memberRepository.save(any())).willReturn(joinMember);
 
         // when
-        MemberDto ActualResult = memberService.joinMember(memberJoinDto);
+        MemberDto ActualResult = loginService.joinMember(memberJoinDto);
 
         // then
         assertThat(ExpectResult.getEmail()).isEqualTo(ActualResult.getEmail());
@@ -83,7 +83,7 @@ class MemberServiceTest {
         given(memberRepository.existsByEmail(any())).willReturn(true);
 
         // when, then
-        assertThrows(MemberDuplicationEmailException.class, () -> memberService.joinMember(memberJoinDto));
+        assertThrows(MemberDuplicationEmailException.class, () -> loginService.joinMember(memberJoinDto));
     }
 
     @Test
@@ -105,7 +105,7 @@ class MemberServiceTest {
         given(passwordEncoder.matches(any(), any())).willReturn(true);
 
         // when, then
-        assertThatCode(() -> memberService.login(requestDto))
+        assertThatCode(() -> loginService.login(requestDto))
                 .doesNotThrowAnyException();
     }
 
@@ -121,7 +121,7 @@ class MemberServiceTest {
         given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> memberService.login(requestDto))
+        assertThatThrownBy(() -> loginService.login(requestDto))
                 .isInstanceOf(MemberNotFoundException.class);
     }
 
@@ -145,7 +145,7 @@ class MemberServiceTest {
         given(passwordEncoder.matches(any(), any())).willReturn(false);
 
         // when, then
-        assertThatThrownBy(() -> memberService.login(requestDto))
+        assertThatThrownBy(() -> loginService.login(requestDto))
                 .isInstanceOf(WrongPasswordException.class);
     }
 
@@ -167,7 +167,7 @@ class MemberServiceTest {
         given(memberRepository.findByPhone(any())).willReturn(Optional.of(member));
 
         // when
-        MemberFindResponseDto responseDto = memberService.findEmail(requestDto);
+        MemberFindResponseDto responseDto = loginService.findEmail(requestDto);
 
         // then
         assertThat(responseDto.getEmail()).isEqualTo("t**2@gmail.com");
@@ -186,7 +186,7 @@ class MemberServiceTest {
         given(memberRepository.findByPhone(any())).willReturn(Optional.empty());
 
         //  when, then
-        assertThatThrownBy(() ->  memberService.findEmail(requestDto))
+        assertThatThrownBy(() ->  loginService.findEmail(requestDto))
                 .isInstanceOf(MemberNotFoundException.class);
     }
 
@@ -210,7 +210,7 @@ class MemberServiceTest {
         given(memberRepository.findByEmailAndPhone(any(), any())).willReturn(Optional.of(member));
 
         // when
-        MemberFindResponseDto responseDto = memberService.findPassword(requestDto);
+        MemberFindResponseDto responseDto = loginService.findPassword(requestDto);
 
         // then
         assertThat(responseDto.getPassword()).isNotEqualTo(member.getPassword());
@@ -229,7 +229,7 @@ class MemberServiceTest {
         given(memberRepository.findByEmailAndPhone(any(), any())).willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> memberService.findPassword(requestDto))
+        assertThatThrownBy(() -> loginService.findPassword(requestDto))
                 .isInstanceOf(MemberNotFoundException.class);
     }
 
@@ -254,7 +254,7 @@ class MemberServiceTest {
         given(passwordEncoder.matches(any(), any())).willReturn(true);
 
         // when
-        MemberLoginResponseDto responseDto = memberService.deleteMember(requestDto);
+        MemberLoginResponseDto responseDto = loginService.deleteMember(requestDto);
 
         // then
         assertThat(responseDto.getEmail()).isEqualTo(member.getEmail());
@@ -275,7 +275,7 @@ class MemberServiceTest {
         given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> memberService.deleteMember(requestDto))
+        assertThatThrownBy(() -> loginService.deleteMember(requestDto))
                 .isInstanceOf(MemberNotFoundException.class);
     }
 
@@ -300,7 +300,7 @@ class MemberServiceTest {
         given(passwordEncoder.matches(any(), any())).willReturn(false);
 
         // when, then
-        assertThatThrownBy(() -> memberService.deleteMember(requestDto))
+        assertThatThrownBy(() -> loginService.deleteMember(requestDto))
                 .isInstanceOf(WrongPasswordException.class);
     }
 
