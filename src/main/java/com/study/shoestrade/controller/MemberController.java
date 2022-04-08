@@ -1,8 +1,11 @@
 package com.study.shoestrade.controller;
 
+import com.study.shoestrade.common.annotation.LoginMember;
 import com.study.shoestrade.common.response.ResponseService;
+import com.study.shoestrade.common.result.ListResult;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
+import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.member.request.MemberFindRequestDto;
 import com.study.shoestrade.dto.member.request.MemberJoinDto;
 import com.study.shoestrade.dto.member.request.MemberLoginRequestDto;
@@ -11,9 +14,12 @@ import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
 import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
 import com.study.shoestrade.service.MailService;
 import com.study.shoestrade.service.LoginService;
+import com.study.shoestrade.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ public class MemberController {
     private final LoginService loginService;
     private final ResponseService responseService;
     private final MailService mailService;
+    private final MemberService memberService;
 
     @PostMapping("/join")
     public SingleResult<MemberDto> join(@RequestBody MemberJoinDto memberJoinDto){
@@ -88,5 +95,23 @@ public class MemberController {
         MemberLoginResponseDto responseDto = loginService.deleteMember(requestDto);
         loginService.logout();
         return responseService.getSingleResult(responseDto);
+    }
+
+    // 주소 등록
+    @PostMapping("/my/address")
+    public Result addAddress(@LoginMember String email, @RequestBody AddressDto requestDto){
+        log.info("MemberController -> addAddress 실행");
+
+        memberService.addAddress(email, requestDto);
+        return responseService.getSuccessResult();
+    }
+
+    // 주소 목록
+    @GetMapping("/my/address")
+    public ListResult<AddressDto> getAddressList(@LoginMember String email){
+        log.info("MemberController -> getAddressList 실행");
+
+        List<AddressDto> addressList = memberService.getAddressList(email);
+        return responseService.getListResult(addressList);
     }
 }

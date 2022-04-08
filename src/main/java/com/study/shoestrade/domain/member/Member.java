@@ -30,8 +30,8 @@ public class Member {
 
     private String phone;
 
-    @Embedded
-    private Address address;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Address> addressList = new ArrayList<>();
 
     private int shoeSize;
 
@@ -58,6 +58,10 @@ public class Member {
 
     public void changePassword(String password){
         this.password = password;
+    }
+
+    public void addAddress(Address address){
+        this.addressList.add(address);
     }
 
 }

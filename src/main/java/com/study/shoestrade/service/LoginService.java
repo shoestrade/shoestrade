@@ -55,9 +55,14 @@ public class LoginService {
        return MemberDto.create(member);
    }
 
+    /**
+     * 추가 필요
+     * 벤 당했는 지 검사 필요
+     */
    // 로그인
    @Transactional(readOnly = true)
    public MemberLoginResponseDto login(MemberLoginRequestDto requestDto){
+       log.info("Login -> login 실행");
        Member member = memberRepository.findByEmail(requestDto.getEmail()).orElseThrow(MemberNotFoundException::new);
 
        if(!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())){
@@ -75,10 +80,14 @@ public class LoginService {
        session.removeAttribute("MEMBER_EMAIL");
     }
 
+    public String getLoginMember(){
+       return (String) session.getAttribute("MEMBER_EMAIL");
+    }
+
     // 이메일 찾기
     @Transactional(readOnly = true)
     public MemberFindResponseDto findEmail(MemberFindRequestDto requestDto){
-       log.info("MemberService -> findEmail 실행");
+       log.info("LoginService -> findEmail 실행");
 
        Member findMember = memberRepository.findByPhone(requestDto.getPhone()).orElseThrow(MemberNotFoundException::new);
 
@@ -111,7 +120,7 @@ public class LoginService {
 
     // 비밀번호 찾기
     public MemberFindResponseDto findPassword(MemberFindRequestDto requestDto){
-       log.info("MemberService -> findPassword 실행");
+       log.info("LoginService -> findPassword 실행");
 
         Member findMember = memberRepository.findByEmailAndPhone(requestDto.getEmail(), requestDto.getPhone())
                 .orElseThrow(MemberNotFoundException::new);
@@ -160,7 +169,7 @@ public class LoginService {
      */
     // 회원 탈퇴
     public MemberLoginResponseDto deleteMember(MemberLoginRequestDto requestDto){
-       log.info("MemberService -> deleteMember 실행");
+       log.info("LoginService -> deleteMember 실행");
 
         Member findMember = memberRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(MemberNotFoundException::new);
