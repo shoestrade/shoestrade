@@ -135,7 +135,7 @@ class MemberServiceTest {
                 .build());
 
         // mocking
-        given(addressRepository.findAddressByMemberEmailOrderByBaseAddress(any())).willReturn(addresses);
+        given(addressRepository.findAddressList(any())).willReturn(addresses);
 
         // when
         List<AddressDto> addressList = memberService.getAddressList(any());

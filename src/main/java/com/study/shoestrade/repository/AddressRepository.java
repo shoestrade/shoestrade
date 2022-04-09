@@ -12,5 +12,5 @@ import java.util.List;
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
     @Query("select a from Address a join fetch a.member m where m.email = :email order by a.baseAddress desc")
-    List<Address> findAddressByMemberEmailOrderByBaseAddress(@Param("email") String email);
+    List<Address> findAddressList(@Param("email") String email);
 }

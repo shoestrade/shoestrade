@@ -44,12 +44,16 @@ public class MemberService {
         return address.toAddressDto();
     }
 
+    /**
+     * 페이징 기능 추가 필요
+     * 기본 주소 하나랑 나머지 주소들을 페이징 해서
+     */
     // 주소 목록 출력
     @Transactional(readOnly = true)
     public List<AddressDto> getAddressList(String email){
         log.info("MemberService -> getAddressList 실행");
 
-        List<Address> addressList = addressRepository.findAddressByMemberEmailOrderByBaseAddress(email);
+        List<Address> addressList = addressRepository.findAddressList(email);
         return addressList.stream()
                 .map(Address::toAddressDto)
                 .collect(Collectors.toList());
