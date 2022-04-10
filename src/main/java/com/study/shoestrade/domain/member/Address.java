@@ -30,6 +30,7 @@ public class Address {
 
     public AddressDto toAddressDto(){
         return AddressDto.builder()
+                .id(id)
                 .name(name)
                 .phone(phone)
                 .addressName(addressName)
@@ -37,5 +38,22 @@ public class Address {
                 .zipcode(zipcode)
                 .baseAddress(baseAddress)
                 .build();
+    }
+
+    public boolean getBaseAddress(){
+        return baseAddress;
+    }
+
+    public void updateAddress(AddressDto addressDto){
+        name = addressDto.getName();
+        phone = addressDto.getPhone();
+        addressName = addressDto.getAddressName();
+        detail = addressDto.getDetail();
+        zipcode = addressDto.getZipcode();
+        baseAddress = addressDto.getBaseAddress();
+    }
+
+    public void changeBaseAddress(boolean isBaseAddress){
+        baseAddress = isBaseAddress;
     }
 }

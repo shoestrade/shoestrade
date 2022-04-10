@@ -5,7 +5,9 @@ import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.ListResult;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
+import com.study.shoestrade.domain.member.Address;
 import com.study.shoestrade.dto.address.AddressDto;
+import com.study.shoestrade.dto.address.response.AddressListResponseDto;
 import com.study.shoestrade.dto.member.request.MemberFindRequestDto;
 import com.study.shoestrade.dto.member.request.MemberJoinDto;
 import com.study.shoestrade.dto.member.request.MemberLoginRequestDto;
@@ -17,6 +19,9 @@ import com.study.shoestrade.service.LoginService;
 import com.study.shoestrade.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -106,12 +111,59 @@ public class MemberController {
         return responseService.getSuccessResult();
     }
 
-    // 주소 목록
+    /**
+     * 주소 목록
+     * @param email : 로그인 회원 이메일(세션)
+     * @param pageable : (@RequestParam 형태) 페이지
+     * @return
+     */
     @GetMapping("/my/address")
-    public ListResult<AddressDto> getAddressList(@LoginMember String email){
+    public SingleResult<AddressListResponseDto> getAddressList(@LoginMember String email, @PageableDefault(size = 10) Pageable pageable){
         log.info("MemberController -> getAddressList 실행");
 
-        List<AddressDto> addressList = memberService.getAddressList(email);
-        return responseService.getListResult(addressList);
+        AddressListResponseDto responseDto = memberService.getAddressList(email, pageable);
+        return responseService.getSingleResult(responseDto);
+    }
+
+    /**
+     * 기본 주소 변경
+     * @param id : 새로 기본 주소로 등록할 주소 id
+     * @return
+     */
+    // 기본 주소 변경
+    @PostMapping("/my/address/baseAddress/{id}")
+    public Result changeBaseAddress(@LoginMember String email, @PathVariable("id") Long id){
+        log.info("MemberController -> changeBaseAddress 실행");
+
+        memberService.changeBaseAddress(email, id);
+        return responseService.getSuccessResult();
+    }
+
+    /**
+     * 주소 수정
+     * @param id : 수정할 주소 id
+     * @param requestDto : 변경할 주소 DTO
+     * @return
+     */
+    @PostMapping("/my/address/{id}")
+    public Result updateAddress(@LoginMember String email, @PathVariable("id") Long id, @RequestBody AddressDto requestDto){
+        log.info("MemberController -> updateAddress 실행");
+
+        memberService.updateAddress(email, id, requestDto);
+        return responseService.getSuccessResult();
+    }
+
+    /**
+     * 주소 삭제
+     * 로그인 확인 필요
+     * @param id : 삭제할 주소 id
+     * @return
+     */
+    @DeleteMapping("/my/address/{id}")
+    public Result deleteAddress(@PathVariable("id") Long id){
+        log.info("MemberController -> deleteAddress 실행");
+
+        memberService.deleteAddress(id);
+        return responseService.getSuccessResult();
     }
 }
