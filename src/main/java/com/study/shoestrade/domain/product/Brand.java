@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -22,7 +23,7 @@ public class Brand {
     private String name;
 
     @OneToMany(mappedBy = "brand")
-    private List<Product> productList = new ArrayList<>();
+    private List<Product> productList = new LinkedList<>();
 
     @Builder
     public Brand(Long id, String name, List<Product> productList) {
@@ -30,4 +31,9 @@ public class Brand {
         this.name = name;
         this.productList = productList;
     }
+
+    public void changeBrandName(String name){
+        this.name = name;
+    }
+
 }
