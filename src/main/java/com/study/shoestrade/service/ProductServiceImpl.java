@@ -124,7 +124,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductLoadDto> findProductByNameInBrand(ProductSearchDto productSearchDto) {
         log.info("info = {}", "ProductService - productSearchDto 실행");
-
         return productRepository.findByNameContainsAndBrand_IdIn(productSearchDto.getName(),
                         productSearchDto.getBrandIdList()
                 ).stream()

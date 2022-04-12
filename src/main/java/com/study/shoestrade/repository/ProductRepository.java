@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
 
     Optional<Product> findByName(String name);
 
     List<Product> findByNameContains(String name);
 
-    List<Product> findByNameContainsAndBrand_IdIn(String name, List<Long> brandNames);
+//    List<Product> findByNameContainsAndBrand_IdIn(String name, List<Long> brandNames);
 
     List<Product> findByBrandId(Long id);
 }
