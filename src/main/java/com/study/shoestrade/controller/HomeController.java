@@ -19,4 +19,17 @@ public class HomeController {
         log.info("member");
         return "member";
     }
+
+    @GetMapping("/")
+    public String home(){
+        log.info("home");
+        return "home";
+    }
+
+    @GetMapping("/admin")
+    public String admin(){
+        log.info("admin");
+        return "admin";
+    }
+
 }
