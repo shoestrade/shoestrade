@@ -1,15 +1,14 @@
 package com.study.shoestrade.domain.product;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class ProductImage {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +21,4 @@ public class ProductImage {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Builder
-    public ProductImage(Long id, String name, Product product) {
-        this.id = id;
-        this.name = name;
-        this.product = product;
-    }
 }

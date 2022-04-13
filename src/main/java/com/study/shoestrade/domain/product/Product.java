@@ -1,10 +1,7 @@
 package com.study.shoestrade.domain.product;
 
-import com.study.shoestrade.dto.ProductDto;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.study.shoestrade.dto.product.ProductDto;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,6 +10,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Product {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,19 +33,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductSize> productSizeList = new ArrayList<>();
-
-    @Builder
-    public Product(Long id, String name, String code, String color, int releasePrice, int interest, Brand brand, List<ProductImage> imageList, List<ProductSize> productSizeList) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
-        this.color = color;
-        this.releasePrice = releasePrice;
-        this.interest = interest;
-        this.brand = brand;
-        this.imageList = imageList;
-        this.productSizeList = productSizeList;
-    }
 
     public void changeProduct(ProductDto productDto) {
         this.id = productDto.getId();

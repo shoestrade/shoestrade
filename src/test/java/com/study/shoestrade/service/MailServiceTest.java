@@ -2,8 +2,8 @@ package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.mailAuth.MailAuth;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
-import com.study.shoestrade.repository.MailAuthRepository;
-import org.assertj.core.api.Assertions;
+import com.study.shoestrade.repository.member.MailAuthRepository;
+import com.study.shoestrade.service.member.MailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

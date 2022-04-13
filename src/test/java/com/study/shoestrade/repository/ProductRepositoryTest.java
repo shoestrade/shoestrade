@@ -2,6 +2,8 @@ package com.study.shoestrade.repository;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
+import com.study.shoestrade.repository.brand.BrandRepository;
+import com.study.shoestrade.repository.product.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

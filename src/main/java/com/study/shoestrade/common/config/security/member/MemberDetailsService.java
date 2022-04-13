@@ -1,6 +1,6 @@
 package com.study.shoestrade.common.config.security.member;
 
-import com.study.shoestrade.repository.MemberRepository;
+import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;

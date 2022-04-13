@@ -1,7 +1,7 @@
 package com.study.shoestrade.common.config.login;
 
 import com.study.shoestrade.common.annotation.LoginMember;
-import com.study.shoestrade.service.LoginService;
+import com.study.shoestrade.service.member.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.MethodParameter;

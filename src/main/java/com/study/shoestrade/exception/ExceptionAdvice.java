@@ -5,11 +5,17 @@ import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.exception.address.AddressNotFoundException;
 import com.study.shoestrade.exception.address.BaseAddressNotDeleteException;
 import com.study.shoestrade.exception.address.BaseAddressUncheckedException;
+import com.study.shoestrade.exception.brand.BrandDuplicationException;
+import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
 import com.study.shoestrade.exception.member.WrongEmailException;
 import com.study.shoestrade.exception.member.WrongPasswordException;
 import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.product.ProductDuplicationException;
+import com.study.shoestrade.exception.product.ProductEmptyResultDataAccessException;
+import com.study.shoestrade.exception.product.ProductImageDuplicationException;
+import com.study.shoestrade.exception.product.ProductImageEmptyResultDataAccessException;
 import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
 import com.study.shoestrade.exception.token.TokenNotFoundException;
@@ -100,5 +106,42 @@ public class ExceptionAdvice {
         return responseService.getFailureResult(1001, "변조된 토큰입니다.");
     }
 
+    // ---------------------------------------------------------------------------------------------------------------------------------------- //
+
+    @ExceptionHandler(BrandDuplicationException.class)
+    protected Result brandDuplicationException(BrandDuplicationException e) {
+        log.info("info = {}", "Exception - BrandDuplicationException 발생");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 이미 존재하는 브랜드 이름입니다.");
+    }
+
+    @ExceptionHandler(BrandEmptyResultDataAccessException.class)
+    protected Result brandEmptyResultDataAccessException(BrandEmptyResultDataAccessException e) {
+        log.info("info = {}", "Exception - BrandEmptyResultDataAccessException 발생");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 브랜드를 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(ProductDuplicationException.class)
+    protected Result productDuplicationException(ProductDuplicationException e) {
+        log.info("info = {}", "Exception - ProductDuplicationException 발생");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 이미 존재하는 상품 이름입니다.");
+    }
+
+    @ExceptionHandler(ProductEmptyResultDataAccessException.class)
+    protected Result productEmptyResultDataAccessException(ProductEmptyResultDataAccessException e) {
+        log.info("info = {}", "Exception - ProductEmptyResultDataAccessException 발생");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 상품을 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(ProductImageDuplicationException.class)
+    protected Result productImageDuplicationException(ProductImageDuplicationException e) {
+        log.info("info = {}", "Exception - ProductImageDuplicationException 발생");
+        return responseService.getFailureResult(-1, "이미지 이름 (" + e.getMessage() + ") 이 중복됩니다.");
+    }
+
+    @ExceptionHandler(ProductImageEmptyResultDataAccessException.class)
+    protected Result productImageEmptyResultDataAccessException(ProductImageEmptyResultDataAccessException e) {
+        log.info("info = {}", "Exception - ProductImageEmptyResultDataAccessException 발생");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 이미지를 찾을 수 없습니다.");
+    }
 
 }

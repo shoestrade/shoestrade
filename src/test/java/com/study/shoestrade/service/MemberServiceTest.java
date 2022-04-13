@@ -8,8 +8,9 @@ import com.study.shoestrade.exception.address.AddressNotFoundException;
 import com.study.shoestrade.exception.address.BaseAddressNotDeleteException;
 import com.study.shoestrade.exception.address.BaseAddressUncheckedException;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
-import com.study.shoestrade.repository.AddressRepository;
-import com.study.shoestrade.repository.MemberRepository;
+import com.study.shoestrade.repository.member.AddressRepository;
+import com.study.shoestrade.repository.member.MemberRepository;
+import com.study.shoestrade.service.member.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
