@@ -14,10 +14,9 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SequenceGenerator(name = "PRODUCT_SIZE_SEQ_GENERATOR", sequenceName = "PRODUCT_SIZE_SEQ")
 public class ProductSize {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRODUCT_SIZE_SEQ_GENERATOR")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "productSize_id")
     private Long id;
 
