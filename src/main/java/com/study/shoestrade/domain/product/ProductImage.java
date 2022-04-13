@@ -10,10 +10,9 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SequenceGenerator(name = "PRODUCT_IMAGE_SEQ_GENERATOR", sequenceName = "PRODUCT_IMAGE_SEQ")
 public class ProductImage {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRODUCT_IMAGE_SEQ_GENERATOR")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "productImage_id" )
     private Long id;
 

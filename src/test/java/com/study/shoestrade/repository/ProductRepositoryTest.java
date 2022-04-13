@@ -42,8 +42,8 @@ class ProductRepositoryTest {
 
 
     @Test
-    @DisplayName("선택된_브랜드_내에_상품_검색_테스트")
-    public void 선택된_브랜드_내에_상품_검색() {
+    @DisplayName("상품_검색_테스트")
+    public void 상품_검색() {
         // given
         Brand brand = brandRepository.save(Brand.builder().id(1L).name("브랜드1").build());
         Product product = Product.builder()
@@ -58,7 +58,7 @@ class ProductRepositoryTest {
         list.add(brand.getId());
 
         // when
-        List<Product> findList = productRepository.findByNameContainsAndBrand_IdIn("상품명1", list);
+        List<Product> findList = productRepository.findProduct("상품명1", list);
 
         // then
         assertThat(findList)

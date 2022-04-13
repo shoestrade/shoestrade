@@ -49,4 +49,10 @@ public class ExceptionAdvice {
         log.info("info = {}", "Exception - ProductImageDuplicationException 발생");
         return responseService.getFailureResult(-1, "이미지 이름 (" + e.getMessage() + ") 이 중복됩니다.");
     }
+
+    @ExceptionHandler(ProductImageEmptyResultDataAccessException.class)
+    protected Result productImageEmptyResultDataAccessException(ProductImageEmptyResultDataAccessException e) {
+        log.info("info = {}", "Exception - ProductImageEmptyResultDataAccessException 발생");
+        return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 이미지를 찾을 수 없습니다.");
+    }
 }

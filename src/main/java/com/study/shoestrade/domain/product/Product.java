@@ -1,6 +1,6 @@
 package com.study.shoestrade.domain.product;
 
-import com.study.shoestrade.dto.ProductSaveDto;
+import com.study.shoestrade.dto.ProductDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,11 +13,9 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SequenceGenerator(name = "PRODUCT_SEQ_GENERATOR", sequenceName = "PRODUCT_SEQ")
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRODUCT_SEQ_GENERATOR")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
     private Long id;
 
@@ -50,13 +48,13 @@ public class Product {
         this.productSizeList = productSizeList;
     }
 
-    public void changeProduct(ProductSaveDto productSaveDto) {
-        this.id = productSaveDto.getId();
-        this.name = productSaveDto.getName();
-        this.code = productSaveDto.getCode();
-        this.color = productSaveDto.getColor();
-        this.releasePrice = productSaveDto.getReleasePrice();
-        this.interest = productSaveDto.getInterest();
+    public void changeProduct(ProductDto productDto) {
+        this.id = productDto.getId();
+        this.name = productDto.getName();
+        this.code = productDto.getCode();
+        this.color = productDto.getColor();
+        this.releasePrice = productDto.getReleasePrice();
+        this.interest = productDto.getInterest();
     }
 
     public void changeProductBrand(Brand brand) {

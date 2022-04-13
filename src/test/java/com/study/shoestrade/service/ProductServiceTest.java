@@ -4,19 +4,16 @@ import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.domain.product.ProductSize;
 import com.study.shoestrade.dto.ProductImageAddDto;
-import com.study.shoestrade.dto.ProductLoadDto;
-import com.study.shoestrade.dto.ProductSaveDto;
+import com.study.shoestrade.dto.ProductDto;
 import com.study.shoestrade.dto.ProductSearchDto;
-import com.study.shoestrade.repository.BrandRepository;
-import com.study.shoestrade.repository.ProductImageRepository;
-import com.study.shoestrade.repository.ProductRepository;
-import com.study.shoestrade.repository.ProductSizeRepository;
+import com.study.shoestrade.repository.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +29,6 @@ import static org.mockito.BDDMockito.willDoNothing;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
-
     @InjectMocks
     private ProductServiceImpl productService;
 
@@ -43,44 +39,37 @@ class ProductServiceTest {
     private BrandRepository brandRepository;
 
     @Mock
-    private ProductSizeRepository productSizeRepository;
+    private ProductImageRepository productImageRepository;
 
     @Mock
-    private ProductImageRepository productImageRepository;
+    private JdbcRepository jdbcRepository;
 
     @Test
     @DisplayName("상품_등록_테스트")
     void 상품_등록() {
         // given
-        ProductSaveDto productSaveDto = ProductSaveDto.builder()
+        ProductDto productDto = ProductDto.builder()
                 .id(1L)
                 .name("상품명1")
                 .code("상품코드1")
                 .releasePrice(100000)
+                .imageList(new ArrayList<>())
                 .build();
 
         Brand brand = Brand.builder()
                 .id(1L)
                 .name("브랜드1").build();
 
-        List<ProductSize> list = new ArrayList<>();
-
-        for (int i = 0; i <= 80; i += 5) {
-            list.add(ProductSize.builder()
-                    .size(220 + i)
-                    .product(productSaveDto.toEntity(brand))
-                    .build());
-        }
-
-        Product product = productSaveDto.toEntity(brand);
+        Product product = productDto.toEntity(brand);
 
         given(productRepository.save(any())).willReturn(product);
         given(brandRepository.findById(any())).willReturn(Optional.ofNullable(brand));
-        given(productSizeRepository.saveAll(any())).willReturn(list);
+        willDoNothing().given(jdbcRepository).saveAllImage(any());
+        willDoNothing().given(jdbcRepository).saveAllSize(any());
 
         // when
         // then
-        assertThatCode(() -> productService.saveProduct(productSaveDto)).doesNotThrowAnyException();
+        assertThatCode(() -> productService.saveProduct(productDto)).doesNotThrowAnyException();
     }
 
 
@@ -100,7 +89,7 @@ class ProductServiceTest {
                 .brand(brand)
                 .build();
 
-        ProductSaveDto updateDto = ProductSaveDto.builder()
+        ProductDto updateDto = ProductDto.builder()
                 .name("변경 후 상품명")
                 .id(1L)
                 .brandId(2L)
@@ -125,13 +114,13 @@ class ProductServiceTest {
 
         // when
         // then
-        assertThatCode(() -> productRepository.deleteById(1L))
+        assertThatCode(() -> productService.deleteProduct(1L))
                 .doesNotThrowAnyException();
     }
 
     @Test
-    @DisplayName("상품_전체_검색_테스트")
-    void 상품_전체_검색() {
+    @DisplayName("상품_검색_테스트")
+    void 상품_검색() {
         // given
         ArrayList<Product> list = new ArrayList<>();
         list.add(Product.builder()
@@ -142,52 +131,7 @@ class ProductServiceTest {
                 .imageList(new ArrayList<>())
                 .build());
 
-        given(productRepository.findAll()).willReturn(list);
-
-        // when
-        List<ProductLoadDto> findList = productService.findProductAll();
-
-        // then
-        assertThat(findList).isEqualTo(list.stream().map(ProductLoadDto::create).collect(Collectors.toList()));
-    }
-
-
-    @Test
-    @DisplayName("상품_이름으로_검색_테스트")
-    void 상품_이름으로_검색() {
-        // given
-        ArrayList<Product> list = new ArrayList<>();
-        list.add(Product.builder()
-                .name("상품명1")
-                .brand(Brand.builder()
-                        .id(1L)
-                        .build())
-                .imageList(new ArrayList<>())
-                .build());
-
-        given(productRepository.findByNameContains(any())).willReturn(list);
-
-        // when
-        List<ProductLoadDto> findList = productService.findProductByName("상품명1");
-
-        // then
-        assertThat(findList).isEqualTo(list.stream().map(ProductLoadDto::create).collect(Collectors.toList()));
-    }
-
-    @Test
-    @DisplayName("선택된_브랜드_내에_있는_상품_이름으로_검색_테스트")
-    void 브랜드_내_상품_검색() {
-        // given
-        ArrayList<Product> list = new ArrayList<>();
-        list.add(Product.builder()
-                .name("상품명1")
-                .brand(Brand.builder()
-                        .id(1L)
-                        .build())
-                .imageList(new ArrayList<>())
-                .build());
-
-        given(productRepository.findByNameContainsAndBrand_IdIn(any(), any())).willReturn(list);
+        given(productRepository.findProduct(any(), any())).willReturn(list);
 
         // when
         ProductSearchDto productSearchDto = ProductSearchDto.builder()
@@ -195,10 +139,10 @@ class ProductServiceTest {
                 .brandIdList(new ArrayList<>(List.of(1L)))
                 .build();
 
-        List<ProductLoadDto> findList = productService.findProductByNameInBrand(productSearchDto);
+        List<ProductDto> findList = productService.findProductByNameInBrand(productSearchDto);
 
         // then
-        assertThat(findList).isEqualTo(list.stream().map(ProductLoadDto::create).collect(Collectors.toList()));
+        assertThat(findList).isEqualTo(list.stream().map(ProductDto::create).collect(Collectors.toList()));
     }
 
     @Test
@@ -220,9 +164,22 @@ class ProductServiceTest {
 
         given(productImageRepository.findByProductIdAndNameIn(any(), any())).willReturn(new ArrayList<>());
         given(productRepository.findById(any())).willReturn(Optional.ofNullable(product));
-
+        willDoNothing().given(jdbcRepository).saveAllImage(any());
         // when
         assertThatCode(() -> productService.addProductImage(productImageAddDto))
                 .doesNotThrowAnyException();
     }
+
+    @Test
+    @DisplayName("상품_이미지_삭제_테스트")
+    void 상품_이미지_삭제() {
+        // given
+        willDoNothing().given(productImageRepository).deleteById(any());
+
+        // when
+        // then
+        assertThatCode(() -> productService.deleteProductImage(1L))
+                .doesNotThrowAnyException();
+    }
+
 }

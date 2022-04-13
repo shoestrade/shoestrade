@@ -5,14 +5,8 @@ import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.domain.product.ProductImage;
 import com.study.shoestrade.domain.product.ProductSize;
 import com.study.shoestrade.dto.*;
-import com.study.shoestrade.exception.BrandEmptyResultDataAccessException;
-import com.study.shoestrade.exception.ProductDuplicationException;
-import com.study.shoestrade.exception.ProductEmptyResultDataAccessException;
-import com.study.shoestrade.exception.ProductImageDuplicationException;
-import com.study.shoestrade.repository.BrandRepository;
-import com.study.shoestrade.repository.ProductImageRepository;
-import com.study.shoestrade.repository.ProductRepository;
-import com.study.shoestrade.repository.ProductSizeRepository;
+import com.study.shoestrade.exception.*;
+import com.study.shoestrade.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,27 +25,27 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final BrandRepository brandRepository;
-    private final ProductSizeRepository productSizeRepository;
     private final ProductImageRepository productImageRepository;
+    private final JdbcRepository jdbcRepository;
 
     /**
      * 상품 등록
      *
-     * @param productSaveDto 등록할 상품 정보
+     * @param productDto 등록할 상품 정보
      * @return 등록한 상품 id
      */
     @Override
     @Transactional
-    public ProductSaveDto saveProduct(ProductSaveDto productSaveDto) {
+    public ProductDto saveProduct(ProductDto productDto) {
         log.info("info = {}", "ProductService - saveProduct 실행");
 
-        DuplicateProduct(productSaveDto.getName());
+        DuplicateProduct(productDto.getName());
 
-        Brand brand = brandRepository.findById(productSaveDto.getBrandId()).orElseThrow(() ->
-                new BrandEmptyResultDataAccessException(productSaveDto.getBrandId().toString(), 1)
+        Brand brand = brandRepository.findById(productDto.getBrandId()).orElseThrow(() ->
+                new BrandEmptyResultDataAccessException(productDto.getBrandId().toString(), 1)
         );
 
-        Product product = productSaveDto.toEntity(brand);
+        Product product = productDto.toEntity(brand);
         Product saveProduct = productRepository.save(product);
 
         List<ProductSize> list = new ArrayList<>();
@@ -63,8 +57,17 @@ public class ProductServiceImpl implements ProductService {
                     .build());
         }
 
-        productSizeRepository.saveAll(list);
-        return ProductSaveDto.create(saveProduct);
+        jdbcRepository.saveAllSize(list);
+
+        jdbcRepository.saveAllImage(productDto.getImageList()
+                .stream()
+                .map(i -> ProductImage.builder()
+                        .name(i)
+                        .product(product)
+                        .build())
+                .collect(Collectors.toList()));
+
+        return ProductDto.create(saveProduct);
     }
 
     /**
@@ -84,50 +87,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 상품 전체 검색
-     *
-     * @return 검색 결과
-     */
-    @Override
-    public List<ProductLoadDto> findProductAll() {
-        log.info("info = {}", "ProductService - findProductAll 실행");
-
-        return productRepository.findAll()
-                .stream()
-                .map(ProductLoadDto::create)
-                .collect(Collectors.toList());
-    }
-
-
-    /**
-     * 상품 이름으로 검색
-     *
-     * @return 검색 결과
-     */
-    @Override
-    public List<ProductLoadDto> findProductByName(String name) {
-        log.info("info = {}", "ProductService - findProductByName 실행");
-
-        return productRepository.findByNameContains(name)
-                .stream()
-                .map(ProductLoadDto::create)
-                .collect(Collectors.toList());
-    }
-
-
-    /**
      * 선택된 브랜드 내에 있는 상품 이름으로 검색
      *
      * @param productSearchDto 검색어, 브랜드 이름 리스트
      * @return 검색 결과
      */
     @Override
-    public List<ProductLoadDto> findProductByNameInBrand(ProductSearchDto productSearchDto) {
+    public List<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto) {
         log.info("info = {}", "ProductService - productSearchDto 실행");
-        return productRepository.findByNameContainsAndBrand_IdIn(productSearchDto.getName(),
+        return productRepository.findProduct(productSearchDto.getName(),
                         productSearchDto.getBrandIdList()
                 ).stream()
-                .map(ProductLoadDto::create)
+                .map(ProductDto::create)
                 .collect(Collectors.toList());
     }
 
@@ -138,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void updateProduct(ProductSaveDto productDto) {
+    public void updateProduct(ProductDto productDto) {
         log.info("info = {}", "ProductService - updateProduct 실행");
 
         Product product = productRepository.findById(productDto.getId()).orElseThrow(() ->
@@ -166,6 +137,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void addProductImage(ProductImageAddDto productImageAddDto) {
+        log.info(productImageAddDto.getProductId().toString());
         Product product = productRepository.findById(productImageAddDto.getProductId()).orElseThrow(() ->
                 new ProductEmptyResultDataAccessException(productImageAddDto.getProductId().toString(), 1)
         );
@@ -174,12 +146,27 @@ public class ProductServiceImpl implements ProductService {
                 product.getId()
         );
 
-        product.getImageList().addAll(
+        jdbcRepository.saveAllImage(
                 productImageAddDto.getImageNameList()
                         .stream()
                         .map(name -> ProductImageDto.builder().name(name).build().toEntity(product))
                         .collect(Collectors.toList())
         );
+    }
+
+    /**
+     * 상품 이미지 삭제
+     * @param productImageId 삭제할 이미지 id
+     */
+    @Override
+    @Transactional
+    public void deleteProductImage(Long productImageId) {
+        log.info("info = {}", "ProductService - deleteProductImage 실행");
+        try {
+            productImageRepository.deleteById(productImageId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ProductImageEmptyResultDataAccessException(productImageId.toString(), 1);
+        }
     }
 
     /**
