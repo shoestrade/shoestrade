@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ProductRepositoryCustom {
 
-    List<Product> findByNameContainsAndBrand_IdIn(String name, List<Long> brandNames);
+    List<Product> findProduct(String name, List<Long> brandNames);
 }

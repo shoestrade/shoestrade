@@ -19,7 +19,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
 
     @Override
-    public List<Product> findByNameContainsAndBrand_IdIn(String name, List<Long> brandNames) {
+    public List<Product> findProduct(String name, List<Long> brandNames) {
         return queryFactory
                 .selectFrom(product)
                 .where(nameEq(name),
