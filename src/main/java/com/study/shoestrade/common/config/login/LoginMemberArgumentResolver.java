@@ -1,7 +1,6 @@
 package com.study.shoestrade.common.config.login;
 
 import com.study.shoestrade.common.annotation.LoginMember;
-import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -12,14 +11,19 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Component
 @Slf4j
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
     private LoginService loginService;
+    private HttpServletRequest request;
 
-    public LoginMemberArgumentResolver(@Lazy LoginService loginService){
+    public LoginMemberArgumentResolver(@Lazy LoginService loginService,
+                                       @Lazy HttpServletRequest request){
         this.loginService = loginService;
+        this.request = request;
     }
 
     @Override
@@ -30,6 +34,6 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return loginService.getLoginMember();
+        return loginService.getLoginMemberEmail(request);
     }
 }

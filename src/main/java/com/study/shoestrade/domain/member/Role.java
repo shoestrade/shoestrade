@@ -7,5 +7,5 @@ package com.study.shoestrade.domain.member;
  */
 
 public enum Role {
-    MEMBER, ADMIN
+    ROLE_MEMBER, ROLE_ADMIN
 }

@@ -37,7 +37,7 @@ public class MemberJoinDto {
                 .point(0)
                 .grade(Grade.BRONZE)
                 .shoeSize(shoeSize)
-                .role(Role.MEMBER)
+                .role(Role.ROLE_MEMBER)
 //                .account(account)
                 .build();
     }

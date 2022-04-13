@@ -1,28 +1,34 @@
 package com.study.shoestrade.common.config.security;
 
-import com.study.shoestrade.common.config.security.member.MemberDetailsService;
+import com.study.shoestrade.common.config.jwt.JwtAuthenticationFilter;
+import com.study.shoestrade.common.config.jwt.JwtTokenProvider;
+import com.study.shoestrade.common.config.security.accessDeniedHandler.CustomAccessDeniedHandler;
+import com.study.shoestrade.common.config.security.authenticationEntryPoint.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final MemberDetailsService memberDetailsService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     // 암호와에 필요한 PasswordEncoder를 Bean에 등록
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     // 인증을 무시할 경로 설정
@@ -34,24 +40,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // spring security에서 csrf 토큰 없이 요청하면 요청을 막음
-            .httpBasic().disable()
-
-            .authorizeRequests()
-            .antMatchers("/admin/**").hasRole("ADMIN")
-            .antMatchers("/member/**").hasRole("MEMBER")
-            .antMatchers("/**").permitAll()
-        .and()
-            .logout()
-                .logoutSuccessUrl("/hello")  // 수정?
-                .invalidateHttpSession(true); // 로그아웃 이후 세션 날리기
+                .httpBasic().disable()  // rest api이므로 기본 설정 미사용
+                .csrf().disable()  // rest api이므로 csrf 보안 미사용
+                .formLogin().disable()
+                .logout().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // jwt로 인증하므로 세션 미사용
+            .and()
+                .authorizeRequests()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/member/**").hasRole("MEMBER")
+                .antMatchers("/my/**").hasRole("MEMBER")
+                .antMatchers("/**").permitAll()
+            .and()
+                .exceptionHandling()
+                    .authenticationEntryPoint(customAuthenticationEntryPoint)
+                    .accessDeniedHandler(customAccessDeniedHandler)
+            .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 추가
     }
 
-    // 로그인할 때 필요한 정보를 가져오는 곳
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(memberDetailsService)
-                .passwordEncoder(passwordEncoder());
-        // 어떤 해쉬로 암호화했는지 알려줌
-    }
 }

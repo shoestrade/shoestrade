@@ -1,6 +1,5 @@
-package com.study.shoestrade.dto.member.response;
+package com.study.shoestrade.dto.member.request;
 
-import com.study.shoestrade.domain.member.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberLoginResponseDto {
+public class TokenRequestDto {
     private String accessToken;
     private String refreshToken;
 }

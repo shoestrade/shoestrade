@@ -45,7 +45,7 @@ public class Member {
 
     // Member role 추가
     @Enumerated(EnumType.STRING)
-    private Role role = Role.MEMBER;
+    private Role role = Role.ROLE_MEMBER;
 
     @OneToMany(mappedBy = "seller")
     private List<Trade> sellList = new ArrayList<>();
