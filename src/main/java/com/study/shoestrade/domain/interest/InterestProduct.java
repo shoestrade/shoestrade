@@ -2,20 +2,18 @@ package com.study.shoestrade.domain.interest;
 
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.product.ProductSize;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SequenceGenerator(name = "INTEREST_PRODUCT_SEQ_GENERATOR", sequenceName = "INTEREST_PRODUCT_SEQ")
+@AllArgsConstructor
+@Builder
 public class InterestProduct {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "INTEREST_PRODUCT_SEQ_GENERATOR")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "interestProduct_id")
     private Long id;
 
@@ -27,10 +25,4 @@ public class InterestProduct {
     @JoinColumn(name = "productSize_id")
     private ProductSize productSize;
 
-    @Builder
-    public InterestProduct(Long id, Member member, ProductSize productSize) {
-        this.id = id;
-        this.member = member;
-        this.productSize = productSize;
-    }
 }

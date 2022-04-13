@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 public class Token {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TOKEN_SEQ_GENERATOR")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String refreshToken;
 

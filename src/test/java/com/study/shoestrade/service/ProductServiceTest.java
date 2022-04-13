@@ -2,18 +2,20 @@ package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
-import com.study.shoestrade.domain.product.ProductSize;
-import com.study.shoestrade.dto.ProductImageAddDto;
-import com.study.shoestrade.dto.ProductDto;
-import com.study.shoestrade.dto.ProductSearchDto;
-import com.study.shoestrade.repository.*;
+import com.study.shoestrade.dto.product.ProductImageAddDto;
+import com.study.shoestrade.dto.product.ProductDto;
+import com.study.shoestrade.dto.product.request.ProductSearchDto;
+import com.study.shoestrade.repository.brand.BrandRepository;
+import com.study.shoestrade.repository.jdbc.JdbcRepository;
+import com.study.shoestrade.repository.product.ProductImageRepository;
+import com.study.shoestrade.repository.product.ProductRepository;
+import com.study.shoestrade.service.product.ProductServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;

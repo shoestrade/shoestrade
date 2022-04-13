@@ -1,8 +1,9 @@
 package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.product.Brand;
-import com.study.shoestrade.dto.BrandDto;
-import com.study.shoestrade.repository.BrandRepository;
+import com.study.shoestrade.dto.brand.BrandDto;
+import com.study.shoestrade.repository.brand.BrandRepository;
+import com.study.shoestrade.service.brand.BrandServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
