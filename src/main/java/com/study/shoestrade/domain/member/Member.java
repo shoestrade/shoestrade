@@ -12,6 +12,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SequenceGenerator(name = "MEMBER_SEQ_GENERATOR", sequenceName = "MEMBER_SEQ")
+@AllArgsConstructor
+@Builder
 public class Member {
 
     @Id
@@ -26,7 +28,6 @@ public class Member {
 
     private String name;
 
-    @Column(unique = true)
     private String phone;
 
     @Embedded
@@ -42,6 +43,10 @@ public class Member {
     @Embedded
     private Account account;
 
+    // Member role 추가
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.MEMBER;
+
     @OneToMany(mappedBy = "seller")
     private List<Trade> sellList = new ArrayList<>();
 
@@ -51,20 +56,8 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<InterestProduct> interestProductList = new ArrayList<>();
 
-    @Builder
-    public Member(Long id, String email, String password, String name, String phone, Address address, int shoeSize, Grade grade, int point, Account account, List<Trade> sellList, List<Trade> purchaseList, List<InterestProduct> interestProductList) {
-        this.id = id;
-        this.email = email;
+    public void changePassword(String password){
         this.password = password;
-        this.name = name;
-        this.phone = phone;
-        this.address = address;
-        this.shoeSize = shoeSize;
-        this.grade = grade;
-        this.point = point;
-        this.account = account;
-        this.sellList = sellList;
-        this.purchaseList = purchaseList;
-        this.interestProductList = interestProductList;
     }
+
 }
