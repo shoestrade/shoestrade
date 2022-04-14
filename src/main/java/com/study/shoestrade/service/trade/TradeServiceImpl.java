@@ -1,6 +1,5 @@
 package com.study.shoestrade.service.trade;
 
-import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.product.ProductSize;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
@@ -23,16 +22,19 @@ public class TradeServiceImpl implements TradeService {
 
     private final TradeRepository tradeRepository;
 
+    private final MemberRepository memberRepository;
+
     private final ProductSizeRepository productSizeRepository;
 
     /**
      * 판매 입찰 등록
-     * @param member 판매자
+     *
+     * @param email             판매자 이메일
      * @param salesTradeSaveDto 판매 정보
      */
     @Transactional
     @Override
-    public void salesTradeSave(Member member, SalesTradeSaveDto salesTradeSaveDto) {
+    public void salesTradeSave(String email, SalesTradeSaveDto salesTradeSaveDto) {
         log.info("info = {}", "TradeService - salesTradeSave 실행");
 
         tradeRepository.save(
@@ -40,7 +42,8 @@ public class TradeServiceImpl implements TradeService {
                         .price(salesTradeSaveDto.getPrice())
                         .productSize(productSizeRepository.findById(salesTradeSaveDto.getProductSizeId())
                                 .orElseThrow()) // 예외 추가 해야함
-                        .seller(member)
+                        .seller(memberRepository.findByEmail(email)
+                                .orElseThrow(MemberNotFoundException::new))
                         .tradeState(TradeState.SELL)
                         .tradeType(TradeType.SELL)
                         .build()

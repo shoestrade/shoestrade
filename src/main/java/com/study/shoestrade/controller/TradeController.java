@@ -3,7 +3,6 @@ package com.study.shoestrade.controller;
 import com.study.shoestrade.common.annotation.LoginMember;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
-import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.dto.trade.request.SalesTradeSaveDto;
 import com.study.shoestrade.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +22,15 @@ public class TradeController {
 
     private final TradeService tradeService;
 
+    /**
+     * 판매 입찰 등록
+     * @param email 판매자 이메일
+     * @param salesTradeSaveDto 판매 입찰 정보
+     * @return 성공 결과
+     */
     @PostMapping("/sales")
-    public Result salesTradeSave(@LoginMember Member member, @RequestBody SalesTradeSaveDto salesTradeSaveDto) {
-        tradeService.salesTradeSave(member, salesTradeSaveDto);
+    public Result salesTradeSave(@LoginMember String email, @RequestBody SalesTradeSaveDto salesTradeSaveDto) {
+        tradeService.salesTradeSave(email, salesTradeSaveDto);
         return responseService.getSuccessResult();
     }
 }
