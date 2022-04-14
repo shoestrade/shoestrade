@@ -1,5 +1,6 @@
 package com.study.shoestrade.domain.member;
 
+import com.study.shoestrade.domain.BaseEntity;
 import com.study.shoestrade.dto.address.AddressDto;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Address {
+public class Address extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="address_id")

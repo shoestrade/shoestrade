@@ -1,5 +1,6 @@
 package com.study.shoestrade.domain.product;
 
+import com.study.shoestrade.domain.BaseEntity;
 import com.study.shoestrade.domain.interest.InterestProduct;
 import com.study.shoestrade.domain.trade.Trade;
 import lombok.*;
@@ -13,9 +14,10 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ProductSize {
+public class ProductSize extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "productSize_id")
     private Long id;
 
