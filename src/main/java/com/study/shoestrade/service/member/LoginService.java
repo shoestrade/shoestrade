@@ -141,10 +141,10 @@ public class LoginService {
         token.removeRefreshToken();
     }
 
-    public String getLoginMemberEmail(ServletRequest request) {
+    public Member getLoginMember(ServletRequest request) {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
         String memberEmail = jwtTokenProvider.getMemberEmail(token);
-        return memberEmail;
+        return memberRepository.findByEmail(memberEmail).orElseThrow(MemberNotFoundException::new);
     }
 
     // 이메일 찾기

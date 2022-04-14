@@ -1,19 +1,17 @@
-package com.study.shoestrade.dto.product.request;
+package com.study.shoestrade.dto.trade.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductSearchDto {
+public class SalesTradeSaveDto {
 
-    private String name;
+    private int price;
 
-    private List<Long> brandIdList;
+    private Long productSizeId;
 }
