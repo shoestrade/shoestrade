@@ -6,6 +6,7 @@ import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.dto.account.AccountDto;
 import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
+import com.study.shoestrade.dto.member.response.PointDto;
 import com.study.shoestrade.exception.address.AddressNotFoundException;
 import com.study.shoestrade.exception.address.BaseAddressNotDeleteException;
 import com.study.shoestrade.exception.address.BaseAddressUncheckedException;
@@ -549,6 +550,27 @@ class MemberServiceTest {
         assertThat(responseDto.getAccountNumber()).isNull();
         assertThat(responseDto.getAccountHolder()).isNull();
         assertThat(member.getAccount()).isNull();
+    }
+
+    @Test
+    @DisplayName("회원의 포인트를 확인할 수 있다.")
+    public void 포인트_보기_성공() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .point(100)
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+
+        // when
+        PointDto responseDto = memberService.getPoint("email");
+
+        // then
+        assertThat(responseDto.getPoint()).isEqualTo(member.getPoint());
     }
 
 }

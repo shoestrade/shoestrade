@@ -6,6 +6,7 @@ import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.dto.account.AccountDto;
 import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
+import com.study.shoestrade.dto.member.response.PointDto;
 import com.study.shoestrade.exception.address.AddressNotFoundException;
 import com.study.shoestrade.exception.address.BaseAddressNotDeleteException;
 import com.study.shoestrade.exception.address.BaseAddressUncheckedException;
@@ -169,5 +170,17 @@ public class MemberService {
 
         findMember.deleteAccount();
         return AccountDto.builder().build();
+    }
+
+    // 포인트 출력
+    public PointDto getPoint(String email){
+        log.info("MemberService -> getPoint 실행");
+
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return PointDto.builder()
+                .point(findMember.getPoint())
+                .build();
     }
 }
