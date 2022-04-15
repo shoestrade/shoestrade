@@ -19,7 +19,7 @@ public class BrandController {
     private final ResponseService responseService;
 
     /**
-     * 브랜드 이름으로 검색
+     * 브랜드 검색
      *
      * @param brandName 브랜드 이름
      * @return 검색된 브랜드 리스트
@@ -28,17 +28,6 @@ public class BrandController {
     public ListResult<BrandDto> findBrandByName(@PathVariable String brandName) {
         log.info("info = {}", "GetBrandController - findByName 실행");
         return responseService.getListResult(brandService.findByBrandName(brandName));
-    }
-
-    /**
-     * 브랜드 전체 검색
-     *
-     * @return 브랜드 전체 리스트
-     */
-    @GetMapping
-    public ListResult<BrandDto> findBrandAll() {
-        log.info("info = {}", "GetBrandController - findBrandAll 실행");
-        return responseService.getListResult(brandService.findBrandAll());
     }
 
     /**

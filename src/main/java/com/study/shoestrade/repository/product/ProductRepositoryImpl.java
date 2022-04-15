@@ -2,6 +2,7 @@ package com.study.shoestrade.repository.product;
 
 
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.shoestrade.domain.product.Product;
 
@@ -27,11 +28,11 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .fetch();
     }
 
-    private Predicate brandNamesEq(List<Long> brandNames) {
+    private BooleanExpression brandNamesEq(List<Long> brandNames) {
         return brandNames.isEmpty() ? null : product.brand.id.in(brandNames);
     }
 
-    private Predicate nameEq(String name) {
+    private BooleanExpression nameEq(String name) {
         return name.isEmpty() ? null : product.name.contains(name);
     }
 }
