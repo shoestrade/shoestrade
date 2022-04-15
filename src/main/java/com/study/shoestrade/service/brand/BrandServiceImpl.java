@@ -8,10 +8,12 @@ import com.study.shoestrade.repository.brand.BrandRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,7 +32,7 @@ public class BrandServiceImpl implements BrandService {
      */
     @Override
     @Transactional
-    public BrandDto saveBrand(String name){
+    public BrandDto saveBrand(String name) {
         log.info("info log={}", "BrandService - saveBrand 실행");
         duplicateBrandName(name);
 
@@ -77,13 +79,11 @@ public class BrandServiceImpl implements BrandService {
      * @return 검색된 브랜드 리스트
      */
     @Override
-    public List<BrandDto> findByBrandName(String name) {
+    public Page<BrandDto> findByBrandName(String name, Pageable pageable) {
         log.info("info log={}", "BrandService - findByBrandNameList 실행");
 
-        return brandRepository.findByNameContains(name)
-                .stream()
-                .map(BrandDto::create)
-                .collect(Collectors.toList());
+        return brandRepository.findByNameContains(name, pageable)
+                .map(BrandDto::create);
     }
 
 

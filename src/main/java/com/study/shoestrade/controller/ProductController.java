@@ -9,6 +9,7 @@ import com.study.shoestrade.dto.product.request.ProductSearchDto;
 import com.study.shoestrade.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -52,9 +53,9 @@ public class ProductController {
      * @return 검색된 결과
      */
     @GetMapping()
-    public ListResult<ProductDto> findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto) {
+    public Result findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto, Pageable pageable) {
         log.info("info = {}", "ProductController - findProductByNameAndBrandList 실행");
-        return responseService.getListResult(productService.findProductByNameInBrand(productSearchDto));
+        return responseService.getSingleResult(productService.findProductByNameInBrand(productSearchDto, pageable));
     }
 
     /**

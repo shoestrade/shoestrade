@@ -2,8 +2,8 @@ package com.study.shoestrade.service.brand;
 
 
 import com.study.shoestrade.dto.brand.BrandDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface BrandService {
     /**
@@ -34,6 +34,6 @@ public interface BrandService {
      * @param name 검색할 브랜드 이름
      * @return 검색된 브랜드 리스트
      */
-    List<BrandDto> findByBrandName(String name);
+    Page<BrandDto> findByBrandName(String name, Pageable pageable);
 }
 

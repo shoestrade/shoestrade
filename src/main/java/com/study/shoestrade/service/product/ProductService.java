@@ -3,8 +3,9 @@ package com.study.shoestrade.service.product;
 import com.study.shoestrade.dto.product.ProductDto;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface ProductService {
 
@@ -29,7 +30,7 @@ public interface ProductService {
      * @param productSearchDto 검색어, 브랜드 이름 리스트
      * @return 검색 결과
      */
-    List<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto);
+    Page<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto, Pageable pageable);
 
     /**
      * 상품 정보 변경

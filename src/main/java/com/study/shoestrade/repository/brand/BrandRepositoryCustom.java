@@ -1,6 +1,8 @@
 package com.study.shoestrade.repository.brand;
 
 import com.study.shoestrade.domain.product.Brand;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,5 +13,5 @@ public interface BrandRepositoryCustom {
      * @param name 검색어
      * @return 검색 결과
      */
-    List<Brand> findByNameContains(String name);
+    Page<Brand> findByNameContains(String name, Pageable pageable);
 }

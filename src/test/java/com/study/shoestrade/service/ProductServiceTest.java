@@ -16,6 +16,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.method.P;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,8 +136,10 @@ class ProductServiceTest {
                         .build())
                 .imageList(new ArrayList<>())
                 .build());
+        PageImpl<Product> page = new PageImpl<>(list);
+        PageRequest pageRequest = PageRequest.of(0, 3);
 
-        given(productRepository.findProduct(any(), any())).willReturn(list);
+        given(productRepository.findProduct(any(), any(), any())).willReturn(page);
 
         // when
         ProductSearchDto productSearchDto = ProductSearchDto.builder()
@@ -141,10 +147,10 @@ class ProductServiceTest {
                 .brandIdList(new ArrayList<>(List.of(1L)))
                 .build();
 
-        List<ProductDto> findList = productService.findProductByNameInBrand(productSearchDto);
+        Page<ProductDto> findPages = productService.findProductByNameInBrand(productSearchDto, pageRequest);
 
         // then
-        assertThat(findList).isEqualTo(list.stream().map(ProductDto::create).collect(Collectors.toList()));
+        assertThat(findPages).isEqualTo(page.map(ProductDto::create));
     }
 
     @Test
