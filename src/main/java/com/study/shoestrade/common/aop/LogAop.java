@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogAop {
 
-    @Before("execution(* com.study.shoestrade..*(..))")
+    @Before("execution(* com.study.shoestrade..*(..)) && !execution(* com.study.shoestrade.common..*(..))")
     public void before(JoinPoint joinPoint){
         log.info("[log] {} -> {} 실행", joinPoint.getSignature().getDeclaringType().getSimpleName() ,joinPoint.getSignature().getName());
     }
 
-    @After("execution(* com.study.shoestrade..*(..))")
+    @After("execution(* com.study.shoestrade..*(..)) && !execution(* com.study.shoestrade.common..*(..))")
     public void after(JoinPoint joinPoint){
         log.info("[log] {} -> {} 종료", joinPoint.getSignature().getDeclaringType().getSimpleName() ,joinPoint.getSignature().getName());
     }
