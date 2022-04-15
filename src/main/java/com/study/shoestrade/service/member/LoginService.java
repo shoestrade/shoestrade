@@ -18,7 +18,6 @@ import com.study.shoestrade.dto.member.request.MemberJoinDto;
 import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
 import com.study.shoestrade.repository.member.TokenRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
@@ -34,7 +33,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -49,14 +47,11 @@ public class LoginService {
     // 이메일 중복 체크
     @Transactional(readOnly = true)
     public boolean checkEmailDuplication(String email) {
-        log.info("LoginService -> checkEmailDuplication 실행");
         return memberRepository.existsByEmail(email);
     }
 
     // 회원 가입
     public MemberDto joinMember(MemberJoinDto memberJoinDto) {
-        log.info("LoginService -> joinMember 실행");
-
         // 이메일 중복 체크
         if (checkEmailDuplication(memberJoinDto.getEmail())) {
             throw new MemberDuplicationEmailException("이미 회원가입된 이메일 입니다.");
@@ -73,7 +68,6 @@ public class LoginService {
      */
     // 로그인
     public MemberLoginResponseDto login(MemberLoginRequestDto requestDto) {
-        log.info("LoginService -> login 실행");
         Member member = memberRepository.findByEmail(requestDto.getEmail()).orElseThrow(MemberNotFoundException::new);
 
         if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
@@ -102,8 +96,6 @@ public class LoginService {
 
     // 토큰 재발급
     public MemberLoginResponseDto reIssue(TokenRequestDto requestDto) {
-        log.info("LoginService -> reIssue 실행");
-
         Member member = findMemberByToken(requestDto);
         Token token = tokenRepository.findByMember(member.getId())
                 .orElseThrow(InvalidRefreshTokenException::new);
@@ -130,8 +122,6 @@ public class LoginService {
      */
     // 로그아웃
     public void logout(String email) {
-        log.info("LoginService -> logout 실행");
-
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -150,8 +140,6 @@ public class LoginService {
     // 이메일 찾기
     @Transactional(readOnly = true)
     public MemberFindResponseDto findEmail(MemberFindRequestDto requestDto) {
-        log.info("LoginService -> findEmail 실행");
-
         Member findMember = memberRepository.findByPhone(requestDto.getPhone()).orElseThrow(MemberNotFoundException::new);
 
         String foundEmail = findMember.getEmail();
@@ -183,8 +171,6 @@ public class LoginService {
 
     // 비밀번호 찾기
     public MemberFindResponseDto findPassword(MemberFindRequestDto requestDto) {
-        log.info("LoginService -> findPassword 실행");
-
         Member findMember = memberRepository.findByEmailAndPhone(requestDto.getEmail(), requestDto.getPhone())
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -234,8 +220,6 @@ public class LoginService {
      */
     // 회원 탈퇴
     public void deleteMember(String email, MemberLoginRequestDto requestDto) {
-        log.info("LoginService -> deleteMember 실행");
-
         if(!email.equals(requestDto.getEmail())){
             throw new WrongEmailException();
         }

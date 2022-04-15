@@ -14,14 +14,12 @@ import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.repository.member.AddressRepository;
 import com.study.shoestrade.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -32,8 +30,6 @@ public class MemberService {
 
     // 주소 등록
     public AddressDto addAddress(String email, AddressDto requestDto){
-        log.info("MemberService -> addAddress 실행");
-
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -66,8 +62,6 @@ public class MemberService {
     // 주소 목록 출력
     @Transactional(readOnly = true)
     public AddressListResponseDto getAddressList(String email, Pageable pageable){
-        log.info("MemberService -> getAddressList 실행");
-
         return AddressListResponseDto.builder()
                 .baseAddressDto(addressRepository.findBaseAddress(email).orElse(Address.builder().build()).toAddressDto())
                 .addressDtoPage(addressRepository.findAddressList(email, pageable).map(Address::toAddressDto))
@@ -76,8 +70,6 @@ public class MemberService {
 
     // 기본 주소 변경
     public AddressDto changeBaseAddress(String email, Long id){
-        log.info("MemberService -> changeBaseAddress 실행");
-
         Address newBaseAddress = addressRepository.findById(id)
                 .orElseThrow(AddressNotFoundException::new);
 
@@ -89,8 +81,6 @@ public class MemberService {
 
     // 주소 수정
     public AddressDto updateAddress(String email, Long id, AddressDto requestDto){
-        log.info("MemberService -> updateAddress 실행");
-
         Address findAddress = addressRepository.findById(id)
                 .orElseThrow(AddressNotFoundException::new);
 
@@ -109,8 +99,6 @@ public class MemberService {
 
     // 주소 삭제
     public AddressDto deleteAddress(Long id){
-        log.info("MemberService -> deleteAddress 실행");
-
         Address findAddress = addressRepository.findById(id)
                 .orElseThrow(AddressNotFoundException::new);
 
@@ -126,8 +114,6 @@ public class MemberService {
 
     // 등록 계좌 보기
     public AccountDto getAccount(String email){
-        log.info("MemberService -> getAccount 실행");
-
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
         Account account = findMember.getAccount();
@@ -146,8 +132,6 @@ public class MemberService {
 
     // 계좌 등록 및 수정
     public AccountDto addAccount(String email, AccountDto requestDto){
-        log.info("MemberService -> addAccount 실행");
-
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -163,8 +147,6 @@ public class MemberService {
 
     // 계좌 삭제
     public AccountDto deleteAccount(String email){
-        log.info("MemberService -> deleteAccount 실행");
-
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -174,8 +156,6 @@ public class MemberService {
 
     // 포인트 출력
     public PointDto getPoint(String email){
-        log.info("MemberService -> getPoint 실행");
-
         Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
 
