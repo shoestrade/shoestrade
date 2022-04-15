@@ -77,14 +77,11 @@ public class JwtTokenProvider {
         } catch (TokenNotFoundException e){
             throw new TokenNotFoundException();
         } catch (ExpiredJwtException e){
-            log.info("d");
             throw new ExpiredJwtException(e.getHeader(), e.getClaims(), e.getMessage());
 //            return e.getClaims().getSubject();
         } catch (SignatureException e){
-            log.info("e");
             throw new SignatureException(e.getMessage());
         } catch (MalformedJwtException e){
-            log.info("f");
             throw new MalformedJwtException(e.getMessage());
         }
 
@@ -106,14 +103,11 @@ public class JwtTokenProvider {
         } catch (TokenNotFoundException e){
             throw new TokenNotFoundException();
         } catch (ExpiredJwtException e){
-            log.info("a");
             throw new ExpiredJwtException(e.getHeader(), e.getClaims(), e.getMessage());
 //            return e.getClaims().getSubject();
         } catch (SignatureException e){
-            log.info("b");
             throw new SignatureException(e.getMessage());
         } catch (MalformedJwtException e){
-            log.info("c");
             throw new MalformedJwtException(e.getMessage());
         }
 

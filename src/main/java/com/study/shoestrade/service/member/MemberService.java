@@ -1,7 +1,9 @@
 package com.study.shoestrade.service.member;
 
+import com.study.shoestrade.domain.member.Account;
 import com.study.shoestrade.domain.member.Address;
 import com.study.shoestrade.domain.member.Member;
+import com.study.shoestrade.dto.account.AccountDto;
 import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
 import com.study.shoestrade.exception.address.AddressNotFoundException;
@@ -66,7 +68,7 @@ public class MemberService {
         log.info("MemberService -> getAddressList 실행");
 
         return AddressListResponseDto.builder()
-                .baseAddressDto(addressRepository.findBaseAddress(email).orElseThrow(AddressNotFoundException::new).toAddressDto())
+                .baseAddressDto(addressRepository.findBaseAddress(email).orElse(Address.builder().build()).toAddressDto())
                 .addressDtoPage(addressRepository.findAddressList(email, pageable).map(Address::toAddressDto))
                 .build();
     }
@@ -119,5 +121,53 @@ public class MemberService {
         AddressDto addressDto = findAddress.toAddressDto();
         addressRepository.delete(findAddress);
         return addressDto;
+    }
+
+    // 등록 계좌 보기
+    public AccountDto getAccount(String email){
+        log.info("MemberService -> getAccount 실행");
+
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+        Account account = findMember.getAccount();
+
+        // 초기 상태
+        if(account == null){
+            return AccountDto.builder().build();
+        }
+
+        return AccountDto.builder()
+                .bankName(account.getBankName())
+                .accountNumber(account.getAccountNumber())
+                .accountHolder(account.getAccountHolder())
+                .build();
+    }
+
+    // 계좌 등록 및 수정
+    public AccountDto addAccount(String email, AccountDto requestDto){
+        log.info("MemberService -> addAccount 실행");
+
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        Account account = findMember.changeAccount(requestDto);
+//        account.changeAccount(requestDto);
+
+        return AccountDto.builder()
+                .bankName(account.getBankName())
+                .accountNumber(account.getAccountNumber())
+                .accountHolder(account.getAccountHolder())
+                .build();
+    }
+
+    // 계좌 삭제
+    public AccountDto deleteAccount(String email){
+        log.info("MemberService -> deleteAccount 실행");
+
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        findMember.deleteAccount();
+        return AccountDto.builder().build();
     }
 }
