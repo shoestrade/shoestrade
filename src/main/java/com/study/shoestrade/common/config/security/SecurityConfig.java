@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .logout().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // jwt로 인증하므로 세션 미사용
-            .and()
+가                .and()
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/brand/**").hasRole("ADMIN")
@@ -53,11 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/member/**").hasRole("MEMBER")
                 .antMatchers("/my/**").hasRole("MEMBER")
                 .antMatchers("/**").permitAll()
-            .and()
+                .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(customAuthenticationEntryPoint)
-                    .accessDeniedHandler(customAccessDeniedHandler)
-            .and()
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .accessDeniedHandler(customAccessDeniedHandler)
+                .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 추가
     }
