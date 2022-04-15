@@ -15,6 +15,7 @@ import com.study.shoestrade.dto.member.request.TokenRequestDto;
 import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
 import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
+import com.study.shoestrade.dto.member.response.PointDto;
 import com.study.shoestrade.service.member.MailService;
 import com.study.shoestrade.service.member.LoginService;
 import com.study.shoestrade.service.member.MemberService;
@@ -225,5 +226,17 @@ public class MemberController {
 
         memberService.deleteAccount(email);
         return responseService.getSuccessResult();
+    }
+
+    /**
+     * 포인트 보기
+     * @return
+     */
+    @GetMapping("/my/point")
+    public SingleResult<PointDto> getPoint(@LoginMember String email){
+        log.info("MemberController -> getPoint 실행");
+
+        PointDto responseDto = memberService.getPoint(email);
+        return responseService.getSingleResult(responseDto);
     }
 }
