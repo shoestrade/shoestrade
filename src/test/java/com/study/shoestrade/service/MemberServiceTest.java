@@ -1,7 +1,9 @@
 package com.study.shoestrade.service;
 
+import com.study.shoestrade.domain.member.Account;
 import com.study.shoestrade.domain.member.Address;
 import com.study.shoestrade.domain.member.Member;
+import com.study.shoestrade.dto.account.AccountDto;
 import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
 import com.study.shoestrade.exception.address.AddressNotFoundException;
@@ -387,4 +389,166 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.deleteAddress(1L))
                 .isInstanceOf(BaseAddressNotDeleteException.class);
     }
+
+    @Test
+    @DisplayName("계좌가 등록되기 전엔 Account 속성들이 null값이 나온다.")
+    public void 계좌_보기_성공1() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
+
+        // when
+        AccountDto responseDto = memberService.getAccount("email");
+
+        // then
+        assertThat(responseDto.getBankName()).isNull();
+        assertThat(responseDto.getAccountNumber()).isNull();
+        assertThat(responseDto.getAccountHolder()).isNull();
+    }
+
+    @Test
+    @DisplayName("계좌가 등록되어 있으면 등록된 계좌가 출력된다.")
+    public void 계좌_보기_성공2() {
+        // given
+        Account account = Account.builder()
+                .bankName("은행")
+                .accountNumber("계좌번호")
+                .accountHolder("예금주")
+                .build();
+
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .account(account)
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
+
+        // when
+        AccountDto responseDto = memberService.getAccount("email");
+
+        // then
+        assertThat(responseDto.getBankName()).isEqualTo(account.getBankName());
+        assertThat(responseDto.getAccountNumber()).isEqualTo(account.getAccountNumber());
+        assertThat(responseDto.getAccountHolder()).isEqualTo(account.getAccountHolder());
+    }
+
+    @Test
+    @DisplayName("회원을 찾을 수 없으면 MemberNotFoundException 예외가 발생한다.")
+    public void 계좌_보기_실패() {
+        // given, mocking
+        given(memberRepository.findByEmail(any())).willReturn(Optional.empty());
+
+        // when, then
+        assertThatCode(() -> memberService.getAccount("email"))
+                .isInstanceOf(MemberNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("계좌를 처음 등록하면 성공한다.")
+    public void 계좌_등록_성공() {
+        // given
+        AccountDto requestDto = AccountDto.builder()
+                .bankName("은행")
+                .accountNumber("계좌번호")
+                .accountHolder("예금주")
+                .build();
+
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+
+        // when
+        AccountDto responseDto = memberService.addAccount("email", requestDto);
+
+        // then
+        assertThat(responseDto.getBankName()).isEqualTo(requestDto.getBankName());
+        assertThat(responseDto.getAccountNumber()).isEqualTo(requestDto.getAccountNumber());
+        assertThat(responseDto.getAccountHolder()).isEqualTo(requestDto.getAccountHolder());
+        assertThat(member.getAccount().getBankName()).isEqualTo(requestDto.getBankName());
+        assertThat(member.getAccount().getAccountNumber()).isEqualTo(requestDto.getAccountNumber());
+        assertThat(member.getAccount().getAccountHolder()).isEqualTo(requestDto.getAccountHolder());
+    }
+
+    @Test
+    @DisplayName("계좌가 등록되어 있으면 수정이 성공한다.")
+    public void 계좌_수정_성공() {
+        // given
+        AccountDto requestDto = AccountDto.builder()
+                .bankName("NEW 은행")
+                .accountNumber("NEW 계좌번호")
+                .accountHolder("NEW 예금주")
+                .build();
+
+        Account account = Account.builder()
+                .bankName("은행")
+                .accountNumber("계좌번호")
+                .accountHolder("예금주")
+                .build();
+
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .account(account)
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+
+        // when
+        AccountDto responseDto = memberService.addAccount("email", requestDto);
+
+        // then
+        assertThat(responseDto.getBankName()).isEqualTo(requestDto.getBankName());
+        assertThat(responseDto.getAccountNumber()).isEqualTo(requestDto.getAccountNumber());
+        assertThat(responseDto.getAccountHolder()).isEqualTo(requestDto.getAccountHolder());
+        assertThat(member.getAccount().getBankName()).isEqualTo(requestDto.getBankName());
+        assertThat(member.getAccount().getAccountNumber()).isEqualTo(requestDto.getAccountNumber());
+        assertThat(member.getAccount().getAccountHolder()).isEqualTo(requestDto.getAccountHolder());
+    }
+
+    @Test
+    @DisplayName("등록되어 있는 계좌가 삭제된다.")
+    public void 계좌_삭제_성공() {
+        // given
+        Account account = Account.builder()
+                .bankName("은행")
+                .accountNumber("계좌번호")
+                .accountHolder("예금주")
+                .build();
+
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .account(account)
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+
+        // when
+        AccountDto responseDto = memberService.deleteAccount("email");
+
+        // then
+        assertThat(responseDto.getBankName()).isNull();
+        assertThat(responseDto.getAccountNumber()).isNull();
+        assertThat(responseDto.getAccountHolder()).isNull();
+        assertThat(member.getAccount()).isNull();
+    }
+
 }

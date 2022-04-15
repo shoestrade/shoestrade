@@ -4,6 +4,8 @@ import com.study.shoestrade.common.annotation.LoginMember;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
+import com.study.shoestrade.domain.member.Account;
+import com.study.shoestrade.dto.account.AccountDto;
 import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
 import com.study.shoestrade.dto.member.request.MemberFindRequestDto;
@@ -185,6 +187,43 @@ public class MemberController {
         log.info("MemberController -> deleteAddress 실행");
 
         memberService.deleteAddress(id);
+        return responseService.getSuccessResult();
+    }
+
+    /**
+     * 등록 계좌 보기
+     * @return
+     */
+    @GetMapping("/my/account")
+    public SingleResult<AccountDto> getAccount(@LoginMember String email){
+        log.info("MemberController -> getAccount 실행");
+
+        AccountDto responseDto = memberService.getAccount(email);
+        return responseService.getSingleResult(responseDto);
+    }
+
+    /**
+     * 계좌 등록 및 수정
+     * @param requestDto : 등록할 계좌 DTO
+     * @return
+     */
+    @PostMapping("/my/account")
+    public SingleResult<AccountDto> addAccount(@LoginMember String email, @RequestBody AccountDto requestDto){
+        log.info("MemberController -> addAccount 실행");
+
+        AccountDto responseDto = memberService.addAccount(email, requestDto);
+        return responseService.getSingleResult(responseDto);
+    }
+
+    /**
+     * 계좌 삭제
+     * @return
+     */
+    @DeleteMapping("my/account")
+    public Result deleteAccount(@LoginMember String email){
+        log.info("MemberController -> deleteAccount 실행");
+
+        memberService.deleteAccount(email);
         return responseService.getSuccessResult();
     }
 }

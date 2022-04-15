@@ -3,6 +3,7 @@ package com.study.shoestrade.domain.member;
 import com.study.shoestrade.domain.BaseEntity;
 import com.study.shoestrade.domain.interest.InterestProduct;
 import com.study.shoestrade.domain.trade.Trade;
+import com.study.shoestrade.dto.account.AccountDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -64,4 +65,13 @@ public class Member extends BaseEntity {
         this.addressList.add(address);
     }
 
+    public Account changeAccount(AccountDto accountDto){
+        Account account = accountDto.toEntity();
+        this.account = account;
+        return this.account;
+    }
+
+    public void deleteAccount(){
+        this.account = null;
+    }
 }
