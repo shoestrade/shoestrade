@@ -6,7 +6,6 @@ import com.study.shoestrade.exception.brand.BrandDuplicationException;
 import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.repository.brand.BrandRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -31,7 +29,6 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public BrandDto saveBrand(String name){
-        log.info("info log={}", "BrandService - saveBrand 실행");
         duplicateBrandName(name);
 
         return BrandDto.create(brandRepository.save(Brand.builder().name(name).build()));
@@ -45,7 +42,6 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public void updateBrand(BrandDto brandDto) {
-        log.info("info log={}", "BrandService - updateBrand 실행");
         duplicateBrandName(brandDto.getName());
 
         Brand findBrand = brandRepository.findById(brandDto.getId()).orElseThrow(
@@ -62,7 +58,6 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public void deleteByBrandId(Long id) {
-        log.info("info log={}", "BrandService - deleteByBrandId 실행");
         try {
             brandRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -77,8 +72,6 @@ public class BrandServiceImpl implements BrandService {
      */
     @Override
     public List<BrandDto> findBrandAll() {
-        log.info("info log={}", "BrandService - findBrandAll 실행");
-
         return brandRepository.findAll()
                 .stream()
                 .map(BrandDto::create)
@@ -93,8 +86,6 @@ public class BrandServiceImpl implements BrandService {
      */
     @Override
     public List<BrandDto> findByBrandName(String name) {
-        log.info("info log={}", "BrandService - findByBrandNameList 실행");
-
         return brandRepository.findByNameContains(name)
                 .stream()
                 .map(BrandDto::create)
@@ -108,8 +99,6 @@ public class BrandServiceImpl implements BrandService {
      * @param name 중복검사 할 브랜드 이름
      */
     private void duplicateBrandName(String name) {
-        log.info("info = {}", "BrandService - duplicateBrandName 실행");
-
         brandRepository.findByName(name).ifPresent(
                 b -> {
                     throw new BrandDuplicationException(name);

@@ -4,7 +4,6 @@ import com.study.shoestrade.domain.mailAuth.MailAuth;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
 import com.study.shoestrade.repository.member.MailAuthRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.Random;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
