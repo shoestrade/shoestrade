@@ -102,6 +102,14 @@ public class ExceptionAdvice {
         return responseService.getFailureResult(1001, "변조된 토큰입니다.");
     }
 
+    /**
+     * 신발 사이즈 변경 시 String이 숫자이어야 함.
+     */
+    @ExceptionHandler(NumberFormatException.class)
+    public Result numberFormatException(){
+        return responseService.getFailureResult(-109, "입력값이 int형이 아닙니다.");
+    }
+
     // ---------------------------------------------------------------------------------------------------------------------------------------- //
 
     @ExceptionHandler(BrandDuplicationException.class)

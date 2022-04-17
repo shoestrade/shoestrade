@@ -6,15 +6,19 @@ import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.dto.account.AccountDto;
 import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
+import com.study.shoestrade.dto.member.request.PasswordDto;
+import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.PointDto;
 import com.study.shoestrade.exception.address.AddressNotFoundException;
 import com.study.shoestrade.exception.address.BaseAddressNotDeleteException;
 import com.study.shoestrade.exception.address.BaseAddressUncheckedException;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.member.WrongPasswordException;
 import com.study.shoestrade.repository.member.AddressRepository;
 import com.study.shoestrade.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 주소 등록
     public AddressDto addAddress(String email, AddressDto requestDto){
@@ -162,5 +167,41 @@ public class MemberService {
         return PointDto.builder()
                 .point(findMember.getPoint())
                 .build();
+    }
+
+    // 프로필 보기
+    public MemberDto getProfile(String email){
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return MemberDto.create(findMember);
+    }
+
+    // 비밀번호 변경
+    public void changePassword(String email, PasswordDto requestDto){
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        if(!passwordEncoder.matches(requestDto.getPrePassword(), findMember.getPassword())){
+            throw new WrongPasswordException();
+        }
+
+        findMember.changePassword(passwordEncoder.encode(requestDto.getNewPassword()));
+    }
+
+    // 휴대폰번호 변경
+    public void changePhone(String email, String number){
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        findMember.changePhone(number);
+    }
+
+    // 신발 사이즈 변경
+    public void changeShoeSize(String email, String size){
+        Member findMember = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
+
+        findMember.changeShoeSize(Integer.parseInt(size));
     }
 }

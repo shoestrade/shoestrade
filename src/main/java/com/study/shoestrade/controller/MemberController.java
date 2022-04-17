@@ -7,10 +7,7 @@ import com.study.shoestrade.common.result.SingleResult;
 import com.study.shoestrade.dto.account.AccountDto;
 import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
-import com.study.shoestrade.dto.member.request.MemberFindRequestDto;
-import com.study.shoestrade.dto.member.request.MemberJoinDto;
-import com.study.shoestrade.dto.member.request.MemberLoginRequestDto;
-import com.study.shoestrade.dto.member.request.TokenRequestDto;
+import com.study.shoestrade.dto.member.request.*;
 import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
 import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
@@ -203,5 +200,51 @@ public class MemberController {
     public SingleResult<PointDto> getPoint(@LoginMember String email){
         PointDto responseDto = memberService.getPoint(email);
         return responseService.getSingleResult(responseDto);
+    }
+
+    /**
+     * 프로필 보기
+     * @return
+     */
+    @GetMapping("/my/profile")
+    public SingleResult<MemberDto> getProfile(@LoginMember String email){
+        MemberDto responseDto = memberService.getProfile(email);
+        return responseService.getSingleResult(responseDto);
+    }
+
+    /**
+     * 비밀번호 변경
+     * @param email : accessToken
+     * @param requestDto : 변경할 비밀번호 DTO
+     * @return
+     */
+    @PostMapping("/my/profile/password")
+    public Result changePassword(@LoginMember String email, @RequestBody PasswordDto requestDto){
+        memberService.changePassword(email, requestDto);
+        return responseService.getSuccessResult();
+    }
+
+    /**
+     * 휴대폰 번호 변경
+     * @param email : accessToken
+     * @param number : 변경할 휴대폰 번호
+     * @return
+     */
+    @PostMapping("/my/profile/phone")
+    public Result changePhone(@LoginMember String email, @RequestParam("number") String number){
+        memberService.changePhone(email, number);
+        return responseService.getSuccessResult();
+    }
+
+    /**
+     * 신발 사이즈 변경
+     * @param email : accessToken
+     * @param size : 변경할 신발 사이즈(int)
+     * @return
+     */
+    @PostMapping("/my/profile/shoesize")
+    public Result changeShoeSize(@LoginMember String email, @RequestParam("size") String size){
+        memberService.changeShoeSize(email, size);
+        return responseService.getSuccessResult();
     }
 }

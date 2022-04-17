@@ -6,11 +6,14 @@ import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.dto.account.AccountDto;
 import com.study.shoestrade.dto.address.AddressDto;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
+import com.study.shoestrade.dto.member.request.PasswordDto;
+import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.PointDto;
 import com.study.shoestrade.exception.address.AddressNotFoundException;
 import com.study.shoestrade.exception.address.BaseAddressNotDeleteException;
 import com.study.shoestrade.exception.address.BaseAddressUncheckedException;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.member.WrongPasswordException;
 import com.study.shoestrade.repository.member.AddressRepository;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.service.member.MemberService;
@@ -24,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -41,6 +45,8 @@ class MemberServiceTest {
     MemberRepository memberRepository;
     @Mock
     AddressRepository addressRepository;
+    @Mock
+    PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("주소를 처음 등록하면 기본 주소로 등록된다.")
@@ -167,7 +173,7 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.addAddress("asd", requestDto))
                 .isInstanceOf(MemberNotFoundException.class);
     }
-    
+
     @Test
     public void 주소_목록() {
         // given
@@ -258,7 +264,7 @@ class MemberServiceTest {
         given(addressRepository.findById(any())).willReturn(Optional.of(address2));
 
         // when
-        AddressDto newAddress = memberService.updateAddress("email",2L, updateAddress);
+        AddressDto newAddress = memberService.updateAddress("email", 2L, updateAddress);
 
         // then
         assertThat(newAddress.getName()).isEqualTo("ccc");
@@ -573,4 +579,148 @@ class MemberServiceTest {
         assertThat(responseDto.getPoint()).isEqualTo(member.getPoint());
     }
 
+    @Test
+    @DisplayName("프로필 조회에 성공한다.")
+    public void 프로필_보기_성공() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+
+        // when
+        MemberDto responseDto = memberService.getProfile("email");
+
+        // then
+        assertThat(responseDto.getEmail()).isEqualTo("email");
+        assertThat(responseDto.getShoeSize()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("토큰 이메일의 회원이 존재하지 않으면 MemberNotFoundException 예외가 발생한다.")
+    public void 프로필_보기_실패() {
+        // given, mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.empty());
+
+        // when, then
+        assertThatCode(() -> memberService.getProfile("email"))
+                .isInstanceOf(MemberNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("회원이 존재하고 기존 비밀번호가 일치하면 비밀번호 변경에 성공한다.")
+    public void 비밀번호_변경_성공() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .build();
+
+        PasswordDto requestDto = PasswordDto.builder()
+                .prePassword("PW")
+                .newPassword("NEW PW")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(requestDto.getPrePassword(), member.getPassword())).willReturn(true);
+        given(passwordEncoder.encode(any())).willReturn("encodedPW");
+
+        // when
+        memberService.changePassword("email", requestDto);
+
+        // then
+        assertThat(member.getPassword()).isNotEqualTo("PW");
+        assertThat(member.getPassword()).isEqualTo("encodedPW");
+    }
+
+    @Test
+    @DisplayName("비밀번호 확인이 실패하면 WrongPasswordException 예외가 발생한다.")
+    public void 비밀번호_변경_실패() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .build();
+
+        PasswordDto requestDto = PasswordDto.builder()
+                .prePassword("PW")
+                .newPassword("NEW PW")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(requestDto.getPrePassword(), member.getPassword())).willReturn(false);
+
+        // when, then
+        assertThatCode(() -> memberService.changePassword("email", requestDto))
+                .isInstanceOf(WrongPasswordException.class);
+    }
+
+    @Test
+    @DisplayName("회원이 인증되면 휴대폰 번호 변경이 성공한다.")
+    public void 휴대폰_번호_변경_성공() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .phone("01011111111")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+
+        // when
+        memberService.changePhone("email", "01022222222");
+
+        // then
+        assertThat(member.getPhone()).isEqualTo("01022222222");
+    }
+
+    @Test
+    @DisplayName("회원이 인증되면 신발 사이즈 변경에 성공한다.")
+    public void 신발_사이즈_변경_성공() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .shoeSize(255)
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+
+        // when
+        memberService.changeShoeSize("email", "270");
+
+        // then
+        assertThat(member.getShoeSize()).isEqualTo(270);
+    }
+
+    @Test
+    @DisplayName("입력되는 신발 사이즈가 숫자가 아니면 NumberFormatException 예외가 발생한다.")
+    public void 신발_사이즈_변경_실패() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .password("PW")
+                .email("email")
+                .shoeSize(255)
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail("email")).willReturn(Optional.of(member));
+
+        // when, then
+        assertThatCode(() -> memberService.changeShoeSize("email", "asd"))
+                .isInstanceOf(NumberFormatException.class);
+    }
 }
