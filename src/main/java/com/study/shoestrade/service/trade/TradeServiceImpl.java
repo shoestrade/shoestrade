@@ -6,6 +6,7 @@ import com.study.shoestrade.domain.trade.TradeType;
 import com.study.shoestrade.dto.trade.request.SalesTradeSaveDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDtoInterface;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.product.ProductSizeNoSuchElementException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.product.ProductSizeRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
@@ -43,7 +44,7 @@ public class TradeServiceImpl implements TradeService {
                 Trade.builder()
                         .price(salesTradeSaveDto.getPrice())
                         .productSize(productSizeRepository.findById(salesTradeSaveDto.getProductSizeId())
-                                .orElseThrow()) // 예외 추가 해야함
+                                .orElseThrow(()->new ProductSizeNoSuchElementException(String.valueOf(salesTradeSaveDto.getProductSizeId())))) // 예외 추가 해야함
                         .seller(memberRepository.findByEmail(email)
                                 .orElseThrow(MemberNotFoundException::new))
                         .tradeState(TradeState.SELL)
