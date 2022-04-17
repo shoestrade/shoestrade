@@ -10,11 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SalesTradeSaveDto {
+public class TradeDeleteDto {
 
-    private int price;
-
-    private Long productSizeId;
+    private Long id;
 
     private TradeType tradeType;
 }

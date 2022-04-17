@@ -14,7 +14,8 @@ import javax.persistence.*;
 @Builder
 public class Trade extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "trade_id")
     private Long id;
 
@@ -38,4 +39,7 @@ public class Trade extends BaseEntity {
     @JoinColumn(name = "productSize_id")
     private ProductSize productSize;
 
+    public void changePrice(int price) {
+        this.price = price;
+    }
 }

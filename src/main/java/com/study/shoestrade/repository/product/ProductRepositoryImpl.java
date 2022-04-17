@@ -1,7 +1,6 @@
 package com.study.shoestrade.repository.product;
 
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.shoestrade.domain.product.Product;
