@@ -74,4 +74,12 @@ public class Member extends BaseEntity {
     public void deleteAccount(){
         this.account = null;
     }
+
+    public void changePhone(String number){
+        this.phone = number;
+    }
+
+    public void changeShoeSize(int size){
+        shoeSize = size;
+    }
 }
