@@ -2,7 +2,7 @@ package com.study.shoestrade.service.admin;
 
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.member.Role;
-import com.study.shoestrade.dto.admin.response.PageMemberDto;
+import com.study.shoestrade.dto.admin.PageMemberDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;

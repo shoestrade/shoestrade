@@ -1,7 +1,7 @@
 package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.member.Member;
-import com.study.shoestrade.dto.admin.response.PageMemberDto;
+import com.study.shoestrade.dto.admin.PageMemberDto;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.service.admin.AdminService;
 import org.junit.jupiter.api.BeforeEach;

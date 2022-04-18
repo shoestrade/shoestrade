@@ -1,4 +1,4 @@
-package com.study.shoestrade.dto.admin.response;
+package com.study.shoestrade.dto.admin;
 
 import com.study.shoestrade.domain.member.Grade;
 import com.study.shoestrade.domain.member.Member;
