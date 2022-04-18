@@ -4,7 +4,7 @@ import com.study.shoestrade.common.annotation.LoginMember;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.domain.trade.TradeType;
-import com.study.shoestrade.dto.trade.request.SalesTradeSaveDto;
+import com.study.shoestrade.dto.trade.request.TradeSaveDto;
 import com.study.shoestrade.dto.trade.request.TradeDeleteDto;
 import com.study.shoestrade.dto.trade.request.TradeUpdateDto;
 import com.study.shoestrade.service.trade.TradeService;
@@ -28,12 +28,12 @@ public class TradeController {
      * 입찰 등록
      *
      * @param email             사용자 이메일
-     * @param salesTradeSaveDto 입찰 정보
+     * @param tradeSaveDto 입찰 정보
      * @return 성공 결과
      */
     @PostMapping
-    public Result salesTradeSave(@LoginMember String email, @RequestBody SalesTradeSaveDto salesTradeSaveDto) {
-        tradeService.salesTradeSave(email, salesTradeSaveDto);
+    public Result salesTradeSave(@LoginMember String email, @RequestBody TradeSaveDto tradeSaveDto) {
+        tradeService.TradeSave(email, tradeSaveDto);
         return responseService.getSuccessResult();
     }
 

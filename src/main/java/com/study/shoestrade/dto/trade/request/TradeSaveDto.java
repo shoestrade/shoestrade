@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SalesTradeSaveDto {
+public class TradeSaveDto {
 
     private int price;
 

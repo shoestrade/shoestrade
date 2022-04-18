@@ -3,7 +3,7 @@ package com.study.shoestrade.service.trade;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
-import com.study.shoestrade.dto.trade.request.SalesTradeSaveDto;
+import com.study.shoestrade.dto.trade.request.TradeSaveDto;
 import com.study.shoestrade.dto.trade.request.TradeDeleteDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.dto.trade.request.TradeUpdateDto;
@@ -37,25 +37,23 @@ public class TradeServiceImpl implements TradeService {
     /**
      * 입찰 등록
      *
-     * @param email             사용자 이메일
-     * @param salesTradeSaveDto 입찰 정보
+     * @param email        사용자 이메일
+     * @param tradeSaveDto 입찰 정보
      */
     @Transactional
     @Override
-    public void salesTradeSave(String email, SalesTradeSaveDto salesTradeSaveDto) {
-        log.info("info = {}", "TradeService - salesTradeSave 실행");
+    public void TradeSave(String email, TradeSaveDto tradeSaveDto) {
 
         tradeRepository.save(
                 Trade.builder()
-                        .price(salesTradeSaveDto.getPrice())
-                        .productSize(productSizeRepository.findById(salesTradeSaveDto.getProductSizeId())
-                                .orElseThrow(() -> new ProductSizeNoSuchElementException(String.valueOf(salesTradeSaveDto.getProductSizeId()))))
-                        .seller(memberRepository.findByEmail(email)
-                                .orElseThrow(MemberNotFoundException::new))
-                        .tradeState(salesTradeSaveDto.getTradeType() == TradeType.SELL ? TradeState.SELL : TradeState.PURCHASE)
-                        .tradeType(salesTradeSaveDto.getTradeType())
-                        .build()
-        );
+                .price(tradeSaveDto.getPrice())
+                .productSize(productSizeRepository.findById(tradeSaveDto.getProductSizeId())
+                        .orElseThrow(() -> new ProductSizeNoSuchElementException(String.valueOf(tradeSaveDto.getProductSizeId()))))
+                .seller(memberRepository.findByEmail(email)
+                        .orElseThrow(MemberNotFoundException::new))
+                .tradeState(tradeSaveDto.getTradeType() == TradeType.SELL ? TradeState.SELL : TradeState.PURCHASE)
+                .tradeType(tradeSaveDto.getTradeType())
+                .build());
     }
 
     /**

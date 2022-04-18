@@ -1,7 +1,7 @@
 package com.study.shoestrade.service.trade;
 
 import com.study.shoestrade.domain.trade.TradeType;
-import com.study.shoestrade.dto.trade.request.SalesTradeSaveDto;
+import com.study.shoestrade.dto.trade.request.TradeSaveDto;
 import com.study.shoestrade.dto.trade.request.TradeDeleteDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.dto.trade.request.TradeUpdateDto;
@@ -13,10 +13,10 @@ public interface TradeService {
     /**
      * 입찰 등록
      *
-     * @param email             사용자 이메일
-     * @param salesTradeSaveDto 입찰 정보
+     * @param email        사용자 이메일
+     * @param tradeSaveDto 입찰 정보
      */
-    void salesTradeSave(String email, SalesTradeSaveDto salesTradeSaveDto);
+    void TradeSave(String email, TradeSaveDto tradeSaveDto);
 
 
     /**

@@ -3,6 +3,7 @@ package com.study.shoestrade.service;
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.dto.brand.BrandDto;
 import com.study.shoestrade.repository.brand.BrandRepository;
+import com.study.shoestrade.service.brand.BrandService;
 import com.study.shoestrade.service.brand.BrandServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
