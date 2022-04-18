@@ -19,13 +19,16 @@ public class Brand extends BaseEntity {
     @Column(name = "brand_id")
     private Long id;
 
-    private String name;
+    private String korName;
+
+    private String engName;
 
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     private List<Product> productList = new LinkedList<>();
 
-    public void changeBrandName(String name) {
-        this.name = name;
+    public void changeBrandName(String korName, String engName) {
+        this.korName = korName;
+        this.engName = engName;
     }
 
 }

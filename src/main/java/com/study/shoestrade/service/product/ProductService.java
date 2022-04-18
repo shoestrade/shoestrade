@@ -51,4 +51,6 @@ public interface ProductService {
      * @param productImageId 삭제할 이미지 id
      */
     void deleteProductImage(Long productImageId);
+
+
 }

@@ -33,6 +33,6 @@ public class BrandRepositoryImpl implements BrandRepositoryCustom {
     }
 
     private BooleanExpression brandContains(String name) {
-        return name == null || name.isEmpty() ? null : brand.name.contains(name);
+        return name == null || name.isEmpty() ? null : brand.engName.contains(name).or(brand.korName.contains(name));
     }
 }

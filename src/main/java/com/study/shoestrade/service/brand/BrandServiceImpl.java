@@ -8,12 +8,9 @@ import com.study.shoestrade.repository.brand.BrandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,14 +22,15 @@ public class BrandServiceImpl implements BrandService {
     /**
      * 브랜드 등록
      *
-     * @param name 등록할 브랜드 이름
      * @return 등록된 브랜드 id
      */
     @Override
     @Transactional
-    public BrandDto saveBrand(String name){
-        duplicateBrandName(name);
-        return BrandDto.create(brandRepository.save(Brand.builder().name(name).build()));
+    public BrandDto saveBrand(BrandDto brandDto) {
+        duplicateBrandEngName(brandDto);
+        return BrandDto.create(brandRepository.save(
+                Brand.builder().korName(brandDto.getKorName()).engName(brandDto.getEngName()).build())
+        );
     }
 
     /**
@@ -43,12 +41,21 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public void updateBrand(BrandDto brandDto) {
-        duplicateBrandName(brandDto.getName());
 
         Brand findBrand = brandRepository.findById(brandDto.getId()).orElseThrow(
                 () -> new BrandEmptyResultDataAccessException(brandDto.getId().toString(), 1)
         );
-        findBrand.changeBrandName(brandDto.getName());
+
+        if(!brandDto.getEngName().equals(findBrand.getEngName())){
+            duplicateBrandEngName(brandDto);
+        }
+
+
+        if(!brandDto.getKorName().equals(findBrand.getKorName())){
+            duplicateBrandKorName(brandDto);
+        }
+
+        findBrand.changeBrandName(brandDto.getKorName(), brandDto.getEngName());
     }
 
     /**
@@ -82,12 +89,19 @@ public class BrandServiceImpl implements BrandService {
     /**
      * 이름 중복 여부
      *
-     * @param name 중복검사 할 브랜드 이름
      */
-    private void duplicateBrandName(String name) {
-        brandRepository.findByName(name).ifPresent(
+    private void duplicateBrandEngName(BrandDto brandDto) {
+        brandRepository.findByEngName(brandDto.getEngName()).ifPresent(
                 b -> {
-                    throw new BrandDuplicationException(name);
+                    throw new BrandDuplicationException(brandDto.getEngName());
+                }
+        );
+    }
+
+    private void duplicateBrandKorName(BrandDto brandDto) {
+        brandRepository.findByKorName(brandDto.getKorName()).ifPresent(
+                b -> {
+                    throw new BrandDuplicationException(brandDto.getKorName());
                 }
         );
     }

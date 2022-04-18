@@ -1,6 +1,7 @@
 package com.study.shoestrade.repository;
 
 import com.study.shoestrade.domain.product.Brand;
+import com.study.shoestrade.dto.brand.BrandDto;
 import com.study.shoestrade.repository.brand.BrandRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,15 +19,18 @@ class BrandRepositoryTest {
     private BrandRepository brandRepository;
 
     Brand brand1 = Brand.builder()
-            .name("나이키")
+            .korName("나이키")
+            .engName("a")
             .build();
 
     Brand brand2 = Brand.builder()
-            .name("아디다스")
+            .korName("아디다스")
+            .engName("b")
             .build();
 
     Brand brand3 = Brand.builder()
-            .name("뉴발란스")
+            .korName("뉴발란스")
+            .engName("c")
             .build();
 
 
@@ -51,13 +55,13 @@ class BrandRepositoryTest {
         Brand findBrand = brandRepository.findById(brand1.getId()).orElse(null);
 
         // when
-        findBrand.changeBrandName("언더아머");
+        findBrand.changeBrandName("언더아머", "a");
 
         brandRepository.flush();
 
         findBrand = brandRepository.findById(brand1.getId()).orElse(null);
         // then
-        assertThat(findBrand.getName()).isEqualTo("언더아머");
+        assertThat(findBrand.getKorName()).isEqualTo("언더아머");
     }
 
     @Test
@@ -67,7 +71,7 @@ class BrandRepositoryTest {
         brandRepository.save(brand1);
 
         // when
-        Brand findByNameBrand = brandRepository.findByName(brand1.getName()).orElse(null);
+        Brand findByNameBrand = brandRepository.findByKorName(brand1.getKorName()).orElse(null);
         // then
         assertThat(findByNameBrand).isEqualTo(brand1);
     }

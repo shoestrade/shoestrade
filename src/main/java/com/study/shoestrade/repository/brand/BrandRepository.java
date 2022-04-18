@@ -16,5 +16,13 @@ public interface BrandRepository extends JpaRepository<Brand, Long>, BrandReposi
      * @param name 검색어
      * @return 검색 결과
      */
-    Optional<Brand> findByName(String name);
+    Optional<Brand> findByKorName(String korName);
+
+    /**
+     * 동일한 이름 가진 브랜드 검색
+     *
+     * @param name 검색어
+     * @return 검색 결과
+     */
+    Optional<Brand> findByEngName(String engName);
 }
