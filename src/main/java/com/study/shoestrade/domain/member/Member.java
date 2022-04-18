@@ -1,5 +1,6 @@
 package com.study.shoestrade.domain.member;
 
+import com.study.shoestrade.domain.BaseEntity;
 import com.study.shoestrade.domain.interest.InterestProduct;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.dto.account.AccountDto;
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

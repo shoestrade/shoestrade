@@ -9,13 +9,11 @@ import com.study.shoestrade.exception.brand.BrandDuplicationException;
 import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
 import com.study.shoestrade.exception.member.*;
-import com.study.shoestrade.exception.product.ProductDuplicationException;
-import com.study.shoestrade.exception.product.ProductEmptyResultDataAccessException;
-import com.study.shoestrade.exception.product.ProductImageDuplicationException;
-import com.study.shoestrade.exception.product.ProductImageEmptyResultDataAccessException;
+import com.study.shoestrade.exception.product.*;
 import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
 import com.study.shoestrade.exception.token.TokenNotFoundException;
+import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -144,4 +142,13 @@ public class ExceptionAdvice {
         return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 이미지를 찾을 수 없습니다.");
     }
 
+    @ExceptionHandler(ProductSizeNoSuchElementException.class)
+    protected Result productSizeNoSuchElementException(ProductSizeNoSuchElementException e) {
+        return responseService.getFailureResult(-1, e.getMessage() + " : 해당 id의 신발사이즈를 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(TradeEmptyResultDataAccessException.class)
+    protected Result tradeEmptyResultDataAccessException(TradeEmptyResultDataAccessException e) {
+        return responseService.getFailureResult(-1, e.getMessage() + " : 해당 입찰 내역을 찾을 수 없습니다.");
+    }
 }

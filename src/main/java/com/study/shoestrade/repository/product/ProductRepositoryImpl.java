@@ -1,9 +1,12 @@
 package com.study.shoestrade.repository.product;
 
 
-import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.shoestrade.domain.product.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -19,19 +22,23 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
 
     @Override
-    public List<Product> findProduct(String name, List<Long> brandNames) {
-        return queryFactory
+    public Page<Product> findProduct(String name, List<Long> brandNames, Pageable pageable) {
+        List<Product> content = queryFactory
                 .selectFrom(product)
                 .where(nameEq(name),
                         brandNamesEq(brandNames))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
+
+        return new PageImpl<>(content, pageable, content.size());
     }
 
-    private Predicate brandNamesEq(List<Long> brandNames) {
+    private BooleanExpression brandNamesEq(List<Long> brandNames) {
         return brandNames.isEmpty() ? null : product.brand.id.in(brandNames);
     }
 
-    private Predicate nameEq(String name) {
+    private BooleanExpression nameEq(String name) {
         return name.isEmpty() ? null : product.name.contains(name);
     }
 }

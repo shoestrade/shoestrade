@@ -1,5 +1,6 @@
 package com.study.shoestrade.domain.product;
 
+import com.study.shoestrade.domain.BaseEntity;
 import com.study.shoestrade.domain.interest.InterestProduct;
 import com.study.shoestrade.domain.trade.Trade;
 import lombok.*;
@@ -15,7 +16,8 @@ import java.util.List;
 @Builder
 public class ProductSize {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "productSize_id")
     private Long id;
 

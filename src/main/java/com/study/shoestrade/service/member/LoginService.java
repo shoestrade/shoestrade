@@ -141,8 +141,7 @@ public class LoginService {
 
     public String getLoginMemberEmail(ServletRequest request) {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
-        String memberEmail = jwtTokenProvider.getMemberEmail(token);
-        return memberEmail;
+        return jwtTokenProvider.getMemberEmail(token);
     }
 
     // 이메일 찾기
@@ -228,7 +227,7 @@ public class LoginService {
      */
     // 회원 탈퇴
     public void deleteMember(String email, MemberLoginRequestDto requestDto) {
-        if(!email.equals(requestDto.getEmail())){
+        if (!email.equals(requestDto.getEmail())){
             throw new WrongEmailException();
         }
 

@@ -9,6 +9,7 @@ import com.study.shoestrade.repository.brand.BrandRepository;
 import com.study.shoestrade.repository.jdbc.JdbcRepository;
 import com.study.shoestrade.repository.product.ProductImageRepository;
 import com.study.shoestrade.repository.product.ProductRepository;
+import com.study.shoestrade.service.product.ProductService;
 import com.study.shoestrade.service.product.ProductServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -132,8 +135,10 @@ class ProductServiceTest {
                         .build())
                 .imageList(new ArrayList<>())
                 .build());
+        PageImpl<Product> page = new PageImpl<>(list);
+        PageRequest pageRequest = PageRequest.of(0, 3);
 
-        given(productRepository.findProduct(any(), any())).willReturn(list);
+        given(productRepository.findProduct(any(), any(), any())).willReturn(page);
 
         // when
         ProductSearchDto productSearchDto = ProductSearchDto.builder()
@@ -141,10 +146,10 @@ class ProductServiceTest {
                 .brandIdList(new ArrayList<>(List.of(1L)))
                 .build();
 
-        List<ProductDto> findList = productService.findProductByNameInBrand(productSearchDto);
+        Page<ProductDto> findPages = productService.findProductByNameInBrand(productSearchDto, pageRequest);
 
         // then
-        assertThat(findList).isEqualTo(list.stream().map(ProductDto::create).collect(Collectors.toList()));
+        assertThat(findPages).isEqualTo(page.map(ProductDto::create));
     }
 
     @Test

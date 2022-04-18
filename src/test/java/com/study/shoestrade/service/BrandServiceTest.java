@@ -3,6 +3,7 @@ package com.study.shoestrade.service;
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.dto.brand.BrandDto;
 import com.study.shoestrade.repository.brand.BrandRepository;
+import com.study.shoestrade.service.brand.BrandService;
 import com.study.shoestrade.service.brand.BrandServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,11 +11,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -79,24 +82,6 @@ class BrandServiceTest {
     }
 
     @Test
-    @DisplayName("브랜드_전체검색_테스트")
-    void 브랜드_전체검색() {
-        // given
-        List<Brand> list = new ArrayList<>();
-        list.add(brand1);
-        list.add(brand2);
-        list.add(brand3);
-
-        given(brandRepository.findAll()).willReturn(list);
-
-        // when
-        List<BrandDto> findList = brandService.findBrandAll();
-
-        // then
-        assertThat(findList).isEqualTo(list.stream().map(BrandDto::create).collect(Collectors.toList()));
-    }
-
-    @Test
     @DisplayName("브랜드_삭제_테스트")
     void 브랜드_삭제() {
         // given
@@ -112,15 +97,15 @@ class BrandServiceTest {
     void 브랜드_이름_검색() {
         // given
         List<Brand> list = new ArrayList<>();
-
         list.add(brand1);
+        Page<Brand> page = new PageImpl<>(list);
+        PageRequest pageRequest = PageRequest.of(0, 3);
 
-        given(brandRepository.findByNameContains(any())).willReturn(list);
-
+        given(brandRepository.findByNameContains(any(), any())).willReturn(page);
         // when
-        List<BrandDto> findList = brandService.findByBrandName("나이키");
+        Page<BrandDto> findPage = brandService.findByBrandName("나이키", pageRequest);
 
         // then
-        assertThat(findList).isEqualTo(list.stream().map(BrandDto::create).collect(Collectors.toList()));
+        assertThat(findPage).isEqualTo(page.map(BrandDto::create));
     }
 }

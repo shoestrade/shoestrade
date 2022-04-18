@@ -1,5 +1,6 @@
 package com.study.shoestrade.domain.product;
 
+import com.study.shoestrade.domain.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,10 +10,11 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ProductImage {
+public class ProductImage extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "productImage_id" )
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "productImage_id")
     private Long id;
 
     private String name;

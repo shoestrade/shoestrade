@@ -8,7 +8,8 @@ import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
 import com.study.shoestrade.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/product")
@@ -48,8 +49,8 @@ public class ProductController {
      * @return 검색된 결과
      */
     @GetMapping()
-    public ListResult<ProductDto> findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto) {
-        return responseService.getListResult(productService.findProductByNameInBrand(productSearchDto));
+    public Result findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto, Pageable pageable) {
+        return responseService.getSingleResult(productService.findProductByNameInBrand(productSearchDto, pageable));
     }
 
     /**
