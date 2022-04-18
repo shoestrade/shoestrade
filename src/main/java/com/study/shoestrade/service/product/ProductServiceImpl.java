@@ -18,7 +18,6 @@ import com.study.shoestrade.repository.jdbc.JdbcRepository;
 import com.study.shoestrade.repository.product.ProductImageRepository;
 import com.study.shoestrade.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProductServiceImpl implements ProductService {
@@ -49,8 +47,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto saveProduct(ProductDto productDto) {
-        log.info("info = {}", "ProductService - saveProduct 실행");
-
         DuplicateProduct(productDto.getName());
 
         Brand brand = brandRepository.findById(productDto.getBrandId()).orElseThrow(() ->
@@ -90,7 +86,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProduct(Long productId) {
-        log.info("info = {}", "ProductService - deleteProduct 실행");
         try {
             productRepository.deleteById(productId);
         } catch (EmptyResultDataAccessException e) {
@@ -106,7 +101,6 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Page<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto, Pageable pageable) {
-        log.info("info = {}", "ProductService - productSearchDto 실행");
         return productRepository.findProduct(productSearchDto.getName(),
                         productSearchDto.getBrandIdList(), pageable)
                 .map(ProductDto::create);
@@ -121,8 +115,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void updateProduct(ProductDto productDto) {
-        log.info("info = {}", "ProductService - updateProduct 실행");
-
         Product product = productRepository.findById(productDto.getId()).orElseThrow(() ->
                 new ProductEmptyResultDataAccessException(1)
         );
@@ -148,7 +140,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void addProductImage(ProductImageAddDto productImageAddDto) {
-        log.info(productImageAddDto.getProductId().toString());
         Product product = productRepository.findById(productImageAddDto.getProductId()).orElseThrow(() ->
                 new ProductEmptyResultDataAccessException(productImageAddDto.getProductId().toString(), 1)
         );
@@ -173,7 +164,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProductImage(Long productImageId) {
-        log.info("info = {}", "ProductService - deleteProductImage 실행");
         try {
             productImageRepository.deleteById(productImageId);
         } catch (EmptyResultDataAccessException e) {
@@ -187,8 +177,6 @@ public class ProductServiceImpl implements ProductService {
      * @param name 중복검사 할 상품 이름
      */
     private void DuplicateProduct(String name) {
-        log.info("info = {}", "ProductService - DuplicateProduct 실행");
-
         productRepository.findByName(name).ifPresent(
                 p -> {
                     throw new ProductDuplicationException(name);
@@ -203,8 +191,6 @@ public class ProductServiceImpl implements ProductService {
      * @param productId 상품 id
      */
     private void duplicateProductImage(List<String> names, Long productId) {
-        log.info("info = {}", "ProductService - DuplicateProductImage 실행");
-
         List<ProductImage> findNames = productImageRepository.findByProductIdAndNameIn(productId, names);
 
         if (!findNames.isEmpty()) {

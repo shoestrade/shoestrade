@@ -10,10 +10,8 @@ import com.study.shoestrade.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Slf4j
 @RequestMapping("/product")
 @RequiredArgsConstructor
 public class ProductController {
@@ -29,7 +27,6 @@ public class ProductController {
      */
     @PostMapping
     public Result saveProduct(@RequestBody ProductDto productDto) {
-        log.info("info = {}", "ProductController - deleteBrand 실행");
         return responseService.getSingleResult(productService.saveProduct(productDto));
     }
 
@@ -41,7 +38,6 @@ public class ProductController {
      */
     @DeleteMapping("/{productId}")
     public Result deleteProduct(@PathVariable Long productId) {
-        log.info("info = {}", "ProductController - deleteProduct 실행");
         productService.deleteProduct(productId);
         return responseService.getSuccessResult();
     }
@@ -54,7 +50,6 @@ public class ProductController {
      */
     @GetMapping()
     public Result findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto, Pageable pageable) {
-        log.info("info = {}", "ProductController - findProductByNameAndBrandList 실행");
         return responseService.getSingleResult(productService.findProductByNameInBrand(productSearchDto, pageable));
     }
 
@@ -66,7 +61,6 @@ public class ProductController {
      */
     @PostMapping("/{id}")
     public Result updateProduct(@PathVariable String id, @RequestBody ProductDto productDto) {
-        log.info("info = {}", "ProductController - updateProduct 실행");
         productService.updateProduct(productDto);
         return responseService.getSuccessResult();
     }
@@ -80,7 +74,6 @@ public class ProductController {
      */
     @PostMapping("/image")
     public Result addImageProduct(@RequestBody ProductImageAddDto productImageAddDto) {
-        log.info("info = {}", "ProductController - addImageProduct 실행");
         productService.addProductImage(productImageAddDto);
         return responseService.getSuccessResult();
     }
@@ -93,7 +86,6 @@ public class ProductController {
      */
     @DeleteMapping("/image/{productImageId}")
     public Result deleteProductImage(@PathVariable Long productImageId) {
-        log.info("info = {}", "ProductController - deleteProductImage 실행");
         productService.deleteProductImage(productImageId);
         return responseService.getSuccessResult();
     }

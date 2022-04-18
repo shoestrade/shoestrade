@@ -10,9 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.*;
 
-@Slf4j
+
 @RestController
 @RequestMapping("/brand")
 @RequiredArgsConstructor
@@ -41,7 +40,6 @@ public class BrandController {
      */
     @PostMapping("/{name}")
     public Result saveBrand(@PathVariable String name) {
-        log.info("info = {}", "GetBrandController - saveBrand 실행");
         return responseService.getSingleResult(brandService.saveBrand(name));
     }
 
@@ -52,7 +50,6 @@ public class BrandController {
      */
     @DeleteMapping("/{id}")
     public Result deleteBrand(@PathVariable Long id) {
-        log.info("info = {}", "GetBrandController - deleteBrand 실행");
         brandService.deleteByBrandId(id);
         return responseService.getSuccessResult();
     }
@@ -64,7 +61,6 @@ public class BrandController {
      */
     @PostMapping("/update")
     public Result updateBrand(@RequestBody BrandDto brandDto) {
-        log.info("info = {}", "GetBrandController - updateBrand 실행");
         brandService.updateBrand(brandDto);
         return responseService.getSuccessResult();
     }
