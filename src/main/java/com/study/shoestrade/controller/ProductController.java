@@ -1,15 +1,14 @@
 package com.study.shoestrade.controller;
 
 import com.study.shoestrade.common.response.ResponseService;
-import com.study.shoestrade.common.result.ListResult;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.dto.product.ProductDto;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
 import com.study.shoestrade.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/product")

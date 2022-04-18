@@ -19,7 +19,9 @@ import java.util.stream.Collectors;
 public class ProductDto {
 
     private Long id;
-    private String name;
+    private String korName;
+
+    private String engName;
     private String code;
     private String color;
     private int releasePrice;
@@ -30,7 +32,8 @@ public class ProductDto {
     public static ProductDto create(Product product) {
         return ProductDto.builder()
                 .id(product.getId())
-                .name(product.getName())
+                .korName(product.getKorName())
+                .engName(product.getEngName())
                 .code(product.getCode())
                 .color(product.getColor())
                 .interest(product.getInterest())
@@ -43,7 +46,8 @@ public class ProductDto {
     public Product toEntity(Brand brand) {
         return Product.builder()
                 .id(this.id)
-                .name(this.name)
+                .korName(this.korName)
+                .engName(this.engName)
                 .code(this.code)
                 .color(this.color)
                 .releasePrice(this.releasePrice)

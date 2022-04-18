@@ -9,7 +9,6 @@ import com.study.shoestrade.repository.brand.BrandRepository;
 import com.study.shoestrade.repository.jdbc.JdbcRepository;
 import com.study.shoestrade.repository.product.ProductImageRepository;
 import com.study.shoestrade.repository.product.ProductRepository;
-import com.study.shoestrade.service.product.ProductService;
 import com.study.shoestrade.service.product.ProductServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +54,7 @@ class ProductServiceTest {
         // given
         ProductDto productDto = ProductDto.builder()
                 .id(1L)
-                .name("상품명1")
+                .korName("상품명1")
                 .code("상품코드1")
                 .releasePrice(100000)
                 .imageList(new ArrayList<>())
@@ -95,7 +94,7 @@ class ProductServiceTest {
                 .build();
 
         ProductDto updateDto = ProductDto.builder()
-                .name("변경 후 상품명")
+                .korName("변경 후 상품명")
                 .id(1L)
                 .brandId(2L)
                 .build();
@@ -108,7 +107,7 @@ class ProductServiceTest {
         productService.updateProduct(updateDto);
 
         // then
-        assertThat(product.getName()).isEqualTo(updateDto.getName());
+        assertThat(product.getKorName()).isEqualTo(updateDto.getKorName());
     }
 
     @Test

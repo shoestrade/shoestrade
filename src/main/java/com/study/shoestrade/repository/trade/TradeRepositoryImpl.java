@@ -36,7 +36,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
     @Override
     public Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, TradeType tradeType, Pageable pageable) {
 
-        List<TradeLoadDto> content = queryFactory.select(new QTradeLoadDto(trade.id, product.name, trade.price))
+        List<TradeLoadDto> content = queryFactory.select(new QTradeLoadDto(trade.id, product.korName, trade.price))
                 .from(trade)
                 .leftJoin(trade.productSize, productSize)
                 .leftJoin(productSize.product, product)

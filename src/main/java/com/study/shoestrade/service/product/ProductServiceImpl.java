@@ -47,7 +47,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto saveProduct(ProductDto productDto) {
-        DuplicateProduct(productDto.getName());
+        DuplicateProductKorName(productDto.getKorName());
+        DuplicateProductEngName(productDto.getEngName());
 
         Brand brand = brandRepository.findById(productDto.getBrandId()).orElseThrow(() ->
                 new BrandEmptyResultDataAccessException(productDto.getBrandId().toString(), 1)
@@ -104,7 +105,6 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProduct(productSearchDto.getName(),
                         productSearchDto.getBrandIdList(), pageable)
                 .map(ProductDto::create);
-
     }
 
     /**
@@ -119,8 +119,12 @@ public class ProductServiceImpl implements ProductService {
                 new ProductEmptyResultDataAccessException(1)
         );
 
-        if (!product.getName().equals(productDto.getName())) {
-            DuplicateProduct(productDto.getName());
+        if(!product.getKorName().equals(productDto.getKorName())){
+            DuplicateProductKorName(productDto.getKorName());
+        }
+
+        if(!product.getEngName().equals(productDto.getEngName())){
+            DuplicateProductEngName(product.getEngName());
         }
 
         Brand brand = brandRepository.findById(productDto.getBrandId()).orElseThrow(() ->
@@ -172,16 +176,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 상품 이름 중복 여부
-     *
-     * @param name 중복검사 할 상품 이름
+     * 상품 한글 이름 중복 여부
+     * @param korName 중복검사 할 상품 한글 이름
      */
-    private void DuplicateProduct(String name) {
-        productRepository.findByName(name).ifPresent(
-                p -> {
-                    throw new ProductDuplicationException(name);
-                }
-        );
+    private void DuplicateProductKorName(String korName) {
+        productRepository.findByKorName(korName).ifPresent(p -> {
+            throw new ProductDuplicationException(korName);
+        });
+    }
+
+    /**
+     * 상품 영어 이름 중복 여부
+     * @param engName 중복검사 할 상품 영어 이름
+     */
+    private void DuplicateProductEngName(String engName){
+        productRepository.findByEngName(engName).ifPresent(p -> {
+            throw new ProductDuplicationException(engName);
+        });
     }
 
     /**
