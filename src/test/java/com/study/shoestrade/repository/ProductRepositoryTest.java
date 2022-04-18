@@ -50,7 +50,7 @@ class ProductRepositoryTest {
     @DisplayName("상품_검색_테스트")
     public void 상품_검색() {
         // given
-        Brand brand = brandRepository.save(Brand.builder().id(1L).name("브랜드1").build());
+        Brand brand = brandRepository.save(Brand.builder().id(1L).korName("브랜드1").build());
         Product product = Product.builder()
                 .name("상품명1")
                 .code("상품코드1")

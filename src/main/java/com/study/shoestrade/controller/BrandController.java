@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -29,7 +30,6 @@ public class BrandController {
      */
     @GetMapping()
     public Result findBrandByName(@RequestParam(value = "name") @Nullable String brandName, Pageable pageable) {
-        log.info("info = {}", "GetBrandController - findByName 실행");
         return responseService.getSingleResult(brandService.findByBrandName(brandName, pageable));
     }
 
@@ -38,9 +38,9 @@ public class BrandController {
      * @param name 검색어
      * @return 등록완료 결과
      */
-    @PostMapping("/{name}")
-    public Result saveBrand(@PathVariable String name) {
-        return responseService.getSingleResult(brandService.saveBrand(name));
+    @PostMapping
+    public Result saveBrand(@RequestBody BrandDto brandDto) {
+        return responseService.getSingleResult(brandService.saveBrand(brandDto));
     }
 
     /**

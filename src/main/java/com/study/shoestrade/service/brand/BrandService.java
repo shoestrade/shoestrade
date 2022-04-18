@@ -12,7 +12,7 @@ public interface BrandService {
      * @param name 등록할 브랜드 이름
      * @return 등록된 브랜드 id
      */
-    BrandDto saveBrand(String name);
+    BrandDto saveBrand(BrandDto brandDto);
 
     /**
      * 브랜드 수정

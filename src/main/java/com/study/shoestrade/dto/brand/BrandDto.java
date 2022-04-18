@@ -14,12 +14,15 @@ public class BrandDto {
 
     private Long id;
 
-    private String name;
+    private String korName;
+
+    private String engName;
 
     public static BrandDto create(Brand brand) {
         return BrandDto.builder()
                 .id(brand.getId())
-                .name(brand.getName())
+                .engName(brand.getEngName())
+                .korName(brand.getKorName())
                 .build();
 
     }

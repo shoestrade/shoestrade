@@ -3,7 +3,6 @@ package com.study.shoestrade.service;
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.dto.brand.BrandDto;
 import com.study.shoestrade.repository.brand.BrandRepository;
-import com.study.shoestrade.service.brand.BrandService;
 import com.study.shoestrade.service.brand.BrandServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,17 +34,17 @@ class BrandServiceTest {
 
     Brand brand1 = Brand.builder()
             .id(1L)
-            .name("나이키")
+            .korName("나이키")
             .build();
 
     Brand brand2 = Brand.builder()
             .id(2L)
-            .name("아디다스")
+            .korName("아디다스")
             .build();
 
     Brand brand3 = Brand.builder()
             .id(3L)
-            .name("뉴발란스")
+            .korName("뉴발란스")
             .build();
 
     @Test
@@ -55,7 +54,7 @@ class BrandServiceTest {
         given(brandRepository.save(any())).willReturn(brand1);
 
         // when
-        BrandDto findBrandDto = brandService.saveBrand(brand1.getName());
+        BrandDto findBrandDto = brandService.saveBrand(BrandDto.builder().korName(brand1.getKorName()).build());
 
         // then
         assertThat(findBrandDto).isEqualTo(BrandDto.create(brand1));
@@ -70,7 +69,7 @@ class BrandServiceTest {
 
         BrandDto updateBrand = BrandDto.builder()
                 .id(1L)
-                .name("언더아머")
+                .korName("언더아머")
                 .build();
 
         // when
@@ -78,7 +77,7 @@ class BrandServiceTest {
 
         // then
         Optional<Brand> findBrand = brandRepository.findById(brand1.getId());
-        assertThat(findBrand.orElse(brand1).getName()).isEqualTo("언더아머");
+        assertThat(findBrand.orElse(brand1).getKorName()).isEqualTo("언더아머");
     }
 
     @Test

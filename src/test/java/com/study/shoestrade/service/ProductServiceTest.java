@@ -63,7 +63,7 @@ class ProductServiceTest {
 
         Brand brand = Brand.builder()
                 .id(1L)
-                .name("브랜드1").build();
+                .korName("브랜드1").build();
 
         Product product = productDto.toEntity(brand);
 
@@ -84,7 +84,7 @@ class ProductServiceTest {
         // given
 
         Brand brand = Brand.builder()
-                .name("브랜드1")
+                .korName("브랜드1")
                 .id(2L)
                 .build();
 

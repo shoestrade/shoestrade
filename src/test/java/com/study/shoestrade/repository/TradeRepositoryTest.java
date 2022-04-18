@@ -45,9 +45,11 @@ class TradeRepositoryTest {
     @DisplayName("판매_입찰_등록_테스트")
     public void 판매_입찰_등록() {
         // given
+        ProductSize saveProductSize = productSizeRepository.save(ProductSize.builder().size(255).build());
+
         Trade trade = Trade.builder()
                 .price(10000)
-                .productSize(ProductSize.builder().id(1L).size(255).build())
+                .productSize(saveProductSize)
                 .seller(member)
                 .tradeState(TradeState.SELL)
                 .tradeType(TradeType.SELL)
