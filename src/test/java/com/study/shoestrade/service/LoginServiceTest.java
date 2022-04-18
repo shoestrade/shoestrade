@@ -12,10 +12,7 @@ import com.study.shoestrade.dto.member.request.TokenRequestDto;
 import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
 import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
-import com.study.shoestrade.exception.member.WrongEmailException;
-import com.study.shoestrade.exception.member.WrongPasswordException;
-import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
-import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.member.*;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.member.TokenRepository;
@@ -31,6 +28,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -149,12 +147,6 @@ class LoginServiceTest {
                 .password("PW")
                 .build();
 
-        Token token = Token.builder()
-                .id(1L)
-                .refreshToken("refreshToken")
-                .member(member)
-                .build();
-
         // mocking
         given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
         given(passwordEncoder.matches(any(), any())).willReturn(true);
@@ -168,6 +160,45 @@ class LoginServiceTest {
         // then
         assertThat(responseDto.getAccessToken()).isEqualTo("accessToken");
         assertThat(responseDto.getRefreshToken()).isEqualTo("newRefreshToken");
+    }
+
+    @Test
+    @DisplayName("정지 기간이 지난 회원이 로그인 시 회원의 role이 변경되며 로그인에 성공한다.")
+    public void 로그인_성공3() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .email("tt@g.com")
+                .password("PW")
+                .role(Role.BAN)
+                .banReleaseTime(LocalDateTime.of(2022, 2, 2, 2, 2, 2))
+                .build();
+
+        MemberLoginRequestDto requestDto = MemberLoginRequestDto.builder()
+                .email("tt@g.com")
+                .password("PW")
+                .build();
+
+        Token token = Token.builder()
+                .id(1L)
+                .refreshToken("refreshToken")
+                .member(member)
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(any(), any())).willReturn(true);
+        given(jwtTokenProvider.createRefreshToken()).willReturn("newRefreshToken");
+        given(tokenRepository.findByMember(1L)).willReturn(Optional.of(token));
+        given(jwtTokenProvider.createAccessToken(any(), any())).willReturn("accessToken");
+
+        // when
+        MemberLoginResponseDto responseDto = loginService.login(requestDto);
+
+        // then dh
+        assertThat(responseDto.getAccessToken()).isEqualTo("accessToken");
+        assertThat(responseDto.getRefreshToken()).isEqualTo("newRefreshToken");
+        assertThat(member.getRole()).isEqualTo(Role.ROLE_MEMBER);
     }
 
     @Test
@@ -198,7 +229,7 @@ class LoginServiceTest {
 
         MemberLoginRequestDto requestDto = MemberLoginRequestDto.builder()
                 .email("tt@g.com")
-                .password("PW")
+                .password("wrong PW")
                 .build();
 
         // mocking
@@ -208,6 +239,32 @@ class LoginServiceTest {
         // when, then
         assertThatThrownBy(() -> loginService.login(requestDto))
                 .isInstanceOf(WrongPasswordException.class);
+    }
+
+    @Test
+    @DisplayName("회원이 정지되어 있으면 BanMemberException 예외가 발생한다.")
+    public void 로그인_실패3() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .email("tt@g.com")
+                .password("PW")
+                .role(Role.BAN)
+                .banReleaseTime(LocalDateTime.of(2222, 2, 2, 2, 2, 2))
+                .build();
+
+        MemberLoginRequestDto requestDto = MemberLoginRequestDto.builder()
+                .email("tt@g.com")
+                .password("PW")
+                .build();
+
+        // mocking
+        given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(any(), any())).willReturn(true);
+
+        // when, then
+        assertThatCode(() -> loginService.login(requestDto))
+                .isInstanceOf(BanMemberException.class);
     }
 
     @Test

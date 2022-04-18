@@ -7,6 +7,7 @@ import com.study.shoestrade.dto.account.AccountDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,9 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role = Role.ROLE_MEMBER;
 
+    // 정지 해제 시간
+    private LocalDateTime banReleaseTime;
+
     @OneToMany(mappedBy = "seller")
     private List<Trade> sellList = new ArrayList<>();
 
@@ -81,5 +85,13 @@ public class Member extends BaseEntity {
 
     public void changeShoeSize(int size){
         shoeSize = size;
+    }
+
+    public void updateBanReleaseTime(LocalDateTime time){
+        this.banReleaseTime = time;
+    }
+
+    public void changeRole(Role role){
+        this.role = role;
     }
 }

@@ -8,10 +8,7 @@ import com.study.shoestrade.exception.address.BaseAddressUncheckedException;
 import com.study.shoestrade.exception.brand.BrandDuplicationException;
 import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
-import com.study.shoestrade.exception.member.WrongEmailException;
-import com.study.shoestrade.exception.member.WrongPasswordException;
-import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
-import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.member.*;
 import com.study.shoestrade.exception.product.*;
 import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
@@ -106,6 +103,11 @@ public class ExceptionAdvice {
     @ExceptionHandler(NumberFormatException.class)
     public Result numberFormatException(){
         return responseService.getFailureResult(-109, "입력값이 int형이 아닙니다.");
+    }
+
+    @ExceptionHandler(BanMemberException.class)
+    public Result banMemberException(BanMemberException e){
+        return responseService.getFailureResult(-110,  e.getMessage() +  "까지 정지된 회원입니다.");
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------- //

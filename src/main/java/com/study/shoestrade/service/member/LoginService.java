@@ -1,6 +1,7 @@
 package com.study.shoestrade.service.member;
 
 import com.study.shoestrade.common.config.jwt.JwtTokenProvider;
+import com.study.shoestrade.domain.member.Role;
 import com.study.shoestrade.domain.member.Token;
 import com.study.shoestrade.dto.member.request.MemberFindRequestDto;
 import com.study.shoestrade.dto.member.request.MemberLoginRequestDto;
@@ -8,16 +9,14 @@ import com.study.shoestrade.dto.member.request.TokenRequestDto;
 import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
 import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
-import com.study.shoestrade.exception.member.WrongEmailException;
-import com.study.shoestrade.exception.member.WrongPasswordException;
-import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.member.*;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.dto.member.request.MemberJoinDto;
-import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
 import com.study.shoestrade.repository.member.TokenRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
@@ -28,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @Service
 @Transactional
+@Slf4j
 public class LoginService {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -62,16 +64,23 @@ public class LoginService {
         return MemberDto.create(member);
     }
 
-    /**
-     * 추가 필요
-     * 벤 당했는 지 검사 필요
-     */
     // 로그인
     public MemberLoginResponseDto login(MemberLoginRequestDto requestDto) {
         Member member = memberRepository.findByEmail(requestDto.getEmail()).orElseThrow(MemberNotFoundException::new);
 
         if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
             throw new WrongPasswordException();
+        }
+
+        // 회원 정지 기간이 초과했으면 정지 해제
+        if(member.getBanReleaseTime() != null && member.getRole() == Role.BAN && LocalDateTime.now().isAfter(member.getBanReleaseTime())){
+            log.info("정지 기간이 지났습니다.");
+            member.changeRole(Role.ROLE_MEMBER);
+        }
+
+        // 정지 회원 확인
+        if(member.getRole() == Role.BAN){
+            throw new BanMemberException(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(member.getBanReleaseTime()));
         }
 
         String refreshToken = jwtTokenProvider.createRefreshToken();
@@ -117,7 +126,6 @@ public class LoginService {
 
     /**
      * 프론트에서 jwt accessToken 지워야함.
-     *
      * @param email
      */
     // 로그아웃
