@@ -1,13 +1,10 @@
 package com.study.shoestrade.controller;
 
 import com.study.shoestrade.common.response.ResponseService;
-import com.study.shoestrade.common.result.ListResult;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.dto.brand.BrandDto;
 import com.study.shoestrade.service.brand.BrandService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;

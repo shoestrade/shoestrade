@@ -39,8 +39,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
 
     private BooleanExpression nameEq(String name) {
-        return name.isEmpty() ? null : product.name.contains(name);
+        return name.isEmpty() ? null : product.korName.contains(name).or(product.engName.contains(name));
     }
+
 }
 
 

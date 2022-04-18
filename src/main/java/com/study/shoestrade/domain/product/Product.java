@@ -20,7 +20,10 @@ public class Product extends BaseEntity {
     @Column(name = "product_id")
     private Long id;
 
-    private String name;
+    private String korName;
+
+    private String engName;
+
     private String code;
     private String color;
     private int releasePrice;
@@ -38,7 +41,8 @@ public class Product extends BaseEntity {
 
     public void changeProduct(ProductDto productDto) {
         this.id = productDto.getId();
-        this.name = productDto.getName();
+        this.korName = productDto.getKorName();
+        this.engName = productDto.getEngName();
         this.code = productDto.getCode();
         this.color = productDto.getColor();
         this.releasePrice = productDto.getReleasePrice();

@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 public class TradeLoadDto {
 
     private Long id;
-    private String name;
+    private String productKorName;
     private int price;
 
     @Builder
     @QueryProjection
-    public TradeLoadDto(Long id, String name, int price) {
+    public TradeLoadDto(Long id, String productKorName, int price) {
         this.id = id;
-        this.name = name;
+        this.productKorName = productKorName;
         this.price = price;
     }
 }
