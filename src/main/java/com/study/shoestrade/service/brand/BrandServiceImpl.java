@@ -7,10 +7,12 @@ import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.repository.brand.BrandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +32,6 @@ public class BrandServiceImpl implements BrandService {
     @Transactional
     public BrandDto saveBrand(String name){
         duplicateBrandName(name);
-
         return BrandDto.create(brandRepository.save(Brand.builder().name(name).build()));
     }
 
@@ -66,30 +67,15 @@ public class BrandServiceImpl implements BrandService {
     }
 
     /**
-     * 브랜드 전체 검색
-     *
-     * @return 브랜드 전체 리스트
-     */
-    @Override
-    public List<BrandDto> findBrandAll() {
-        return brandRepository.findAll()
-                .stream()
-                .map(BrandDto::create)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 브랜드 이름으로 검색
+     * 브랜드 검색
      *
      * @param name 검색할 브랜드 이름
      * @return 검색된 브랜드 리스트
      */
     @Override
-    public List<BrandDto> findByBrandName(String name) {
-        return brandRepository.findByNameContains(name)
-                .stream()
-                .map(BrandDto::create)
-                .collect(Collectors.toList());
+    public Page<BrandDto> findByBrandName(String name, Pageable pageable) {
+        return brandRepository.findByNameContains(name, pageable)
+                .map(BrandDto::create);
     }
 
 

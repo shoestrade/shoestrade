@@ -3,6 +3,7 @@ package com.study.shoestrade.dto.product;
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.domain.product.ProductImage;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProductDto {
 
     private Long id;
@@ -23,18 +26,6 @@ public class ProductDto {
     private int interest;
     private Long brandId;
     private List<String> imageList = new ArrayList<>();
-
-    @Builder
-    public ProductDto(Long id, String name, String code, String color, int releasePrice, int interest, Long brandId, List<String> imageList) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
-        this.color = color;
-        this.releasePrice = releasePrice;
-        this.interest = interest;
-        this.brandId = brandId;
-        this.imageList = imageList;
-    }
 
     public static ProductDto create(Product product) {
         return ProductDto.builder()

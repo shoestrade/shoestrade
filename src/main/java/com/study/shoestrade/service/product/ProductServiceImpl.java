@@ -19,6 +19,8 @@ import com.study.shoestrade.repository.product.ProductImageRepository;
 import com.study.shoestrade.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,12 +100,11 @@ public class ProductServiceImpl implements ProductService {
      * @return 검색 결과
      */
     @Override
-    public List<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto) {
+    public Page<ProductDto> findProductByNameInBrand(ProductSearchDto productSearchDto, Pageable pageable) {
         return productRepository.findProduct(productSearchDto.getName(),
-                        productSearchDto.getBrandIdList()
-                ).stream()
-                .map(ProductDto::create)
-                .collect(Collectors.toList());
+                        productSearchDto.getBrandIdList(), pageable)
+                .map(ProductDto::create);
+
     }
 
     /**
@@ -157,6 +158,7 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 상품 이미지 삭제
+     *
      * @param productImageId 삭제할 이미지 id
      */
     @Override

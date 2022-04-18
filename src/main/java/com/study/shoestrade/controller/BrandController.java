@@ -6,7 +6,11 @@ import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.dto.brand.BrandDto;
 import com.study.shoestrade.service.brand.BrandService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
+
 
 @RestController
 @RequestMapping("/brand")
@@ -17,24 +21,16 @@ public class BrandController {
     private final ResponseService responseService;
 
     /**
-     * 브랜드 이름으로 검색
+     * 브랜드 검색
      *
      * @param brandName 브랜드 이름
+     * @param pageable 페이지
      * @return 검색된 브랜드 리스트
      */
-    @GetMapping("/{brandName}")
-    public ListResult<BrandDto> findBrandByName(@PathVariable String brandName) {
-        return responseService.getListResult(brandService.findByBrandName(brandName));
-    }
-
-    /**
-     * 브랜드 전체 검색
-     *
-     * @return 브랜드 전체 리스트
-     */
-    @GetMapping
-    public ListResult<BrandDto> findBrandAll() {
-        return responseService.getListResult(brandService.findBrandAll());
+    @GetMapping()
+    public Result findBrandByName(@RequestParam(value = "name") @Nullable String brandName, Pageable pageable) {
+        log.info("info = {}", "GetBrandController - findByName 실행");
+        return responseService.getSingleResult(brandService.findByBrandName(brandName, pageable));
     }
 
     /**

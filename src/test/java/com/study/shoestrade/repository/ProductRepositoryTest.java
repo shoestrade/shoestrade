@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +62,12 @@ class ProductRepositoryTest {
         List<Long> list = new ArrayList<>();
         list.add(brand.getId());
 
+        PageRequest pageRequest = PageRequest.of(0, 3);
         // when
-        List<Product> findList = productRepository.findProduct("상품명1", list);
+        Page<Product> findPages = productRepository.findProduct("상품명1", list, pageRequest);
 
         // then
-        assertThat(findList)
+        assertThat(findPages)
                 .extracting("name")
                 .containsOnly("상품명1");
     }
