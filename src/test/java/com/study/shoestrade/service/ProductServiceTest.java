@@ -5,6 +5,7 @@ import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.ProductDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
+import com.study.shoestrade.dto.product.response.ProductDetailDto;
 import com.study.shoestrade.repository.brand.BrandRepository;
 import com.study.shoestrade.repository.jdbc.JdbcRepository;
 import com.study.shoestrade.repository.product.ProductImageRepository;
@@ -88,14 +89,15 @@ class ProductServiceTest {
                 .build();
 
         Product product = Product.builder()
-                .name("변경 전 상품명")
+                .korName("변경 전 상품명")
+                .engName("engName")
                 .id(1L)
                 .brand(brand)
                 .build();
 
         ProductDto updateDto = ProductDto.builder()
                 .korName("변경 후 상품명")
-                .id(1L)
+                .engName("engName")
                 .brandId(2L)
                 .build();
 
@@ -104,7 +106,7 @@ class ProductServiceTest {
         given(brandRepository.findById(any())).willReturn(Optional.ofNullable(brand));
 
         // when
-        productService.updateProduct(updateDto);
+        productService.updateProduct(1L, updateDto);
 
         // then
         assertThat(product.getKorName()).isEqualTo(updateDto.getKorName());
@@ -128,7 +130,7 @@ class ProductServiceTest {
         // given
         ArrayList<Product> list = new ArrayList<>();
         list.add(Product.builder()
-                .name("상품명1")
+                .korName("상품명1")
                 .brand(Brand.builder()
                         .id(1L)
                         .build())
@@ -156,7 +158,7 @@ class ProductServiceTest {
     void 상품_이미지_등록() {
         // given
         Product product = Product.builder()
-                .name("상품명1")
+                .korName("상품명1")
                 .brand(Brand.builder()
                         .id(1L)
                         .build())
@@ -188,4 +190,23 @@ class ProductServiceTest {
                 .doesNotThrowAnyException();
     }
 
+    @Test
+    @DisplayName("상품_상세_검색_테스트")
+    void 상품_상세_검색() {
+        // given
+        Brand brand = Brand.builder()
+                .korName("브랜드1")
+                .id(2L)
+                .build();
+
+        ProductDetailDto productDetailDto = ProductDetailDto.builder().korName("상품명").engName("engName").id(1L).brandId(2L).imPurchasePrice(1000).imSalesPrice(1000).lastedPrice(10000).build();
+
+        given(productRepository.findProductDetail(any())).willReturn(Optional.ofNullable(productDetailDto));
+
+        // when
+        ProductDetailDto findProductDetail = productService.findProductDetailById(1L);
+
+        // then
+        assertThat(findProductDetail).isEqualTo(productDetailDto);
+    }
 }

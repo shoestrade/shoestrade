@@ -40,9 +40,9 @@ public class BrandServiceImpl implements BrandService {
      */
     @Override
     @Transactional
-    public void updateBrand(BrandDto brandDto) {
+    public void updateBrand(Long id, BrandDto brandDto) {
 
-        Brand findBrand = brandRepository.findById(brandDto.getId()).orElseThrow(
+        Brand findBrand = brandRepository.findById(id).orElseThrow(
                 () -> new BrandEmptyResultDataAccessException(brandDto.getId().toString(), 1)
         );
 

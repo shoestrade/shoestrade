@@ -8,6 +8,7 @@ import com.study.shoestrade.dto.product.ProductDto;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.ProductImageDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
+import com.study.shoestrade.dto.product.response.ProductDetailDto;
 import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.product.ProductDuplicationException;
 import com.study.shoestrade.exception.product.ProductEmptyResultDataAccessException;
@@ -98,6 +99,7 @@ public class ProductServiceImpl implements ProductService {
      * 선택된 브랜드 내에 있는 상품 이름으로 검색
      *
      * @param productSearchDto 검색어, 브랜드 이름 리스트
+     * @param pageable         페이지 정보
      * @return 검색 결과
      */
     @Override
@@ -110,20 +112,21 @@ public class ProductServiceImpl implements ProductService {
     /**
      * 상품 정보 변경
      *
+     * @param id         변경할 상품 id
      * @param productDto 변경할 정보
      */
     @Override
     @Transactional
-    public void updateProduct(ProductDto productDto) {
-        Product product = productRepository.findById(productDto.getId()).orElseThrow(() ->
+    public void updateProduct(Long id, ProductDto productDto) {
+        Product product = productRepository.findById(id).orElseThrow(() ->
                 new ProductEmptyResultDataAccessException(1)
         );
 
-        if(!product.getKorName().equals(productDto.getKorName())){
+        if (!product.getKorName().equals(productDto.getKorName())) {
             DuplicateProductKorName(productDto.getKorName());
         }
 
-        if(!product.getEngName().equals(productDto.getEngName())){
+        if (!product.getEngName().equals(productDto.getEngName())) {
             DuplicateProductEngName(product.getEngName());
         }
 
@@ -176,10 +179,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-
+    /**
+     * @param productId 검색할 상품 id
+     * @return 검색 결과
+     */
+    @Override
+    public ProductDetailDto findProductDetailById(Long productId) {
+        return productRepository.findProductDetail(productId)
+                .orElseThrow(() -> new ProductEmptyResultDataAccessException(productId.toString(), 1));
+    }
 
     /**
      * 상품 한글 이름 중복 여부
+     *
      * @param korName 중복검사 할 상품 한글 이름
      */
     private void DuplicateProductKorName(String korName) {
@@ -190,9 +202,10 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 상품 영어 이름 중복 여부
+     *
      * @param engName 중복검사 할 상품 영어 이름
      */
-    private void DuplicateProductEngName(String engName){
+    private void DuplicateProductEngName(String engName) {
         productRepository.findByEngName(engName).ifPresent(p -> {
             throw new ProductDuplicationException(engName);
         });

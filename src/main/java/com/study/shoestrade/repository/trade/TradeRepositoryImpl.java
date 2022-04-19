@@ -31,6 +31,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
      *
      * @param email     사용자 이메일
      * @param tradeType 구매, 판매
+     * @param pageable 페이지 정보
      * @return 검색된 입찰 내역
      */
     @Override

@@ -5,16 +5,12 @@ import com.study.shoestrade.domain.product.ProductSize;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
-import com.study.shoestrade.dto.trade.request.TradeDeleteDto;
-import com.study.shoestrade.dto.trade.request.TradeSaveDto;
-import com.study.shoestrade.dto.trade.request.TradeUpdateDto;
-import com.study.shoestrade.dto.trade.response.QTradeLoadDto;
+import com.study.shoestrade.dto.trade.request.TradeDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.product.ProductSizeRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
-import com.study.shoestrade.service.trade.TradeService;
 import com.study.shoestrade.service.trade.TradeServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.study.shoestrade.domain.product.QProduct.product;
-import static com.study.shoestrade.domain.trade.QTrade.trade;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -55,7 +49,7 @@ class TradeServiceTest {
 
     Member member = Member.builder().id(1L).email("이메일").build();
     ProductSize productSize = ProductSize.builder().id(1L).size(255).build();
-    TradeSaveDto tradeSaveDto = TradeSaveDto.builder()
+    TradeDto tradeSaveDto = TradeDto.builder()
             .price(1000)
             .productSizeId(1L)
             .tradeType(TradeType.SELL)
@@ -108,10 +102,10 @@ class TradeServiceTest {
         // given
         ArrayList<Trade> trades = new ArrayList<>(List.of(trade));
         given(tradeRepository.findByIdAndEmail(any(), any(), any())).willReturn(trades);
-        TradeUpdateDto tradeUpdateDto = TradeUpdateDto.builder().id(1L).price(1000).tradeType(TradeType.SELL).build();
+        TradeDto tradeUpdateDto = TradeDto.builder().price(1000).tradeType(TradeType.SELL).build();
 
         // when
-        tradeService.updateTrade("이메일", tradeUpdateDto);
+        tradeService.updateTrade("이메일", 1L, tradeUpdateDto);
 
         // then
         assertThat(trade.getPrice()).isEqualTo(1000);
@@ -126,8 +120,8 @@ class TradeServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> tradeService.updateTrade("이메일",
-                TradeUpdateDto.builder().id(1L).price(1000).tradeType(TradeType.SELL).build())).isInstanceOf(TradeEmptyResultDataAccessException.class);
+        assertThatThrownBy(() -> tradeService.updateTrade("이메일", 1L,
+                TradeDto.builder().price(1000).tradeType(TradeType.SELL).build())).isInstanceOf(TradeEmptyResultDataAccessException.class);
     }
 
     @Test
@@ -137,7 +131,7 @@ class TradeServiceTest {
         ArrayList<Trade> trades = new ArrayList<>(List.of(trade));
         given(tradeRepository.findByIdAndEmail(any(), any(), any())).willReturn(trades);
         willDoNothing().given(tradeRepository).delete(any());
-        TradeDeleteDto tradeDeleteDto = TradeDeleteDto.builder().id(trade.getId()).tradeType(TradeType.SELL).build();
+        TradeDto tradeDeleteDto = TradeDto.builder().id(trade.getId()).tradeType(TradeType.SELL).build();
 
         // when
         // then
@@ -150,7 +144,7 @@ class TradeServiceTest {
         // given
         ArrayList<Trade> trades = new ArrayList<>();
         given(tradeRepository.findByIdAndEmail(any(), any(), any())).willReturn(trades);
-        TradeDeleteDto tradeDeleteDto = TradeDeleteDto.builder().id(trade.getId()).tradeType(TradeType.SELL).build();
+        TradeDto tradeDeleteDto = TradeDto.builder().id(trade.getId()).tradeType(TradeType.SELL).build();
 
         // when
         // then

@@ -45,6 +45,7 @@ public class ProductController {
      * 상품 검색
      *
      * @param productSearchDto 검색어, 선택된 브랜드 이름 리스트
+     * @param pageable 페이지 정보
      * @return 검색된 결과
      */
     @GetMapping
@@ -55,12 +56,13 @@ public class ProductController {
     /**
      * 상품 정보 수정
      *
+     * @param id 수정할 상품 id
      * @param productDto 변경할 상품 정보
      * @return 변경 성공 여부
      */
     @PostMapping("/{id}")
-    public Result updateProduct(@PathVariable String id, @RequestBody ProductDto productDto) {
-        productService.updateProduct(productDto);
+    public Result updateProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
+        productService.updateProduct(id, productDto);
         return responseService.getSuccessResult();
     }
 
@@ -87,5 +89,17 @@ public class ProductController {
     public Result deleteProductImage(@PathVariable Long productImageId) {
         productService.deleteProductImage(productImageId);
         return responseService.getSuccessResult();
+    }
+
+    /**
+     * 상품 상세 검색
+     *
+     * @param productId 검색할 상품 id
+     * @return 검색 결과
+     */
+    @GetMapping("/{productId}")
+    public Result findProductDetail(@PathVariable Long productId){
+        return responseService.getSingleResult(productService.findProductDetailById(productId));
+
     }
 }

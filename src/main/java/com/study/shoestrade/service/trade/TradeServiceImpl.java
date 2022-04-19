@@ -3,10 +3,8 @@ package com.study.shoestrade.service.trade;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
-import com.study.shoestrade.dto.trade.request.TradeSaveDto;
-import com.study.shoestrade.dto.trade.request.TradeDeleteDto;
+import com.study.shoestrade.dto.trade.request.TradeDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
-import com.study.shoestrade.dto.trade.request.TradeUpdateDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.exception.product.ProductSizeNoSuchElementException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
@@ -37,23 +35,23 @@ public class TradeServiceImpl implements TradeService {
     /**
      * 입찰 등록
      *
-     * @param email        사용자 이메일
-     * @param tradeSaveDto 입찰 정보
+     * @param email    사용자 이메일
+     * @param tradeDto 입찰 정보
      */
     @Transactional
     @Override
-    public void TradeSave(String email, TradeSaveDto tradeSaveDto) {
+    public void TradeSave(String email, TradeDto tradeDto) {
 
         tradeRepository.save(
                 Trade.builder()
-                .price(tradeSaveDto.getPrice())
-                .productSize(productSizeRepository.findById(tradeSaveDto.getProductSizeId())
-                        .orElseThrow(() -> new ProductSizeNoSuchElementException(String.valueOf(tradeSaveDto.getProductSizeId()))))
-                .seller(memberRepository.findByEmail(email)
-                        .orElseThrow(MemberNotFoundException::new))
-                .tradeState(tradeSaveDto.getTradeType() == TradeType.SELL ? TradeState.SELL : TradeState.PURCHASE)
-                .tradeType(tradeSaveDto.getTradeType())
-                .build());
+                        .price(tradeDto.getPrice())
+                        .productSize(productSizeRepository.findById(tradeDto.getProductSizeId())
+                                .orElseThrow(() -> new ProductSizeNoSuchElementException(String.valueOf(tradeDto.getProductSizeId()))))
+                        .seller(memberRepository.findByEmail(email)
+                                .orElseThrow(MemberNotFoundException::new))
+                        .tradeState(tradeDto.getTradeType() == TradeType.SELL ? TradeState.SELL : TradeState.PURCHASE)
+                        .tradeType(tradeDto.getTradeType())
+                        .build());
     }
 
     /**
@@ -61,7 +59,7 @@ public class TradeServiceImpl implements TradeService {
      *
      * @param email     사용자 이메일
      * @param tradeType 구매, 판매 구분
-     * @param pageable  페이지
+     * @param pageable  페이지 정보
      * @return 검색된 입찰 내역
      */
     @Override
@@ -72,34 +70,34 @@ public class TradeServiceImpl implements TradeService {
     /**
      * 입찰 금액 수정
      *
-     * @param email          사용자 이메일
-     * @param tradeUpdateDto 수정할 입찰 정보
+     * @param email    사용자 이메일
+     * @param tradeDto 수정할 입찰 정보
      */
     @Transactional
     @Override
-    public void updateTrade(String email, TradeUpdateDto tradeUpdateDto) {
-        List<Trade> findTrade = tradeRepository.findByIdAndEmail(email, tradeUpdateDto.getId(), tradeUpdateDto.getTradeType());
+    public void updateTrade(String email, Long id, TradeDto tradeDto) {
+        List<Trade> findTrade = tradeRepository.findByIdAndEmail(email, id, tradeDto.getTradeType());
 
         if (findTrade.isEmpty()) {
-            throw new TradeEmptyResultDataAccessException(tradeUpdateDto.toString(), 1);
+            throw new TradeEmptyResultDataAccessException(tradeDto.toString(), 1);
         }
 
-        findTrade.get(0).changePrice(tradeUpdateDto.getPrice());
+        findTrade.get(0).changePrice(tradeDto.getPrice());
     }
 
     /**
      * 입찰 삭제
      *
-     * @param email          사용자 이메일
-     * @param tradeDeleteDto 삭제할 입찰 정보
+     * @param email    사용자 이메일
+     * @param tradeDto 삭제할 입찰 정보
      */
     @Transactional
     @Override
-    public void deleteTrade(String email, TradeDeleteDto tradeDeleteDto) {
-        List<Trade> findTrade = tradeRepository.findByIdAndEmail(email, tradeDeleteDto.getId(), tradeDeleteDto.getTradeType());
+    public void deleteTrade(String email, TradeDto tradeDto) {
+        List<Trade> findTrade = tradeRepository.findByIdAndEmail(email, tradeDto.getId(), tradeDto.getTradeType());
 
         if (findTrade.isEmpty()) {
-            throw new TradeEmptyResultDataAccessException(tradeDeleteDto.toString(), 1);
+            throw new TradeEmptyResultDataAccessException(tradeDto.toString(), 1);
         }
 
         tradeRepository.delete(findTrade.get(0));

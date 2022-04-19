@@ -9,5 +9,12 @@ import java.util.List;
 @Repository
 public interface ProductImageRepository extends JpaRepository<ProductImage, Long> {
 
+    /**
+     * 상품 내 상품 이미지 이름 검색
+     *
+     * @param productId 상품 id
+     * @param names     상품 이미지 이름
+     * @return 검색 결과
+     */
     List<ProductImage> findByProductIdAndNameIn(Long productId, List<String> names);
 }

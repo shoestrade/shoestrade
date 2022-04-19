@@ -7,6 +7,7 @@ import com.study.shoestrade.service.brand.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,7 +23,7 @@ public class BrandController {
      * 브랜드 검색
      *
      * @param brandName 브랜드 이름
-     * @param pageable 페이지
+     * @param pageable  페이지 정보
      * @return 검색된 브랜드 리스트
      */
     @GetMapping()
@@ -32,7 +33,8 @@ public class BrandController {
 
     /**
      * 브랜드 등록
-     * @param name 검색어
+     *
+     * @param brandDto 등록할 브랜드 정보
      * @return 등록완료 결과
      */
     @PostMapping
@@ -42,6 +44,7 @@ public class BrandController {
 
     /**
      * 브랜드 삭제
+     *
      * @param id 삭제할 브랜드 id
      * @return 삭제 결과
      */
@@ -53,12 +56,14 @@ public class BrandController {
 
     /**
      * 브랜드 수정
+     *
+     * @param id       수정할 브랜드 id
      * @param brandDto 수정할 브랜드 정보
      * @return 수정 결과
      */
-    @PostMapping("/update")
-    public Result updateBrand(@RequestBody BrandDto brandDto) {
-        brandService.updateBrand(brandDto);
+    @PostMapping("/{id}")
+    public Result updateBrand(@PathVariable Long id, @RequestBody BrandDto brandDto) {
+        brandService.updateBrand(id, brandDto);
         return responseService.getSuccessResult();
     }
 }

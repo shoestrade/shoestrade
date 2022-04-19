@@ -4,9 +4,7 @@ import com.study.shoestrade.common.annotation.LoginMember;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.domain.trade.TradeType;
-import com.study.shoestrade.dto.trade.request.TradeSaveDto;
-import com.study.shoestrade.dto.trade.request.TradeDeleteDto;
-import com.study.shoestrade.dto.trade.request.TradeUpdateDto;
+import com.study.shoestrade.dto.trade.request.TradeDto;
 import com.study.shoestrade.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +26,12 @@ public class TradeController {
      * 입찰 등록
      *
      * @param email             사용자 이메일
-     * @param tradeSaveDto 입찰 정보
+     * @param tradeDto 입찰 정보
      * @return 성공 결과
      */
     @PostMapping
-    public Result salesTradeSave(@LoginMember String email, @RequestBody TradeSaveDto tradeSaveDto) {
-        tradeService.TradeSave(email, tradeSaveDto);
+    public Result salesTradeSave(@LoginMember String email, @RequestBody TradeDto tradeDto) {
+        tradeService.TradeSave(email, tradeDto);
         return responseService.getSuccessResult();
     }
 
@@ -45,8 +43,8 @@ public class TradeController {
      * @param pageable  페이지
      * @return 검색 결과
      */
-    @GetMapping
-    public Result salesTrade(@LoginMember String email, @RequestParam TradeType tradeType, Pageable pageable) {
+    @GetMapping("{tradeType}")
+    public Result salesTrade(@LoginMember String email, @PathVariable TradeType tradeType, Pageable pageable) {
         return responseService.getSingleResult(tradeService.findTradeByEmailAndTradeType(email, tradeType, pageable));
     }
 
@@ -54,24 +52,24 @@ public class TradeController {
      * 입찰 금액 수정
      *
      * @param email          사용자 이메일
-     * @param tradeUpdateDto 수정할 입찰 정보
+     * @param tradeDto 수정할 입찰 정보
      * @return 성공 결과
      */
-    @PostMapping("/update")
-    public Result updateTrade(@LoginMember String email, @RequestBody TradeUpdateDto tradeUpdateDto) {
-        tradeService.updateTrade(email, tradeUpdateDto);
+    @PostMapping("/{id}")
+    public Result updateTrade(@LoginMember String email, @PathVariable Long id ,@RequestBody TradeDto tradeDto) {
+        tradeService.updateTrade(email, id, tradeDto);
         return responseService.getSuccessResult();
     }
 
     /**
      * 입찰 삭제
      * @param email          사용자 이메일
-     * @param tradeDeleteDto 삭제할 입찰 정보
+     * @param tradeDto 삭제할 입찰 정보
      * @return  성공 결과
      */
     @DeleteMapping
-    public Result deleteTrade(@LoginMember String email, @RequestBody TradeDeleteDto tradeDeleteDto) {
-        tradeService.deleteTrade(email, tradeDeleteDto);
+    public Result deleteTrade(@LoginMember String email, @RequestBody TradeDto tradeDto) {
+        tradeService.deleteTrade(email, tradeDto);
         return responseService.getSuccessResult();
     }
 }
