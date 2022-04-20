@@ -33,7 +33,7 @@ class ProductRepositoryTest {
     public void 상품_등록() {
         // given
         Product product = Product.builder()
-                .name("상품명1")
+                .korName("상품명1")
                 .code("상품코드1")
                 .releasePrice(100000)
                 .build();
@@ -52,7 +52,7 @@ class ProductRepositoryTest {
         // given
         Brand brand = brandRepository.save(Brand.builder().id(1L).korName("브랜드1").build());
         Product product = Product.builder()
-                .name("상품명1")
+                .korName("상품명1")
                 .code("상품코드1")
                 .brand(brand)
                 .build();

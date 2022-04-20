@@ -1,5 +1,6 @@
 package com.study.shoestrade.repository.jdbc;
 
+import com.study.shoestrade.domain.interest.InterestProduct;
 import com.study.shoestrade.domain.product.ProductImage;
 import com.study.shoestrade.domain.product.ProductSize;
 
@@ -17,4 +18,10 @@ public interface JdbcRepository {
     * @param images 저장할 이미지
     */
    void saveAllImage(List<ProductImage> images);
+
+   /**
+    * 관심 상품 저장
+    * @param interests : 저장할 관심 상품
+    */
+   void saveAllInterest(List<InterestProduct> interests);
 }

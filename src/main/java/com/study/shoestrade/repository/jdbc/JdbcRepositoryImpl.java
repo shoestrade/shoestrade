@@ -1,5 +1,6 @@
 package com.study.shoestrade.repository.jdbc;
 
+import com.study.shoestrade.domain.interest.InterestProduct;
 import com.study.shoestrade.domain.product.ProductImage;
 import com.study.shoestrade.domain.product.ProductSize;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,27 @@ public class JdbcRepositoryImpl implements JdbcRepository {
         }
     }
 
+    /**
+     * 관심 상품 저장
+     * @param interests : 저장할 관심 상품
+     */
+    @Override
+    public void saveAllInterest(List<InterestProduct> interests) {
+        int batchCount = 0;
+        List<InterestProduct> subInterests = new ArrayList<>();
+
+        for(int i = 0; i < interests.size(); i++){
+            subInterests.add(interests.get(i));
+            if((i+1) % batchSize == 0){
+                batchCount = batchInsertInterest(batchSize, batchCount, subInterests);
+            }
+        }
+        if(!subInterests.isEmpty()){
+            batchCount = batchInsertInterest(batchSize, batchCount, subInterests);
+        }
+    }
+
+
     private int batchInsertImage(int batchSize, int batchCount, List<ProductImage> subImages) {
         jdbcTemplate.batchUpdate("insert into product_image (`name`, `product_id`) values (?,?)"
                 , new BatchPreparedStatementSetter() {
@@ -94,6 +116,25 @@ public class JdbcRepositoryImpl implements JdbcRepository {
                     }
                 });
         subItems.clear();
+        batchCount++;
+        return batchCount;
+    }
+
+    private int batchInsertInterest(int batchSize, int batchCount, List<InterestProduct> subInterests){
+        jdbcTemplate.batchUpdate("insert into interest_product (`member_id`, `product_size_id`) values (?, ?)"
+                , new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setLong(1, subInterests.get(i).getMember().getId());
+                        ps.setLong(2, subInterests.get(i).getProductSize().getId());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return subInterests.size();
+                    }
+                });
+        subInterests.clear();
         batchCount++;
         return batchCount;
     }

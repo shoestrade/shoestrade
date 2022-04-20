@@ -58,7 +58,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "purchaser")
     private List<Trade> purchaseList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<InterestProduct> interestProductList = new ArrayList<>();
 
     public void changePassword(String password){
@@ -94,4 +94,5 @@ public class Member extends BaseEntity {
     public void changeRole(Role role){
         this.role = role;
     }
+
 }
