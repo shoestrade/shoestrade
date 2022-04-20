@@ -4,7 +4,9 @@ import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
 import com.study.shoestrade.dto.trade.request.TradeDto;
+import com.study.shoestrade.dto.trade.response.TradeDoneDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
+import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.exception.product.ProductSizeNoSuchElementException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
@@ -101,5 +103,30 @@ public class TradeServiceImpl implements TradeService {
         }
 
         tradeRepository.delete(findTrade.get(0));
+    }
+
+    /**
+     * 상품의 체결 거래 내역
+     *
+     * @param productId 상품 id
+     * @param pageable  페이지 정보
+     * @return 검색 결과
+     */
+    @Override
+    public Page<TradeDoneDto> findDoneTrade(Long productId, Pageable pageable) {
+        return tradeRepository.findDoneTrade(productId, pageable);
+    }
+
+    /**
+     * 상품의 입찰 내역
+     *
+     * @param productId  상품 id
+     * @param tradeState 입찰 상태(판매, 구매)
+     * @param pageable   페이지 정보
+     * @return 검색 결과
+     */
+    @Override
+    public Page<TradeTransactionDto> findTransactionTrade(Long productId, TradeState tradeState, Pageable pageable) {
+        return tradeRepository.findTransactionTrade(productId, tradeState, pageable);
     }
 }
