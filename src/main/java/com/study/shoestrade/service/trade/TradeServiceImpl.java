@@ -65,8 +65,8 @@ public class TradeServiceImpl implements TradeService {
      * @return 검색된 입찰 내역
      */
     @Override
-    public Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, TradeType tradeType, Pageable pageable) {
-        return tradeRepository.findTradeByEmailAndTradeType(email, tradeType, pageable);
+    public Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, String tradeType, Pageable pageable) {
+        return tradeRepository.findTradeByEmailAndTradeType(email, tradeType.equals("sell") ? TradeType.SELL : TradeType.PURCHASE, pageable);
     }
 
     /**
@@ -126,7 +126,19 @@ public class TradeServiceImpl implements TradeService {
      * @return 검색 결과
      */
     @Override
-    public Page<TradeTransactionDto> findTransactionTrade(Long productId, TradeState tradeState, Pageable pageable) {
-        return tradeRepository.findTransactionTrade(productId, tradeState, pageable);
+    public Page<TradeTransactionDto> findTransactionTrade(Long productId, String tradeState, Pageable pageable) {
+        return tradeRepository.findTransactionTrade(productId, tradeState.equals("sell") ? TradeState.PURCHASE : TradeState.SELL, pageable);
+    }
+
+    /**
+     * 즉시 거래가
+     *
+     * @param productId  상품 id
+     * @param tradeState 입찰 상태(판매, 구매)
+     * @return 검색 결과
+     */
+    @Override
+    public List<TradeLoadDto> findInstantTrade(Long productId, String tradeState) {
+        return tradeRepository.findInstantTrade(productId, tradeState.equals("sell") ? TradeState.PURCHASE : TradeState.SELL);
     }
 }

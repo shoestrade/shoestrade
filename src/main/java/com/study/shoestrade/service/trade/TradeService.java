@@ -9,6 +9,8 @@ import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface TradeService {
 
     /**
@@ -28,7 +30,7 @@ public interface TradeService {
      * @param pageable  페이지 정보
      * @return 검색된 입찰 내역
      */
-    Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, TradeType tradeType, Pageable pageable);
+    Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, String tradeType, Pageable pageable);
 
     /**
      * 입찰 금액 수정
@@ -63,6 +65,14 @@ public interface TradeService {
      * @param pageable   페이지 정보
      * @return 검색 결과
      */
-    Page<TradeTransactionDto> findTransactionTrade(Long productId, TradeState tradeState, Pageable pageable);
+    Page<TradeTransactionDto> findTransactionTrade(Long productId, String tradeState, Pageable pageable);
 
+    /**
+     * 즉시 거래가
+     *
+     * @param productId  상품 id
+     * @param tradeState 입찰 상태(판매, 구매)
+     * @return 검색 결과
+     */
+    List<TradeLoadDto> findInstantTrade(Long productId, String tradeState);
 }

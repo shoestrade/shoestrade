@@ -45,7 +45,7 @@ public class TradeController {
      * @return 검색 결과
      */
     @GetMapping("{tradeType}")
-    public Result salesTrade(@LoginMember String email, @PathVariable TradeType tradeType, Pageable pageable) {
+    public Result salesTrade(@LoginMember String email, @PathVariable String tradeType, Pageable pageable) {
         return responseService.getSingleResult(tradeService.findTradeByEmailAndTradeType(email, tradeType, pageable));
     }
 
@@ -96,7 +96,18 @@ public class TradeController {
      * @return 검색 결과
      */
     @GetMapping("/{productId}/{tradeState}")
-    public Result findTransactionTrade(@PathVariable("productId") Long productId, @PathVariable("tradeState") TradeState tradeState, Pageable pageable) {
+    public Result findTransactionTrade(@PathVariable("productId") Long productId, @PathVariable("tradeState") String tradeState, Pageable pageable) {
         return responseService.getSingleResult(tradeService.findTransactionTrade(productId, tradeState, pageable));
+    }
+
+    /**
+     * 즉시 거래가
+     * @param productId 상품 id
+     * @param tradeState 입찰 상태(판매, 구매)
+     * @return 검색 결과
+     */
+    @GetMapping("/instant/{productId}/{tradeState}")
+    public Result findInstantTrade(@PathVariable("productId") Long productId, @PathVariable("tradeState") String tradeState) {
+        return responseService.getSingleResult(tradeService.findInstantTrade(productId, tradeState));
     }
 }

@@ -64,17 +64,17 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                                 product,
                                 select(trade.price)
                                         .from(trade)
-                                        .leftJoin(trade.productSize, productSize)
+                                        .join(trade.productSize, productSize)
                                         .where(trade.tradeState.eq(TradeState.DONE), productSize.product.id.eq(productId))
                                         .orderBy(trade.lastModifiedDate.desc()),
-                                select(trade.price.min())
-                                        .from(trade)
-                                        .leftJoin(trade.productSize, productSize)
-                                        .where(trade.tradeState.eq(TradeState.SELL), productSize.product.id.eq(productId)),
                                 select(trade.price.max())
                                         .from(trade)
-                                        .leftJoin(trade.productSize, productSize)
-                                        .where(trade.tradeState.eq(TradeState.PURCHASE), productSize.product.id.eq(productId)))
+                                        .join(trade.productSize, productSize)
+                                        .where(trade.tradeState.eq(TradeState.PURCHASE), productSize.product.id.eq(productId)),
+                                select(trade.price.min())
+                                        .from(trade)
+                                        .join(trade.productSize, productSize)
+                                        .where(trade.tradeState.eq(TradeState.SELL), productSize.product.id.eq(productId)))
                 )
                 .from(product)
                 .where(product.id.eq(productId))

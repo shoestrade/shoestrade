@@ -6,7 +6,9 @@ import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
 import com.study.shoestrade.dto.trade.request.TradeDto;
+import com.study.shoestrade.dto.trade.response.TradeDoneDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
+import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.product.ProductSizeRepository;
@@ -21,7 +23,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -85,12 +90,12 @@ class TradeServiceTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 3);
 
-        Page<TradeLoadDto> page = new PageImpl<>(new ArrayList<>(List.of(new TradeLoadDto(1L, "입찰", 1000))), pageRequest, 1);
+        Page<TradeLoadDto> page = new PageImpl<>(new ArrayList<>(List.of(new TradeLoadDto(1L, "입찰", 255, 1000))), pageRequest, 1);
 
         given(tradeRepository.findTradeByEmailAndTradeType(any(), any(), any())).willReturn(page);
 
         // when
-        Page<TradeLoadDto> findPage = tradeService.findTradeByEmailAndTradeType("이메일", TradeType.SELL, pageRequest);
+        Page<TradeLoadDto> findPage = tradeService.findTradeByEmailAndTradeType("이메일", "sell", pageRequest);
 
         // then
         assertThat(findPage).isEqualTo(page);
@@ -149,5 +154,50 @@ class TradeServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tradeService.deleteTrade("이메일", tradeDeleteDto)).isInstanceOf(TradeEmptyResultDataAccessException.class);
+    }
+
+
+    @Test
+    @DisplayName("체결_거래_내역_테스트")
+    public void 최근_체결_거래_내역() {
+        // given
+        LocalDateTime localDateTime = LocalDateTime.now();
+        TradeDoneDto tradeDoneDto = TradeDoneDto.builder()
+                .price(1000)
+                .size(250)
+                .tradeDate(localDateTime)
+                .build();
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        Page<TradeDoneDto> page = new PageImpl<>(new ArrayList<>(List.of(tradeDoneDto)), pageRequest, 1);
+
+        given(tradeRepository.findDoneTrade(any(), any())).willReturn(page);
+
+        // when
+        Page<TradeDoneDto> resultPage = tradeService.findDoneTrade(1L, pageRequest);
+
+        // then
+        assertThat(resultPage).isEqualTo(page);
+    }
+
+
+    @Test
+    @DisplayName("입찰_내역_테스트")
+    public void 입찰_내역() {
+        // given
+        TradeTransactionDto tradeTransactionDto = TradeTransactionDto.builder()
+                .price(1000)
+                .size(250)
+                .quantity(1L)
+                .build();
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        Page<TradeTransactionDto> page = new PageImpl<>(new ArrayList<>(List.of(tradeTransactionDto)), pageRequest, 1);
+
+        given(tradeRepository.findTransactionTrade(any(), any(), any())).willReturn(page);
+
+        // when
+        Page<TradeTransactionDto> resultPage = tradeService.findTransactionTrade(1L, "sell", pageRequest);
+
+        // then
+        assertThat(resultPage).isEqualTo(page);
     }
 }
