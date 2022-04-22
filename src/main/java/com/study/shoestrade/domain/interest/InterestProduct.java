@@ -1,5 +1,6 @@
 package com.study.shoestrade.domain.interest;
 
+import com.study.shoestrade.domain.BaseEntity;
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.product.ProductSize;
 import lombok.*;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class InterestProduct {
+public class InterestProduct extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "interestProduct_id")

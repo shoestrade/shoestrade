@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AdminService {
+public class  AdminService {
 
     private final MemberRepository memberRepository;
 

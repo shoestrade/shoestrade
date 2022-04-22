@@ -88,7 +88,7 @@ class ProductServiceTest {
                 .build();
 
         Product product = Product.builder()
-                .name("변경 전 상품명")
+                .korName("변경 전 상품명")
                 .id(1L)
                 .brand(brand)
                 .build();
@@ -128,7 +128,7 @@ class ProductServiceTest {
         // given
         ArrayList<Product> list = new ArrayList<>();
         list.add(Product.builder()
-                .name("상품명1")
+                .korName("상품명1")
                 .brand(Brand.builder()
                         .id(1L)
                         .build())
@@ -156,7 +156,7 @@ class ProductServiceTest {
     void 상품_이미지_등록() {
         // given
         Product product = Product.builder()
-                .name("상품명1")
+                .korName("상품명1")
                 .brand(Brand.builder()
                         .id(1L)
                         .build())

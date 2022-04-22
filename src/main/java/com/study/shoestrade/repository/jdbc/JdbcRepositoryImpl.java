@@ -1,5 +1,6 @@
 package com.study.shoestrade.repository.jdbc;
 
+import com.study.shoestrade.domain.interest.InterestProduct;
 import com.study.shoestrade.domain.product.ProductImage;
 import com.study.shoestrade.domain.product.ProductSize;
 import lombok.RequiredArgsConstructor;
@@ -7,8 +8,11 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +64,28 @@ public class JdbcRepositoryImpl implements JdbcRepository {
         }
     }
 
+    /**
+     * 관심 상품 저장
+     * @param interests : 저장할 관심 상품
+     */
+    @Override
+    public void saveAllInterest(List<InterestProduct> interests) {
+        int batchCount = 0;
+        List<InterestProduct> subInterests = new ArrayList<>();
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+
+        for(int i = 0; i < interests.size(); i++){
+            subInterests.add(interests.get(i));
+            if((i+1) % batchSize == 0){
+                batchCount = batchInsertInterest(batchSize, batchCount, subInterests, now);
+            }
+        }
+        if(!subInterests.isEmpty()){
+            batchCount = batchInsertInterest(batchSize, batchCount, subInterests, now);
+        }
+    }
+
+
     private int batchInsertImage(int batchSize, int batchCount, List<ProductImage> subImages) {
         jdbcTemplate.batchUpdate("insert into product_image (`name`, `product_id`) values (?,?)"
                 , new BatchPreparedStatementSetter() {
@@ -94,6 +120,27 @@ public class JdbcRepositoryImpl implements JdbcRepository {
                     }
                 });
         subItems.clear();
+        batchCount++;
+        return batchCount;
+    }
+
+    private int batchInsertInterest(int batchSize, int batchCount, List<InterestProduct> subInterests, Timestamp now){
+        jdbcTemplate.batchUpdate("insert into interest_product (`member_id`, `product_size_id`, `created_date`, `last_modified_date`) values (?, ?, ?, ?)"
+                , new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setLong(1, subInterests.get(i).getMember().getId());
+                        ps.setLong(2, subInterests.get(i).getProductSize().getId());
+                        ps.setTimestamp(3, now);
+                        ps.setTimestamp(4, now);
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return subInterests.size();
+                    }
+                });
+        subInterests.clear();
         batchCount++;
         return batchCount;
     }
