@@ -47,6 +47,8 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
                 .join(productSize.product, product)
                 .join(memberType(tradeType), member)
                 .where(member.email.eq(email), trade.tradeType.eq(tradeType))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         return new PageImpl<>(content, pageable, content.size());
@@ -86,7 +88,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
                 .join(trade.productSize, productSize)
                 .where(productSize.product.id.eq(productId), trade.tradeState.eq(tradeState),
                         trade.id.in(
-                                select(a.id.min())
+                                select(a.id.min())          // 일단 id가 가장 빠른걸로 가져옴, 생각 좀 해야할듯
                                         .from(a)
                                         .leftJoin(b)
                                         .on(a.productSize.eq(b.productSize), compareMinMax(tradeState, a, b))
@@ -103,6 +105,8 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
     }
 
     private BooleanExpression compareMinMax(TradeState tradeState, QTrade a, QTrade b) {
-        return tradeState.equals(TradeState.SELL) ? a.price.lt(b.price) : b.price.lt(a.price);
+        return tradeState.equals(TradeState.SELL)
+                ? a.price.lt(b.price).or(a.price.eq(b.price).and(b.lastModifiedDate.lt(a.lastModifiedDate)))
+                : b.price.lt(a.price).or(a.price.eq(b.price).and(a.lastModifiedDate.lt(b.lastModifiedDate)));
     }
 }

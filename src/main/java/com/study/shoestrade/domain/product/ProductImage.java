@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ProductImage extends BaseEntity {
+public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
