@@ -1,8 +1,10 @@
 package com.study.shoestrade.repository.trade;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.shoestrade.domain.member.QMember;
+import com.study.shoestrade.domain.product.QProductImage;
 import com.study.shoestrade.domain.trade.QTrade;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
@@ -16,9 +18,11 @@ import org.springframework.data.domain.Pageable;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.querydsl.jpa.JPAExpressions.*;
 import static com.querydsl.jpa.JPAExpressions.select;
 import static com.study.shoestrade.domain.member.QMember.member;
 import static com.study.shoestrade.domain.product.QProduct.product;
+import static com.study.shoestrade.domain.product.QProductImage.productImage;
 import static com.study.shoestrade.domain.product.QProductSize.productSize;
 import static com.study.shoestrade.domain.trade.QTrade.trade;
 
@@ -41,12 +45,13 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
     @Override
     public Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, TradeType tradeType, Pageable pageable) {
 
-        List<TradeLoadDto> content = queryFactory.select(new QTradeLoadDto(trade.id, product.korName, productSize.size, trade.price))
+        List<TradeLoadDto> content = queryFactory.select(new QTradeLoadDto(trade.id, product.korName, productSize.size, trade.price, productImage.name))
                 .from(trade)
                 .join(trade.productSize, productSize)
                 .join(productSize.product, product)
+                .join(productImage).on(product.eq(productImage.product))
                 .join(memberType(tradeType), member)
-                .where(member.email.eq(email), trade.tradeType.eq(tradeType))
+                .where(member.email.eq(email), trade.tradeType.eq(tradeType), productImage.id.in(select(productImage.id.min()).from(productImage).groupBy(productImage.product)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -88,7 +93,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
                 .join(trade.productSize, productSize)
                 .where(productSize.product.id.eq(productId), trade.tradeState.eq(tradeState),
                         trade.id.in(
-                                select(a.id.min())          // 일단 id가 가장 빠른걸로 가져옴, 생각 좀 해야할듯
+                                select(a.id.min())
                                         .from(a)
                                         .leftJoin(b)
                                         .on(a.productSize.eq(b.productSize), compareMinMax(tradeState, a, b))

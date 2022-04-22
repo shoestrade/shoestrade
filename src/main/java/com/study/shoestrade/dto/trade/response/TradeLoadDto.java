@@ -15,13 +15,16 @@ public class TradeLoadDto {
     private int size;
     private int price;
 
+    private String image;
+
     @Builder
     @QueryProjection
-    public TradeLoadDto(Long id, String productKorName, int size, int price) {
+    public TradeLoadDto(Long id, String productKorName, int size, int price, String image) {
         this.id = id;
         this.productKorName = productKorName;
         this.size = size;
         this.price = price;
+        this.image = image;
     }
 
     @QueryProjection
