@@ -46,11 +46,30 @@ public class InterestController {
         return responseService.getSingleResult(responseDto);
     }
 
+    /**
+     *  마이페이지에서 관심 상품 보기
+     * @param email : accessToken email
+     * @param pageable : page 상태
+     * @return
+     */
     @GetMapping("/my/wish")
     public SingleResult<Page<MyInterest>> getMyWishList(@LoginMember String email, @PageableDefault(size = 10) Pageable pageable){
         Page<MyInterest> responseDto = interestService.getMyWishList(email, pageable);
         return responseService.getSingleResult(responseDto);
     }
 
+    /**
+     * 마이페이제에서 관심 상품 삭제
+     * @param email : accessToken email
+     * @param productId : 상품 id
+     * @param interestId : 관심 상품 id
+     * @return
+     */
+    @DeleteMapping("/my/wish/{productId}/{interestId}")
+    public Result deleteInterestProduct(@LoginMember String email, @PathVariable("productId") Long productId,
+                                        @PathVariable("interestId") Long interestId){
+        interestService.deleteInterestProduct(email, productId, interestId);
+        return responseService.getSuccessResult();
+    }
 
 }

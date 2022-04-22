@@ -57,7 +57,7 @@ public class InterestProductRepositoryImpl implements InterestProductRepositoryC
                         trade.tradeType.eq(TradeType.SELL).or(trade.isNull())
                         )
                 .groupBy(interestProduct.id, productImage.name)
-                .orderBy(interestProduct.lastModifiedDate.asc())
+                .orderBy(interestProduct.lastModifiedDate.asc(), interestProduct.productSize.id.asc())
                 .offset(pageable.getOffset())
                 .limit(10)
                 .fetch();

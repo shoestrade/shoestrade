@@ -8,8 +8,11 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,15 +72,16 @@ public class JdbcRepositoryImpl implements JdbcRepository {
     public void saveAllInterest(List<InterestProduct> interests) {
         int batchCount = 0;
         List<InterestProduct> subInterests = new ArrayList<>();
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
         for(int i = 0; i < interests.size(); i++){
             subInterests.add(interests.get(i));
             if((i+1) % batchSize == 0){
-                batchCount = batchInsertInterest(batchSize, batchCount, subInterests);
+                batchCount = batchInsertInterest(batchSize, batchCount, subInterests, now);
             }
         }
         if(!subInterests.isEmpty()){
-            batchCount = batchInsertInterest(batchSize, batchCount, subInterests);
+            batchCount = batchInsertInterest(batchSize, batchCount, subInterests, now);
         }
     }
 
@@ -120,13 +124,15 @@ public class JdbcRepositoryImpl implements JdbcRepository {
         return batchCount;
     }
 
-    private int batchInsertInterest(int batchSize, int batchCount, List<InterestProduct> subInterests){
-        jdbcTemplate.batchUpdate("insert into interest_product (`member_id`, `product_size_id`) values (?, ?)"
+    private int batchInsertInterest(int batchSize, int batchCount, List<InterestProduct> subInterests, Timestamp now){
+        jdbcTemplate.batchUpdate("insert into interest_product (`member_id`, `product_size_id`, `created_date`, `last_modified_date`) values (?, ?, ?, ?)"
                 , new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         ps.setLong(1, subInterests.get(i).getMember().getId());
                         ps.setLong(2, subInterests.get(i).getProductSize().getId());
+                        ps.setTimestamp(3, now);
+                        ps.setTimestamp(4, now);
                     }
 
                     @Override

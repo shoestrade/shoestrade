@@ -115,12 +115,11 @@ public class InterestServiceTest {
 
     @Test
     @DisplayName("관심 상품에 등록되어 있지 않는 상품은 관심 상품으로 등록할 수 있다.")
-    public void 관심_상품_추가_성공1() {
+    public void 관심_상품_추가_성공() {
         // given
         InterestProductRequestDto requestDto = InterestProductRequestDto.builder()
-                .interests(List.of(100L, 101L))
+                .interests(List.of(100L, 101L, 102L, 103L))
                 .build();
-
 
         // mocking
         given(memberRepository.findByEmail(any())).willReturn(Optional.of(member));
@@ -128,12 +127,11 @@ public class InterestServiceTest {
         given(interestProductRepository.findPreInterests(any(), any())).willReturn(new ArrayList<>());
         given(productSizeRepository.findProductSizes(3L, requestDto.getInterests())).willReturn(productSizes);
 
-
         // when
         interestService.addWishList("email", product.getId(), requestDto);
 
         // then
-        assertThat(product.getInterest()).isEqualTo(2);
+        assertThat(product.getInterest()).isEqualTo(4);
     }
 
     @Test
@@ -187,4 +185,25 @@ public class InterestServiceTest {
         assertThat(responseDto.getInterestProductSizes().get(3).isChecked()).isFalse();
     }
 
+    @Test
+    public void 관심_상품_삭제() {
+        // given
+        InterestProduct interestProduct = InterestProduct.builder()
+                .id(100L)
+                .member(member)
+                .productSize(productSizes.get(0))
+                .build();
+
+        product.addInterest(1);
+
+        // mocking
+        given(interestProductRepository.findOneInterest("email", 3L, 100L)).willReturn(Optional.of(interestProduct));
+        given(productRepository.findById(3L)).willReturn(Optional.of(product));
+
+        // when
+        interestService.deleteInterestProduct("email", 3L, 100L);
+        
+        // then
+        assertThat(product.getInterest()).isEqualTo(0);
+    }
 }

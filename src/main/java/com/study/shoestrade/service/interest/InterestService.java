@@ -8,6 +8,7 @@ import com.study.shoestrade.dto.interest.request.InterestProductRequestDto;
 import com.study.shoestrade.dto.interest.response.InterestProductResponseDto;
 import com.study.shoestrade.dto.interest.response.InterestProductResponseSizeDto;
 import com.study.shoestrade.dto.interest.response.MyInterest;
+import com.study.shoestrade.exception.interest.InterestNotFoundException;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.exception.product.ProductEmptyResultDataAccessException;
 import com.study.shoestrade.repository.interest.InterestProductRepository;
@@ -22,8 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -47,16 +47,31 @@ public class InterestService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductEmptyResultDataAccessException(productId.toString(), 1));
 
+        // 기존에 등록되어 있는 관심 상품
         List<InterestProduct> preInterests = interestProductRepository.findPreInterests(email, productId);
-
-        // 기존 관심 상품 제거
-        interestProductRepository.deleteAllInBatch(preInterests);
+        // 기존 관심 상품 toMap
+        Map<ProductSize, Long> preProducts = preInterests.stream()
+                .collect(Collectors.toMap(InterestProduct::getProductSize, InterestProduct::getId));
 
         // 입력 받은 ProductSize의 Id로 ProductSize들 찾기
         List<ProductSize> productSizes = productSizeRepository.findProductSizes(productId, requestDto.getInterests());
+        // ProductSize -> toSet
+        Set<ProductSize> newProducts = new HashSet<>(productSizes);
 
-        // ProductSize들로 InterestProduct 객체 만들기
-        List<InterestProduct> interestProducts = productSizes.stream()
+        // 삭제할 기존 관심 상품
+        List<InterestProduct> deleteInterests = preProducts.entrySet().stream()
+                .filter(entry -> !newProducts.contains(entry.getKey()))
+                .map(entry ->
+                        InterestProduct.builder()
+                                .id(entry.getValue())
+                                .member(findMember)
+                                .productSize(entry.getKey())
+                                .build())
+                .collect(Collectors.toList());
+
+        // 추가할 새로운 관심 상품
+        List<InterestProduct> insertInterests = newProducts.stream()
+                .filter(p -> !preProducts.containsKey(p))
                 .map(productSize ->
                         InterestProduct.builder()
                                 .member(findMember)
@@ -64,12 +79,13 @@ public class InterestService {
                                 .build())
                 .collect(Collectors.toList());
 
-
+        // 삭제된 관심 상품 삭제
+        interestProductRepository.deleteAllInBatch(deleteInterests);
         // 새로운 관심 상품 리스트 추가 (벌크)
-        jdbcRepository.saveAllInterest(interestProducts);
+        jdbcRepository.saveAllInterest(insertInterests);
 
-        product.subInterest(preInterests.size());
-        product.addInterest(requestDto.getInterests().size());
+        product.subInterest(deleteInterests.size());
+        product.addInterest(insertInterests.size());
     }
 
     // 상품페이지에서 관심 상품 목록 보기
@@ -95,5 +111,17 @@ public class InterestService {
     // 마이페이지에서 관심 상품 목록 보기
     public Page<MyInterest> getMyWishList(String email, Pageable pageable){
         return interestProductRepository.findMyInterests(email, pageable);
+    }
+
+    // 마이페이지에서 관심 상품 삭제
+    public void deleteInterestProduct(String email, Long productId, Long interestId){
+        InterestProduct interestProduct = interestProductRepository.findOneInterest(email, productId, interestId)
+                .orElseThrow(InterestNotFoundException::new);
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductEmptyResultDataAccessException(productId.toString(), 1));
+
+        product.subInterest(1);
+        interestProductRepository.delete(interestProduct);
     }
 }

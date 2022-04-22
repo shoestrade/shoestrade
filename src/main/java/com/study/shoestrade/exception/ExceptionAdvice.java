@@ -7,7 +7,7 @@ import com.study.shoestrade.exception.address.BaseAddressNotDeleteException;
 import com.study.shoestrade.exception.address.BaseAddressUncheckedException;
 import com.study.shoestrade.exception.brand.BrandDuplicationException;
 import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
-import com.study.shoestrade.exception.interest.DuplicateInterestException;
+import com.study.shoestrade.exception.interest.InterestNotFoundException;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
 import com.study.shoestrade.exception.member.*;
 import com.study.shoestrade.exception.product.*;
@@ -111,9 +111,9 @@ public class ExceptionAdvice {
         return responseService.getFailureResult(-110,  e.getMessage() +  "까지 정지된 회원입니다.");
     }
 
-    @ExceptionHandler(DuplicateInterestException.class)
-    public Result duplicateInterestException(DuplicateInterestException e){
-        return responseService.getFailureResult(-111, e.getMessage() + "는 이미 관심 상품에 등록되어 있습니다.");
+    @ExceptionHandler(InterestNotFoundException.class)
+    public Result interestNotFoundException(InterestNotFoundException e){
+        return responseService.getFailureResult(-111, "존재하지 않는 관심 상품입니다.");
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------- //
