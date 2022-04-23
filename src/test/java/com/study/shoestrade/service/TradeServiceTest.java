@@ -90,7 +90,7 @@ class TradeServiceTest {
         // given
         PageRequest pageRequest = PageRequest.of(0, 3);
 
-        Page<TradeLoadDto> page = new PageImpl<>(new ArrayList<>(List.of(new TradeLoadDto(1L, "입찰", 255, 1000))), pageRequest, 1);
+        Page<TradeLoadDto> page = new PageImpl<>(new ArrayList<>(List.of(new TradeLoadDto(1L, "입찰", 255, 1000, "이미지1"))), pageRequest, 1);
 
         given(tradeRepository.findTradeByEmailAndTradeType(any(), any(), any())).willReturn(page);
 

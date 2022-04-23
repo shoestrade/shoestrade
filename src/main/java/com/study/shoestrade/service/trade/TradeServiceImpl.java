@@ -49,8 +49,10 @@ public class TradeServiceImpl implements TradeService {
                         .price(tradeDto.getPrice())
                         .productSize(productSizeRepository.findById(tradeDto.getProductSizeId())
                                 .orElseThrow(() -> new ProductSizeNoSuchElementException(String.valueOf(tradeDto.getProductSizeId()))))
-                        .seller(memberRepository.findByEmail(email)
+                        .purchaser(tradeDto.getTradeType() == TradeType.SELL ? null : memberRepository.findByEmail(email)
                                 .orElseThrow(MemberNotFoundException::new))
+                        .seller(tradeDto.getTradeType() == TradeType.SELL ? memberRepository.findByEmail(email)
+                                .orElseThrow(MemberNotFoundException::new) : null)
                         .tradeState(tradeDto.getTradeType() == TradeType.SELL ? TradeState.SELL : TradeState.PURCHASE)
                         .tradeType(tradeDto.getTradeType())
                         .build());

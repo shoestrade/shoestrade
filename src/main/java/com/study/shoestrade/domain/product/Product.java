@@ -1,7 +1,7 @@
 package com.study.shoestrade.domain.product;
 
 import com.study.shoestrade.domain.BaseEntity;
-import com.study.shoestrade.dto.product.ProductDto;
+import com.study.shoestrade.dto.product.request.ProductSaveDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,7 +39,7 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductSize> productSizeList = new ArrayList<>();
 
-    public void changeProduct(ProductDto productDto) {
+    public void changeProduct(ProductSaveDto productDto) {
         this.id = productDto.getId();
         this.korName = productDto.getKorName();
         this.engName = productDto.getEngName();

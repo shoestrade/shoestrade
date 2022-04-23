@@ -2,7 +2,7 @@ package com.study.shoestrade.controller;
 
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
-import com.study.shoestrade.dto.product.ProductDto;
+import com.study.shoestrade.dto.product.request.ProductSaveDto;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
 import com.study.shoestrade.service.product.ProductService;
@@ -25,7 +25,7 @@ public class ProductController {
      * @return 등록 완료된 상품 정보
      */
     @PostMapping
-    public Result saveProduct(@RequestBody ProductDto productDto) {
+    public Result saveProduct(@RequestBody ProductSaveDto productDto) {
         return responseService.getSingleResult(productService.saveProduct(productDto));
     }
 
@@ -61,7 +61,7 @@ public class ProductController {
      * @return 변경 성공 여부
      */
     @PostMapping("/{id}")
-    public Result updateProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
+    public Result updateProduct(@PathVariable Long id, @RequestBody ProductSaveDto productDto) {
         productService.updateProduct(id, productDto);
         return responseService.getSuccessResult();
     }

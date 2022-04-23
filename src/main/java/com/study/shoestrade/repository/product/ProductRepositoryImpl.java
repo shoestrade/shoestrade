@@ -62,11 +62,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         List<ProductDetailDto> content = queryFactory.select(
                         new QProductDetailDto(
                                 product,
-                                select(trade.price)
-                                        .from(trade)
-                                        .join(trade.productSize, productSize)
-                                        .where(trade.tradeState.eq(TradeState.DONE), productSize.product.id.eq(productId))
-                                        .orderBy(trade.lastModifiedDate.desc()),
+                                trade.price,
                                 select(trade.price.max())
                                         .from(trade)
                                         .join(trade.productSize, productSize)
@@ -77,7 +73,11 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                                         .where(trade.tradeState.eq(TradeState.SELL), productSize.product.id.eq(productId)))
                 )
                 .from(product)
-                .where(product.id.eq(productId))
+                .join(productSize).on(product.eq(productSize.product))
+                .join(trade).on(productSize.eq(trade.productSize))
+                .where(product.id.eq(productId), trade.tradeState.eq(TradeState.DONE))
+                .orderBy(trade.lastModifiedDate.desc())
+                .limit(1)
                 .fetch();
 
         return Optional.ofNullable(content.size() != 0 ? content.get(0) : null);

@@ -3,9 +3,10 @@ package com.study.shoestrade.service;
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
-import com.study.shoestrade.dto.product.ProductDto;
+import com.study.shoestrade.dto.product.request.ProductSaveDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
 import com.study.shoestrade.dto.product.response.ProductDetailDto;
+import com.study.shoestrade.dto.product.response.ProductLoadDto;
 import com.study.shoestrade.repository.brand.BrandRepository;
 import com.study.shoestrade.repository.jdbc.JdbcRepository;
 import com.study.shoestrade.repository.product.ProductImageRepository;
@@ -53,7 +54,7 @@ class ProductServiceTest {
     @DisplayName("상품_등록_테스트")
     void 상품_등록() {
         // given
-        ProductDto productDto = ProductDto.builder()
+        ProductSaveDto productDto = ProductSaveDto.builder()
                 .id(1L)
                 .korName("상품명1")
                 .code("상품코드1")
@@ -95,7 +96,7 @@ class ProductServiceTest {
                 .brand(brand)
                 .build();
 
-        ProductDto updateDto = ProductDto.builder()
+        ProductSaveDto updateDto = ProductSaveDto.builder()
                 .korName("변경 후 상품명")
                 .engName("engName")
                 .brandId(2L)
@@ -147,10 +148,10 @@ class ProductServiceTest {
                 .brandIdList(new ArrayList<>(List.of(1L)))
                 .build();
 
-        Page<ProductDto> findPages = productService.findProductByNameInBrand(productSearchDto, pageRequest);
+        Page<ProductLoadDto> findPages = productService.findProductByNameInBrand(productSearchDto, pageRequest);
 
         // then
-        assertThat(findPages).isEqualTo(page.map(ProductDto::create));
+        assertThat(findPages).isEqualTo(page.map(ProductLoadDto::create));
     }
 
     @Test
@@ -199,7 +200,7 @@ class ProductServiceTest {
                 .id(2L)
                 .build();
 
-        ProductDetailDto productDetailDto = ProductDetailDto.builder().korName("상품명").engName("engName").id(1L).brandId(2L).imPurchasePrice(1000).imSalesPrice(1000).lastedPrice(10000).build();
+        ProductDetailDto productDetailDto = ProductDetailDto.builder().korName("상품명").engName("engName").id(1L).brandName("브랜드1").imPurchasePrice(1000).imSalesPrice(1000).lastedPrice(10000).build();
 
         given(productRepository.findProductDetail(any())).willReturn(Optional.ofNullable(productDetailDto));
 

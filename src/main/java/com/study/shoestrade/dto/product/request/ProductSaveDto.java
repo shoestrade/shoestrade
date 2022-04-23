@@ -1,10 +1,9 @@
-package com.study.shoestrade.dto.product;
+package com.study.shoestrade.dto.product.request;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.domain.product.ProductImage;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ProductDto {
+public class ProductSaveDto {
 
     private Long id;
     private String korName;
@@ -30,19 +29,7 @@ public class ProductDto {
     private Long brandId;
     private List<String> imageList = new ArrayList<>();
 
-    public static ProductDto create(Product product) {
-        return ProductDto.builder()
-                .id(product.getId())
-                .korName(product.getKorName())
-                .engName(product.getEngName())
-                .code(product.getCode())
-                .color(product.getColor())
-                .interest(product.getInterest())
-                .releasePrice(product.getReleasePrice())
-                .brandId(product.getBrand().getId())
-                .imageList(product.getImageList().stream().map(ProductImage::getName).collect(Collectors.toList()))
-                .build();
-    }
+
 
     public Product toEntity(Brand brand) {
         return Product.builder()
