@@ -2,8 +2,11 @@ package com.study.shoestrade.service.admin;
 
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.member.Role;
+import com.study.shoestrade.dto.admin.MemberDetailDto;
 import com.study.shoestrade.dto.admin.PageMemberDto;
+import com.study.shoestrade.dto.interest.response.MyInterest;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.repository.interest.InterestProductRepository;
 import com.study.shoestrade.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,14 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AdminService {
+public class  AdminService {
 
     private final MemberRepository memberRepository;
+    private final InterestProductRepository interestProductRepository;
 
     // 회원 리스트 조회
     @Transactional(readOnly = true)
@@ -28,7 +33,13 @@ public class AdminService {
     }
 
     // 회원 상세 정보 조회
+    @Transactional(readOnly = true)
+    public MemberDetailDto getMemberDetail(Long id){
+        Member member = memberRepository.findMemberDetail(id).orElseThrow(MemberNotFoundException::new);
+        List<MyInterest> memberInterests = interestProductRepository.findMemberInterests(id);
 
+        return MemberDetailDto.create(member, memberInterests);
+    }
 
     // 회원 정지
     public void banMember(Long member_id, int day){

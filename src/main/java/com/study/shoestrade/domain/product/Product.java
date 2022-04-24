@@ -52,4 +52,12 @@ public class Product extends BaseEntity {
     public void changeProductBrand(Brand brand) {
         this.brand = brand;
     }
+
+    public void addInterest(int count){
+        this.interest += count;
+    }
+
+    public void subInterest(int count){
+        this.interest -= count;
+    }
 }
