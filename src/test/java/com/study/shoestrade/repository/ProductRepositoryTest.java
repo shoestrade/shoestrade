@@ -68,7 +68,7 @@ class ProductRepositoryTest {
 
         // then
         assertThat(findPages)
-                .extracting("name")
+                .extracting("korName")
                 .containsOnly("상품명1");
     }
 }

@@ -1,33 +1,32 @@
 package com.study.shoestrade.dto.product.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import com.querydsl.core.annotations.QueryProjection;
+import com.study.shoestrade.domain.product.Product;
+import com.study.shoestrade.domain.product.ProductImage;
+import com.study.shoestrade.dto.product.request.ProductSaveDto;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
-@Data
+
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class ProductDetailDto {
-
-    private Long id;
-    private String name;
-    private String code;
-    private String color;
-    private int releasePrice;
-    private int interest;
-    private String brandName;
+@Getter
+@SuperBuilder
+public class ProductDetailDto extends ProductLoadDto {
 
     private int lastedPrice;
-    private int ImSalesPrice;
-    private int ImPurchasePrice;
+    private int imSalesPrice;
+    private int imPurchasePrice;
 
-    private List<String> imageList = new ArrayList<>();
-
-
-
+    @QueryProjection
+    public ProductDetailDto(Product product, int lastedPrice, int imSalesPrice, int imPurchasePrice) {
+        super(product.getId(), product.getKorName(), product.getEngName(), product.getCode(),
+                product.getColor(), product.getReleasePrice(), product.getInterest(), product.getBrand().getEngName(),
+                product.getImageList().stream().map(ProductImage::getName).collect(Collectors.toList()));
+        this.lastedPrice = lastedPrice;
+        this.imSalesPrice = imSalesPrice;
+        this.imPurchasePrice = imPurchasePrice;
+    }
 }

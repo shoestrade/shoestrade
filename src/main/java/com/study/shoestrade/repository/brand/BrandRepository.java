@@ -11,17 +11,17 @@ import java.util.Optional;
 public interface BrandRepository extends JpaRepository<Brand, Long>, BrandRepositoryCustom {
 
     /**
-     * 동일한 이름 가진 브랜드 검색
+     * 동일한 한국 이름 가진 브랜드 검색
      *
-     * @param name 검색어
+     * @param korName 검색어
      * @return 검색 결과
      */
     Optional<Brand> findByKorName(String korName);
 
     /**
-     * 동일한 이름 가진 브랜드 검색
+     * 동일한 영어 이름 가진 브랜드 검색
      *
-     * @param name 검색어
+     * @param engName 검색어
      * @return 검색 결과
      */
     Optional<Brand> findByEngName(String engName);

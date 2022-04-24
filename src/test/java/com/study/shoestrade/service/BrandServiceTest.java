@@ -68,12 +68,12 @@ class BrandServiceTest {
         given(brandRepository.findById(brand1.getId())).willReturn(Optional.ofNullable(brand1));
 
         BrandDto updateBrand = BrandDto.builder()
-                .id(1L)
                 .korName("언더아머")
+                .engName("underarmour")
                 .build();
 
         // when
-        brandService.updateBrand(updateBrand);
+        brandService.updateBrand(1L, updateBrand);
 
         // then
         Optional<Brand> findBrand = brandRepository.findById(brand1.getId());

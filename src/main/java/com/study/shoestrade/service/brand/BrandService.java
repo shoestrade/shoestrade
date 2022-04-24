@@ -9,7 +9,7 @@ public interface BrandService {
     /**
      * 브랜드 등록
      *
-     * @param name 등록할 브랜드 이름
+     * @param brandDto 등록할 브랜드 정보
      * @return 등록된 브랜드 id
      */
     BrandDto saveBrand(BrandDto brandDto);
@@ -17,9 +17,9 @@ public interface BrandService {
     /**
      * 브랜드 수정
      *
-     * @param brandDto 수정할 브랜드
+     * @param brandDto 수정할 브랜드 정보
      */
-    void updateBrand(BrandDto brandDto);
+    void updateBrand(Long id, BrandDto brandDto);
 
     /**
      * 브랜드 삭제
@@ -32,6 +32,7 @@ public interface BrandService {
      * 브랜드 검색
      *
      * @param name 검색할 브랜드 이름
+     * @param pageable 페이지 정보
      * @return 검색된 브랜드 리스트
      */
     Page<BrandDto> findByBrandName(String name, Pageable pageable);

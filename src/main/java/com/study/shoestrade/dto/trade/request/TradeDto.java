@@ -1,6 +1,5 @@
 package com.study.shoestrade.dto.trade.request;
 
-import com.querydsl.core.annotations.QueryProjection;
 import com.study.shoestrade.domain.trade.TradeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,11 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TradeUpdateDto {
-
+public class TradeDto {
     private Long id;
 
     private int price;
+
+    private Long productSizeId;
 
     private TradeType tradeType;
 }

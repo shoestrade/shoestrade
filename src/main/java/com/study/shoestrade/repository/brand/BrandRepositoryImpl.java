@@ -20,6 +20,12 @@ public class BrandRepositoryImpl implements BrandRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    /**
+     * 검색한 문자가 포함된 Brand 반환
+     * @param name 검색어
+     * @param pageable 페이지 정보
+     * @return 검색 결과
+     */
     @Override
     public Page<Brand> findByNameContains(String name, Pageable pageable) {
         List<Brand> content = queryFactory
@@ -32,6 +38,12 @@ public class BrandRepositoryImpl implements BrandRepositoryCustom {
         return new PageImpl<>(content, pageable, content.size());
     }
 
+    /**
+     * 검색어 존재 확인
+     *
+     * @param name 검색어
+     * @return 검색어 적용 결과
+     */
     private BooleanExpression brandContains(String name) {
         return name == null || name.isEmpty() ? null : brand.engName.contains(name).or(brand.korName.contains(name));
     }
