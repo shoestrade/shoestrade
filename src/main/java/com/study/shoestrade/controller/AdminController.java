@@ -3,6 +3,7 @@ package com.study.shoestrade.controller;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
+import com.study.shoestrade.dto.admin.MemberDetailDto;
 import com.study.shoestrade.dto.admin.PageMemberDto;
 import com.study.shoestrade.service.admin.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,11 @@ public class AdminController {
         return responseService.getSingleResult(responseDto);
     }
 
-//    @GetMapping("/admin/members/{id}")
-//    public SingleResult<>
+    @GetMapping("/admin/members/{id}")
+    public SingleResult<MemberDetailDto> getMemberDetail(@PathVariable("id") Long id){
+        MemberDetailDto responseDto = adminService.getMemberDetail(id);
+        return responseService.getSingleResult(responseDto);
+    }
 
     /**
      * 회원 정지

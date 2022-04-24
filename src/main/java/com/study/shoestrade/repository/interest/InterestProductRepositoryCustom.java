@@ -12,4 +12,6 @@ public interface InterestProductRepositoryCustom {
     List<InterestProduct> findPreInterests(String email, Long productId);
 
     Page<MyInterest> findMyInterests(String email, Pageable pageable);
+
+    List<MyInterest> findMemberInterests(Long id);
 }
