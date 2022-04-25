@@ -54,14 +54,4 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
         return email == null ? null : member.email.contains(email);
     }
 
-    @Override
-    public Optional<Member> findMemberDetail(Long id) {
-        return Optional.ofNullable(queryFactory.select(member)
-                .from(member)
-                .join(member.addressList, address).fetchJoin()
-                .where(member.id.eq(id))
-                .fetchOne());
-    }
-
-
 }
