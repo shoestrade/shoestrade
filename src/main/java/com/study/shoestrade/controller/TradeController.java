@@ -37,7 +37,7 @@ public class TradeController {
     /**
      * 거래 내역 수 조회
      * @param email : accessToken email
-     * @param tradeType : 입찰 타입
+     * @param tradeType : 거래 타입 {sell : 구매 거래 내역, purchase : 판매 거래 내역}
      * @return
      */
     @GetMapping("/{tradeType}/count")
