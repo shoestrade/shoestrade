@@ -26,7 +26,8 @@ public class ProductController {
      */
     @PostMapping
     public Result saveProduct(@RequestBody ProductSaveDto productDto) {
-        return responseService.getSingleResult(productService.saveProduct(productDto));
+        productService.saveProduct(productDto);
+        return responseService.getSuccessResult();
     }
 
     /**

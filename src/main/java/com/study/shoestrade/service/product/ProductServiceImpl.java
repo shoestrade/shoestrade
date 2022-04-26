@@ -46,11 +46,10 @@ public class ProductServiceImpl implements ProductService {
      * 상품 등록
      *
      * @param productSaveDto 등록할 상품 정보
-     * @return 등록한 상품 id
      */
     @Override
     @Transactional
-    public ProductLoadDto saveProduct(ProductSaveDto productSaveDto) {
+    public void saveProduct(ProductSaveDto productSaveDto) {
         DuplicateProductKorName(productSaveDto.getKorName());
         DuplicateProductEngName(productSaveDto.getEngName());
 
@@ -79,8 +78,6 @@ public class ProductServiceImpl implements ProductService {
                         .product(product)
                         .build())
                 .collect(Collectors.toList()));
-
-        return ProductLoadDto.create(saveProduct);
     }
 
     /**
@@ -108,8 +105,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductLoadDto> findProductByNameInBrand(ProductSearchDto productSearchDto, Pageable pageable) {
         return productRepository.findProduct(productSearchDto.getName(),
-                        productSearchDto.getBrandIdList(), pageable)
-                .map(ProductLoadDto::create);
+                        productSearchDto.getBrandIdList(), pageable);
     }
 
     /**
