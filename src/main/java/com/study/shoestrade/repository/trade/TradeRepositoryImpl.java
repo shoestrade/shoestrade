@@ -9,8 +9,11 @@ import com.study.shoestrade.domain.trade.QTrade;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
+import com.study.shoestrade.dto.trade.response.QTradeBreakdownCountDto;
 import com.study.shoestrade.dto.trade.response.QTradeLoadDto;
+import com.study.shoestrade.dto.trade.response.TradeBreakdownCountDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
+import com.study.shoestrade.exception.trade.WrongStateException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -34,30 +37,38 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    /**
-     * 입찰 검색
-     *
-     * @param email     사용자 이메일
-     * @param tradeType 구매, 판매
-     * @param pageable  페이지 정보
-     * @return 검색된 입찰 내역
-     */
+    // 거래 내역 조회
     @Override
-    public Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, TradeType tradeType, Pageable pageable) {
-
-        List<TradeLoadDto> content = queryFactory.select(new QTradeLoadDto(trade.id, product.korName, productSize.size, trade.price, productImage.name))
+    public Page<TradeLoadDto> findBreakdown(String email, TradeType tradeType, String state, Pageable pageable) {
+        List<TradeLoadDto> content = queryFactory.select(
+                new QTradeLoadDto(
+                        trade.id,
+                        product.korName,
+                        productSize.size,
+                        trade.price,
+                        trade.tradeCompletionDate,
+                        trade.tradeState,
+                        productImage.name)
+                )
                 .from(trade)
                 .join(trade.productSize, productSize)
                 .join(productSize.product, product)
                 .join(productImage).on(product.eq(productImage.product))
                 .join(memberType(tradeType), member)
-                .where(member.email.eq(email), trade.tradeType.eq(tradeType), productImage.id.in(select(productImage.id.min()).from(productImage).groupBy(productImage.product)))
+                .where(
+                        trade.tradeState.in(getStateList(state, tradeType)),
+                        member.email.eq(email), trade.tradeType.eq(tradeType),
+                        productImage.id.in(select(productImage.id.min()).from(productImage).groupBy(productImage.product))
+                )
+                .orderBy(trade.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         return new PageImpl<>(content, pageable, content.size());
     }
+
+
 
     /**
      * 사용자 이메일과 입찰 id로 입찰 정보 가져옴
@@ -103,6 +114,52 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
                 )
                 .orderBy(productSize.size.asc())
                 .fetch();
+    }
+
+    // 거래 내역 수 조회
+    @Override
+    public TradeBreakdownCountDto findBreakdownCount(String email, TradeType tradeType) {
+        return queryFactory.select(new QTradeBreakdownCountDto(
+                        select(trade.count())
+                                .from(trade)
+                                .join(memberType(tradeType), member)
+                                .where(trade.tradeType.eq(tradeType), trade.tradeState.eq(getTradeState(tradeType)), member.email.eq(email)),
+                        select(trade.count())
+                                .from(trade)
+                                .join(memberType(tradeType), member)
+                                .where(trade.tradeType.eq(tradeType), trade.tradeState.in(progressTrade()), member.email.eq(email)),
+                        select(trade.count())
+                                .from(trade)
+                                .join(memberType(tradeType), member)
+                                .where(trade.tradeType.eq(tradeType), trade.tradeState.eq(TradeState.DONE), member.email.eq(email))
+                        )
+                )
+                .from(trade)
+                .distinct()
+                .fetchOne();
+    }
+
+    private static List<TradeState> progressTrade(){
+        return List.of(TradeState.CENTER_DELIVERY, TradeState.INSPECT, TradeState.FAKE, TradeState.REAL, TradeState.HOME_DELIVERY);
+    }
+
+    // 내역에서 입찰, 진행 중, 종료인지
+    private List<TradeState> getStateList(String state, TradeType tradeType){
+        if(state.equals("bid")){
+            return List.of(getTradeState(tradeType));
+        }
+        else if(state.equals("progress")){
+            return progressTrade();
+        }
+        else if(state.equals("done")){
+            return List.of(TradeState.DONE);
+        }
+
+        throw new WrongStateException(state);
+    }
+
+    private TradeState getTradeState(TradeType tradeType){
+        return tradeType == TradeType.PURCHASE ? TradeState.PURCHASE : TradeState.SELL;
     }
 
     private QMember memberType(TradeType tradeType) {

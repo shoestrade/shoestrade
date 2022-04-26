@@ -3,8 +3,6 @@ package com.study.shoestrade.controller;
 import com.study.shoestrade.common.annotation.LoginMember;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
-import com.study.shoestrade.domain.trade.TradeState;
-import com.study.shoestrade.domain.trade.TradeType;
 import com.study.shoestrade.dto.trade.request.TradeDto;
 import com.study.shoestrade.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
@@ -37,16 +35,27 @@ public class TradeController {
     }
 
     /**
-     * 사용자가 등록한 입찰 내역 검색
-     *
-     * @param email     사용자 이메일
-     * @param tradeType 입찰 타입
-     * @param pageable  페이지
-     * @return 검색 결과
+     * 거래 내역 수 조회
+     * @param email : accessToken email
+     * @param tradeType : 거래 타입 {sell : 구매 거래 내역, purchase : 판매 거래 내역}
+     * @return
      */
-    @GetMapping("{tradeType}")
-    public Result salesTrade(@LoginMember String email, @PathVariable String tradeType, Pageable pageable) {
-        return responseService.getSingleResult(tradeService.findTradeByEmailAndTradeType(email, tradeType, pageable));
+    @GetMapping("/{tradeType}/count")
+    public Result getBreakdownCount(@LoginMember String email, @PathVariable("tradeType") String tradeType){
+        return responseService.getSingleResult(tradeService.getBreakdownCount(email, tradeType));
+    }
+
+    /**
+     * 거래 내역 조회
+     * @param email : accessToken email
+     * @param tradeType : 거래 타입 {sell : 구매 거래 내역, purchase : 판매 거래 내역}
+     * @param state : 거래 상태 {bid : 입찰, progress : 진행 중, done : 종료(완료)}
+     * @param pageable : 페이징
+     * @return
+     */
+    @GetMapping("/{tradeType}/{state}")
+    public Result getBreakdown(@LoginMember String email, @PathVariable("tradeType") String tradeType, @PathVariable("state") String state, Pageable pageable){
+        return responseService.getSingleResult(tradeService.getBreakdown(email, tradeType, state, pageable));
     }
 
     /**
@@ -57,7 +66,7 @@ public class TradeController {
      * @return 성공 결과
      */
     @PostMapping("/{id}")
-    public Result updateTrade(@LoginMember String email, @PathVariable Long id, @RequestBody TradeDto tradeDto) {
+    public Result updateTrade(@LoginMember String email, @PathVariable("id") Long id, @RequestBody TradeDto tradeDto) {
         tradeService.updateTrade(email, id, tradeDto);
         return responseService.getSuccessResult();
     }
@@ -82,7 +91,7 @@ public class TradeController {
      * @param pageable  페이지 정보
      * @return 검색 결과
      */
-    @GetMapping("/{productId}/done")
+    @GetMapping("/product/{productId}/done")
     public Result findDoneTrade(@PathVariable("productId") Long productId, Pageable pageable) {
         return responseService.getSingleResult(tradeService.findDoneTrade(productId, pageable));
     }
@@ -95,7 +104,7 @@ public class TradeController {
      * @param pageable   페이지 정보
      * @return 검색 결과
      */
-    @GetMapping("/{productId}/{tradeState}")
+    @GetMapping("/product/{productId}/{tradeState}")
     public Result findTransactionTrade(@PathVariable("productId") Long productId, @PathVariable("tradeState") String tradeState, Pageable pageable) {
         return responseService.getSingleResult(tradeService.findTransactionTrade(productId, tradeState, pageable));
     }

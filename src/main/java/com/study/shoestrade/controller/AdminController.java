@@ -7,9 +7,11 @@ import com.study.shoestrade.dto.address.response.AddressListResponseDto;
 import com.study.shoestrade.dto.interest.response.MyInterest;
 import com.study.shoestrade.dto.member.response.MemberDetailDto;
 import com.study.shoestrade.dto.admin.PageMemberDto;
+import com.study.shoestrade.dto.trade.response.TradeBreakdownCountDto;
 import com.study.shoestrade.service.admin.AdminService;
 import com.study.shoestrade.service.interest.InterestService;
 import com.study.shoestrade.service.member.MemberService;
+import com.study.shoestrade.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,7 @@ public class AdminController {
     private final AdminService adminService;
     private final MemberService memberService;
     private final InterestService interestService;
+    private final TradeService tradeService;
     private final ResponseService responseService;
 
 
@@ -75,6 +78,30 @@ public class AdminController {
         return responseService.getSingleResult(responseDto);
     }
 
+    /**
+     * 회원 거래 내역 수 전체 조회
+     * @param email : 회원 email
+     * @param tradeType : 거래 타입 {sell : 구매 거래 내역, purchase : 판매 거래 내역}
+     * @return
+     */
+    @GetMapping("/admin/members/{email}/{tradeType}/count")
+    public Result getMemberBreakdownCount(@PathVariable("email") String email, @PathVariable("tradeType") String tradeType){
+        return responseService.getSingleResult(tradeService.getBreakdownCount(email, tradeType));
+    }
+
+    /**
+     * 회원 거래 내역 조회
+     * @param email : 회원 email
+     * @param tradeType : 거래 타입 {sell : 구매 거래 내역, purchase : 판매 거래 내역}
+     * @param state : 거래 상태 {bid : 입찰, progress : 진행 중, done : 종료(완료)}
+     * @param pageable : 페이징
+     * @return
+     */
+    @GetMapping("/admin/members/{email}/{tradeType}/{state}")
+    public Result getMemberBreakdown(@PathVariable("email") String email, @PathVariable("tradeType") String tradeType,
+                                     @PathVariable("state") String state, Pageable pageable){
+        return responseService.getSingleResult(tradeService.getBreakdown(email,tradeType, state, pageable));
+    }
 
     /**
      * 회원 정지
