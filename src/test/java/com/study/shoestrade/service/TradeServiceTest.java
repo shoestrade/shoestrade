@@ -23,9 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,24 +79,6 @@ class TradeServiceTest {
         // when
         // then
         assertThatCode(() -> tradeService.TradeSave(member.getEmail(), tradeSaveDto)).doesNotThrowAnyException();
-    }
-
-    @Test
-    @DisplayName("입찰_검색_테스트")
-    public void 입찰_검색() {
-
-        // given
-        PageRequest pageRequest = PageRequest.of(0, 3);
-
-        Page<TradeLoadDto> page = new PageImpl<>(new ArrayList<>(List.of(new TradeLoadDto(1L, "입찰", 255, 1000, "이미지1"))), pageRequest, 1);
-
-        given(tradeRepository.findTradeByEmailAndTradeType(any(), any(), any())).willReturn(page);
-
-        // when
-        Page<TradeLoadDto> findPage = tradeService.findTradeByEmailAndTradeType("이메일", "sell", pageRequest);
-
-        // then
-        assertThat(findPage).isEqualTo(page);
     }
 
     @Test
@@ -200,4 +180,5 @@ class TradeServiceTest {
         // then
         assertThat(resultPage).isEqualTo(page);
     }
+
 }

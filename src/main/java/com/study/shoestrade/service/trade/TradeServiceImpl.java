@@ -4,12 +4,14 @@ import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
 import com.study.shoestrade.dto.trade.request.TradeDto;
+import com.study.shoestrade.dto.trade.response.TradeBreakdownCountDto;
 import com.study.shoestrade.dto.trade.response.TradeDoneDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.exception.product.ProductSizeNoSuchElementException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
+import com.study.shoestrade.exception.trade.WrongTradeTypeException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.product.ProductSizeRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
@@ -58,18 +60,18 @@ public class TradeServiceImpl implements TradeService {
                         .build());
     }
 
-    /**
-     * 사용자가 등록한 입찰 내역 검색
-     *
-     * @param email     사용자 이메일
-     * @param tradeType 구매, 판매 구분
-     * @param pageable  페이지 정보
-     * @return 검색된 입찰 내역
-     */
+    // 거래 내역 수 조회
     @Override
-    public Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, String tradeType, Pageable pageable) {
-        return tradeRepository.findTradeByEmailAndTradeType(email, tradeType.equals("sell") ? TradeType.SELL : TradeType.PURCHASE, pageable);
+    public TradeBreakdownCountDto getBreakdownCount(String email, String tradeType){
+        return tradeRepository.findBreakdownCount(email, getTradeType(tradeType));
     }
+
+    // 거래 내역 조회
+    @Override
+    public Page<TradeLoadDto> getBreakdown(String email, String tradeType, String state, Pageable pageable) {
+        return tradeRepository.findBreakdown(email, getTradeType(tradeType), state, pageable);
+    }
+
 
     /**
      * 입찰 금액 수정
@@ -142,5 +144,13 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public List<TradeLoadDto> findInstantTrade(Long productId, String tradeState) {
         return tradeRepository.findInstantTrade(productId, tradeState.equals("sell") ? TradeState.PURCHASE : TradeState.SELL);
+    }
+
+    // 거래 타입 반환
+    private TradeType getTradeType(String tradeType) {
+        if(tradeType.equals("sell")) return TradeType.SELL;
+        else if(tradeType.equals("purchase")) return TradeType.PURCHASE;
+
+        throw new WrongTradeTypeException(tradeType);
     }
 }

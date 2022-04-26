@@ -6,6 +6,7 @@ import com.study.shoestrade.domain.product.ProductSize;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -20,6 +21,7 @@ public class Trade extends BaseEntity {
     private Long id;
 
     private int price;
+    private LocalDateTime tradeCompletionDate;
 
     @Enumerated(EnumType.STRING)
     private TradeType tradeType;

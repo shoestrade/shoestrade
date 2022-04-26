@@ -21,11 +21,11 @@ public interface TradeRepository extends JpaRepository<Trade, Long>, TradeReposi
      * @param pageable  페이지 정보
      * @return 검색 결과
      */
-    @Query("select new com.study.shoestrade.dto.trade.response.TradeDoneDto(p.size, t.price, t.lastModifiedDate) " +
+    @Query("select new com.study.shoestrade.dto.trade.response.TradeDoneDto(p.size, t.price, t.tradeCompletionDate) " +
             "from Trade t " +
             "join t.productSize p " +
             "where p.product.id = :productId and t.tradeState = 'DONE' " +
-            "order by t.lastModifiedDate desc")
+            "order by t.tradeCompletionDate desc")
     Page<TradeDoneDto> findDoneTrade(@Param("productId") Long productId, Pageable pageable);
 
     /**
