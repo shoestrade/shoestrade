@@ -1,8 +1,7 @@
 package com.study.shoestrade.service.trade;
 
-import com.study.shoestrade.domain.trade.TradeState;
-import com.study.shoestrade.domain.trade.TradeType;
 import com.study.shoestrade.dto.trade.request.TradeDto;
+import com.study.shoestrade.dto.trade.response.TradeBreakdownCountDto;
 import com.study.shoestrade.dto.trade.response.TradeDoneDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
@@ -21,16 +20,11 @@ public interface TradeService {
      */
     void TradeSave(String email, TradeDto tradeSaveDto);
 
+    // 거래 내역 수 조회
+    TradeBreakdownCountDto getBreakdownCount(String email, String tradeType);
 
-    /**
-     * 사용자가 등록한 입찰 내역 검색
-     *
-     * @param email     사용자
-     * @param tradeType 구매, 판매 구분
-     * @param pageable  페이지 정보
-     * @return 검색된 입찰 내역
-     */
-    Page<TradeLoadDto> findTradeByEmailAndTradeType(String email, String tradeType, Pageable pageable);
+    // 거래 내역 조회
+    Page<TradeLoadDto> getBreakdown(String email, String tradeType, String state, Pageable pageable);
 
     /**
      * 입찰 금액 수정

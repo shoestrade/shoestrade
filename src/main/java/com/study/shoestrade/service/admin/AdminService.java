@@ -2,7 +2,7 @@ package com.study.shoestrade.service.admin;
 
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.member.Role;
-import com.study.shoestrade.dto.admin.MemberDetailDto;
+import com.study.shoestrade.dto.member.response.MemberDetailDto;
 import com.study.shoestrade.dto.admin.PageMemberDto;
 import com.study.shoestrade.dto.interest.response.MyInterest;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
@@ -35,10 +35,8 @@ public class  AdminService {
     // 회원 상세 정보 조회
     @Transactional(readOnly = true)
     public MemberDetailDto getMemberDetail(Long id){
-        Member member = memberRepository.findMemberDetail(id).orElseThrow(MemberNotFoundException::new);
-        List<MyInterest> memberInterests = interestProductRepository.findMemberInterests(id);
-
-        return MemberDetailDto.create(member, memberInterests);
+        Member member = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+        return MemberDetailDto.create(member);
     }
 
     // 회원 정지

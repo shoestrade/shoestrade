@@ -15,6 +15,8 @@ import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
 import com.study.shoestrade.exception.token.TokenNotFoundException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
+import com.study.shoestrade.exception.trade.WrongStateException;
+import com.study.shoestrade.exception.trade.WrongTradeTypeException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -114,6 +116,16 @@ public class ExceptionAdvice {
     @ExceptionHandler(InterestNotFoundException.class)
     public Result interestNotFoundException(InterestNotFoundException e){
         return responseService.getFailureResult(-111, "존재하지 않는 관심 상품입니다.");
+    }
+
+    @ExceptionHandler(WrongStateException.class)
+    public Result wrongStateException(WrongStateException e){
+        return responseService.getFailureResult(-112, e.getMessage() + "는 잘못된 내역조회 상태입니다.");
+    }
+
+    @ExceptionHandler(WrongTradeTypeException.class)
+    public Result wrongTradeTypeException(WrongTradeTypeException e){
+        return responseService.getFailureResult(-113, e.getMessage() + "는 잘못된 거래 타입입니다.");
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------- //

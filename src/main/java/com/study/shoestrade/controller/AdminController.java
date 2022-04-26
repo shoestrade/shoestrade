@@ -3,9 +3,13 @@ package com.study.shoestrade.controller;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
-import com.study.shoestrade.dto.admin.MemberDetailDto;
+import com.study.shoestrade.dto.address.response.AddressListResponseDto;
+import com.study.shoestrade.dto.interest.response.MyInterest;
+import com.study.shoestrade.dto.member.response.MemberDetailDto;
 import com.study.shoestrade.dto.admin.PageMemberDto;
 import com.study.shoestrade.service.admin.AdminService;
+import com.study.shoestrade.service.interest.InterestService;
+import com.study.shoestrade.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +22,10 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     private final AdminService adminService;
+    private final MemberService memberService;
+    private final InterestService interestService;
     private final ResponseService responseService;
+
 
     /**
      * 회원 리스트 조회
@@ -33,11 +40,41 @@ public class AdminController {
         return responseService.getSingleResult(responseDto);
     }
 
+    /**
+     * 회원 상세 정보 조회
+     * @param id : 회원 id
+     * @return
+     */
     @GetMapping("/admin/members/{id}")
     public SingleResult<MemberDetailDto> getMemberDetail(@PathVariable("id") Long id){
         MemberDetailDto responseDto = adminService.getMemberDetail(id);
         return responseService.getSingleResult(responseDto);
     }
+
+    /**
+     * 회원 주소 정보 조회
+     * @param email : 회원 email
+     * @param pageable : 페이징
+     * @return
+     */
+    @GetMapping("/admin/members/{email}/address")
+    public SingleResult<AddressListResponseDto> getMemberAddressList(@PathVariable("email") String email, @PageableDefault(size=10) Pageable pageable){
+        AddressListResponseDto responseDto = memberService.getAddressList(email, pageable);
+        return responseService.getSingleResult(responseDto);
+    }
+
+    /**
+     * 회원 관심 상품 목록 조회
+     * @param email : 회원 email
+     * @param pageable : 페이징
+     * @return
+     */
+    @GetMapping("/admin/members/{email}/wish")
+    public SingleResult<Page<MyInterest>> getMemberWishList(@PathVariable("email") String email, @PageableDefault(size = 10) Pageable pageable){
+        Page<MyInterest> responseDto = interestService.getMyWishList(email, pageable);
+        return responseService.getSingleResult(responseDto);
+    }
+
 
     /**
      * 회원 정지

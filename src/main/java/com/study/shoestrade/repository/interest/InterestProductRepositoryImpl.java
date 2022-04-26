@@ -64,26 +64,4 @@ public class InterestProductRepositoryImpl implements InterestProductRepositoryC
 
         return new PageImpl<>(content, pageable, content.size());
     }
-
-    @Override
-    public List<MyInterest> findMemberInterests(Long id) {
-        return queryFactory
-                .select(new QMyInterest(interestProduct.id, product.id, productSize.id, product.brand.engName,
-                        product.korName, productSize.size, trade.price.min(), productImage.name))
-                .from(interestProduct)
-                .join(interestProduct.member, member)
-                .join(interestProduct.productSize, productSize)
-                .join(productSize.product, product)
-                .join(productImage).on(productImage.product.eq(product))
-                .leftJoin(trade).on(trade.productSize.eq(productSize))
-                .where(member.id.eq(id),
-                        productImage.id.in(JPAExpressions.select(productImage.id.min()).from(productImage).groupBy(productImage.product.id)),
-                        trade.tradeType.eq(TradeType.SELL).or(trade.isNull())
-                )
-                .groupBy(interestProduct.id, productImage.name)
-                .orderBy(interestProduct.lastModifiedDate.asc(), interestProduct.productSize.id.asc())
-                .fetch();
-    }
-
-
 }

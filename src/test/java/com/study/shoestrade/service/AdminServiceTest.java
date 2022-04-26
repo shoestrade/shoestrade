@@ -2,6 +2,8 @@ package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.dto.admin.PageMemberDto;
+import com.study.shoestrade.dto.member.response.MemberDetailDto;
+import com.study.shoestrade.repository.interest.InterestProductRepository;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.service.admin.AdminService;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +78,6 @@ class AdminServiceTest {
         members.add(member1);
         members.add(member2);
         members.add(member3);
-
     }
 
     @Test
@@ -94,7 +95,6 @@ class AdminServiceTest {
         // then
         assertThat(responseDto.getContent().size()).isEqualTo(3);
     }
-
 
     @Test
     @DisplayName("관리자가 기간을 설정하고 정지 요청하면 회원 정지에 성공한다.")
@@ -145,6 +145,22 @@ class AdminServiceTest {
 
         // then
         assertThat(member.getRole()).isEqualTo(ROLE_MEMBER);
+    }
+
+    @Test
+    @DisplayName("관리자가 회원의 email로 회원의 상세정보를 조회할 수 있다.")
+    public void 회원_상세_정보_조회() {
+        // given
+        Member member = members.get(0);
+
+        // mocking
+        given(memberRepository.findById(any())).willReturn(Optional.of(member));
+
+        // when
+        MemberDetailDto responseDto = adminService.getMemberDetail(1L);
+
+        // then
+        assertThat(responseDto.getEmail()).isEqualTo(member.getEmail());
     }
 
 }

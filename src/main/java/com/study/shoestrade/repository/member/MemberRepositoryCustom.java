@@ -8,6 +8,4 @@ import java.util.Optional;
 
 public interface MemberRepositoryCustom {
     Page<Member> findMembers(String email, Pageable pageable);
-
-    Optional<Member> findMemberDetail(Long id);
 }
