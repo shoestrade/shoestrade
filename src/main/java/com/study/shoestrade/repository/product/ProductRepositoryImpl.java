@@ -49,7 +49,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        Long count = queryFactory.select(product.count())
+                .from(product)
+                .where(nameEq(name), brandNamesEq(brandNames))
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, count);
     }
 
     /**

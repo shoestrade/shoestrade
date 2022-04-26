@@ -65,10 +65,15 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        Long count = queryFactory.select(trade.count())
+                .from(trade)
+                .join(memberType(tradeType), member)
+                .where(trade.tradeState.in(getStateList(state, tradeType)),
+                        member.email.eq(email), trade.tradeType.eq(tradeType))
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, count);
     }
-
-
 
     /**
      * 사용자 이메일과 입찰 id로 입찰 정보 가져옴
