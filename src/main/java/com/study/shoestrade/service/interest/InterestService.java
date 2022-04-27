@@ -114,12 +114,11 @@ public class InterestService {
     }
 
     // 마이페이지에서 관심 상품 삭제
-    public void deleteInterestProduct(String email, Long productId, Long interestId){
-        InterestProduct interestProduct = interestProductRepository.findOneInterest(email, productId, interestId)
+    public void deleteInterestProduct(String email, Long interestId){
+        InterestProduct interestProduct = interestProductRepository.findOneInterest(email, interestId)
                 .orElseThrow(InterestNotFoundException::new);
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductEmptyResultDataAccessException(productId.toString(), 1));
+        Product product = interestProduct.getProductSize().getProduct();
 
         product.subInterest(1);
         interestProductRepository.delete(interestProduct);
