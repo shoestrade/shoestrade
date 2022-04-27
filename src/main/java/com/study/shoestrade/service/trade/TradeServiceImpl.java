@@ -11,6 +11,7 @@ import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.exception.product.ProductSizeNoSuchElementException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
+import com.study.shoestrade.exception.trade.WrongStateException;
 import com.study.shoestrade.exception.trade.WrongTradeTypeException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.product.ProductSizeRepository;
@@ -69,9 +70,9 @@ public class TradeServiceImpl implements TradeService {
     // 거래 내역 조회
     @Override
     public Page<TradeLoadDto> getBreakdown(String email, String tradeType, String state, Pageable pageable) {
+        checkState(state);
         return tradeRepository.findBreakdown(email, getTradeType(tradeType), state, pageable);
     }
-
 
     /**
      * 입찰 금액 수정
@@ -131,7 +132,7 @@ public class TradeServiceImpl implements TradeService {
      */
     @Override
     public Page<TradeTransactionDto> findTransactionTrade(Long productId, String tradeState, Pageable pageable) {
-        return tradeRepository.findTransactionTrade(productId, tradeState.equals("sell") ? TradeState.PURCHASE : TradeState.SELL, pageable);
+        return tradeRepository.findTransactionTrade(productId, getTradeState(tradeState), pageable);
     }
 
     /**
@@ -143,7 +144,7 @@ public class TradeServiceImpl implements TradeService {
      */
     @Override
     public List<TradeLoadDto> findInstantTrade(Long productId, String tradeState) {
-        return tradeRepository.findInstantTrade(productId, tradeState.equals("sell") ? TradeState.PURCHASE : TradeState.SELL);
+        return tradeRepository.findInstantTrade(productId, getTradeState(tradeState));
     }
 
     // 거래 타입 반환
@@ -153,4 +154,20 @@ public class TradeServiceImpl implements TradeService {
 
         throw new WrongTradeTypeException(tradeType);
     }
+
+    // 거래 상태 반환
+    private TradeState getTradeState(String tradeState) {
+        if(tradeState.equals("sell")) return TradeState.PURCHASE;
+        else if(tradeState.equals("purchase")) return TradeState.SELL;
+
+        throw new WrongStateException(tradeState);
+    }
+
+    // 내역에서 입찰, 진행 중, 종료인지 체크
+    private void checkState(String state){
+        if(!state.equals("bid") && !state.equals("progress") && !state.equals("done")){
+            throw new WrongStateException(state);
+        }
+    }
+
 }

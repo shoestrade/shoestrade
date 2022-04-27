@@ -24,7 +24,12 @@ import java.util.List;
 public class  AdminService {
 
     private final MemberRepository memberRepository;
-    private final InterestProductRepository interestProductRepository;
+
+    @Transactional(readOnly = true)
+    public String getMemberEmail(Long id){
+        Member member = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+        return member.getEmail();
+    }
 
     // 회원 리스트 조회
     @Transactional(readOnly = true)

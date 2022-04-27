@@ -19,17 +19,17 @@ class BrandRepositoryTest {
     private BrandRepository brandRepository;
 
     Brand brand1 = Brand.builder()
-            .korName("나이키")
+            .korName("브랜드1")
             .engName("a")
             .build();
 
     Brand brand2 = Brand.builder()
-            .korName("아디다스")
+            .korName("브랜드2")
             .engName("b")
             .build();
 
     Brand brand3 = Brand.builder()
-            .korName("뉴발란스")
+            .korName("브랜드3")
             .engName("c")
             .build();
 
