@@ -7,7 +7,6 @@ import com.study.shoestrade.service.brand.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -26,7 +25,7 @@ public class BrandController {
      * @param pageable  페이지 정보
      * @return 검색된 브랜드 리스트
      */
-    @GetMapping()
+    @GetMapping
     public Result findBrandByName(@RequestParam(value = "name") @Nullable String brandName, Pageable pageable) {
         return responseService.getSingleResult(brandService.findByBrandName(brandName, pageable));
     }

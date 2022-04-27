@@ -2,6 +2,7 @@ package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
+import com.study.shoestrade.domain.product.ProductImage;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.request.ProductSaveDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -129,15 +131,12 @@ class ProductServiceTest {
     @DisplayName("상품_검색_테스트")
     void 상품_검색() {
         // given
-        ArrayList<Product> list = new ArrayList<>();
-        list.add(Product.builder()
+        ArrayList<ProductLoadDto> list = new ArrayList<>();
+        list.add(ProductLoadDto.builder()
                 .korName("상품명1")
-                .brand(Brand.builder()
-                        .id(1L)
-                        .build())
-                .imageList(new ArrayList<>())
+                .brandName("브랜드1")
                 .build());
-        PageImpl<Product> page = new PageImpl<>(list);
+        PageImpl<ProductLoadDto> page = new PageImpl<>(list);
         PageRequest pageRequest = PageRequest.of(0, 3);
 
         given(productRepository.findProduct(any(), any(), any())).willReturn(page);
@@ -150,8 +149,13 @@ class ProductServiceTest {
 
         Page<ProductLoadDto> findPages = productService.findProductByNameInBrand(productSearchDto, pageRequest);
 
+        Page<ProductLoadDto> result = page.map(product -> ProductLoadDto.builder()
+                .korName(product.getKorName())
+                .build()
+        );
+
         // then
-        assertThat(findPages).isEqualTo(page.map(ProductLoadDto::create));
+        assertThat(findPages.getSize()).isEqualTo(result.getSize());
     }
 
     @Test
