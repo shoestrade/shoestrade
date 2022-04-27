@@ -1,5 +1,6 @@
 package com.study.shoestrade.dto.product.response;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.domain.product.ProductImage;
 import lombok.AllArgsConstructor;
@@ -24,21 +25,22 @@ public class ProductLoadDto {
     private String code;
     private String color;
     private int releasePrice;
+    private int imPurchasePrice;
     private int interest;
     private String brandName;
     private List<String> imageList = new ArrayList<>();
 
-    public static ProductLoadDto create(Product product) {
-        return ProductLoadDto.builder()
-                .id(product.getId())
-                .korName(product.getKorName())
-                .engName(product.getEngName())
-                .code(product.getCode())
-                .color(product.getColor())
-                .interest(product.getInterest())
-                .releasePrice(product.getReleasePrice())
-                .brandName(product.getBrand().getEngName())
-                .imageList(product.getImageList().stream().map(ProductImage::getName).collect(Collectors.toList()))
-                .build();
+    @QueryProjection
+    public ProductLoadDto(Product product, int imPurchasePrice) {
+        this.id = product.getId();
+        this.korName = product.getKorName();
+        this.engName = product.getEngName();
+        this.code = product.getCode();
+        this.color = product.getColor();
+        this.releasePrice = product.getReleasePrice();
+        this.imPurchasePrice = imPurchasePrice;
+        this.interest = product.getInterest();
+        this.brandName = product.getBrand().getEngName();
+        this.imageList = product.getImageList().stream().map(ProductImage::getName).collect(Collectors.toList());
     }
 }

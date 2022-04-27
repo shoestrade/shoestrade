@@ -2,8 +2,18 @@ package com.study.shoestrade.repository;
 
 import com.study.shoestrade.domain.product.Brand;
 import com.study.shoestrade.domain.product.Product;
+import com.study.shoestrade.domain.product.ProductSize;
+import com.study.shoestrade.domain.trade.Trade;
+import com.study.shoestrade.domain.trade.TradeState;
+import com.study.shoestrade.domain.trade.TradeType;
+import com.study.shoestrade.dto.product.response.ProductLoadDto;
+import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.product.ProductSizeNoSuchElementException;
 import com.study.shoestrade.repository.brand.BrandRepository;
+import com.study.shoestrade.repository.jdbc.JdbcRepository;
 import com.study.shoestrade.repository.product.ProductRepository;
+import com.study.shoestrade.repository.product.ProductSizeRepository;
+import com.study.shoestrade.repository.trade.TradeRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +38,12 @@ class ProductRepositoryTest {
     @Autowired
     private BrandRepository brandRepository;
 
+    @Autowired
+    private ProductSizeRepository productSizeRepository;
+
+    @Autowired
+    private TradeRepository tradeRepository;
+
     @Test
     @DisplayName("상품_등록_테스트")
     public void 상품_등록() {
@@ -50,25 +66,29 @@ class ProductRepositoryTest {
     @DisplayName("상품_검색_테스트")
     public void 상품_검색() {
         // given
-        Brand brand = brandRepository.save(Brand.builder().id(1L).korName("브랜드1").build());
-        Product product = Product.builder()
+        Brand brand = brandRepository.save(Brand.builder()
+                .korName("브랜드1")
+                .build());
+
+        Product product = productRepository.save(Product.builder()
                 .korName("상품명1")
                 .code("상품코드1")
                 .brand(brand)
-                .build();
+                .imageList(new ArrayList<>())
+                .build());
 
-        productRepository.save(product);
-
-        List<Long> list = new ArrayList<>();
-        list.add(brand.getId());
+        productSizeRepository.save(ProductSize.builder()
+                .size(220)
+                .product(product)
+                .build());
 
         PageRequest pageRequest = PageRequest.of(0, 3);
         // when
-        Page<Product> findPages = productRepository.findProduct("상품명1", list, pageRequest);
+        Page<ProductLoadDto> findPage = productRepository.findProduct("상품명1", List.of(brand.getId()), pageRequest);
 
         // then
-        assertThat(findPages)
+        assertThat(findPage)
                 .extracting("korName")
-                .containsOnly("상품명1");
+                .contains("상품명1");
     }
 }
