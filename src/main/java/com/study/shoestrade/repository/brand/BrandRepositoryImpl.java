@@ -35,7 +35,12 @@ public class BrandRepositoryImpl implements BrandRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        Long count = queryFactory.select(brand.count())
+                .from(brand)
+                .where(brandContains(name))
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, count);
     }
 
     /**

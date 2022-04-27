@@ -59,9 +59,14 @@ public class InterestProductRepositoryImpl implements InterestProductRepositoryC
                 .groupBy(interestProduct.id, productImage.name)
                 .orderBy(interestProduct.lastModifiedDate.asc(), interestProduct.productSize.id.asc())
                 .offset(pageable.getOffset())
-                .limit(10)
+                .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        Long count = queryFactory.select(interestProduct.count())
+                .from(interestProduct)
+                .where(interestProduct.member.email.eq(email))
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, count);
     }
 }

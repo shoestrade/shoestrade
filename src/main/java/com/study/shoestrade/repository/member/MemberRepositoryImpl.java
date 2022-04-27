@@ -44,10 +44,15 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
                         member.role.ne(ROLE_ADMIN))
                 .orderBy(member.email.asc())
                 .offset(pageable.getOffset())
-                .limit(10)
+                .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        Long count = queryFactory
+                .select(member.count())
+                .from(member)
+                .where(emailEq(email), member.role.ne(ROLE_ADMIN)).fetchOne();
+
+        return new PageImpl<>(content, pageable, count);
     }
 
     private BooleanExpression emailEq(String email){
