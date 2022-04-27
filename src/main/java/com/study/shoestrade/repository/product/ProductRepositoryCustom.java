@@ -1,6 +1,5 @@
 package com.study.shoestrade.repository.product;
 
-import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.dto.product.response.ProductDetailDto;
 import com.study.shoestrade.dto.product.response.ProductLoadDto;
 import org.springframework.data.domain.Page;

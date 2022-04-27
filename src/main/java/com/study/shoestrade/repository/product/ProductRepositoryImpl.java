@@ -4,10 +4,7 @@ package com.study.shoestrade.repository.product;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.study.shoestrade.domain.product.Product;
-import com.study.shoestrade.domain.product.QProduct;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.dto.product.response.ProductDetailDto;
 import com.study.shoestrade.dto.product.response.ProductLoadDto;
@@ -18,7 +15,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -114,9 +110,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         return name.isEmpty() ? null : product.korName.contains(name).or(product.engName.contains(name));
     }
 
-        private OrderSpecifier<?> orderByFieldList(List<?> list){
-            return Expressions.stringTemplate("FIELD({0}, {1})", product.id ,list).asc();
-        }
+    private OrderSpecifier<?> orderByFieldList(List<?> list) {
+        return Expressions.stringTemplate("FIELD({0}, {1})", product.id, list).asc();
+    }
 
 }
 
