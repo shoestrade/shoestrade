@@ -8,6 +8,7 @@ import com.study.shoestrade.dto.product.request.ProductSearchDto;
 import com.study.shoestrade.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,7 @@ public class ProductController {
      * @return 등록 완료된 상품 정보
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Result saveProduct(@RequestBody ProductSaveDto productDto) {
         productService.saveProduct(productDto);
         return responseService.getSuccessResult();
@@ -37,6 +39,7 @@ public class ProductController {
      * @return 등록 완료된 상품 정보
      */
     @DeleteMapping("/{productId}")
+    @ResponseStatus(HttpStatus.OK)
     public Result deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return responseService.getSuccessResult();
@@ -50,6 +53,7 @@ public class ProductController {
      * @return 검색된 결과
      */
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Result findProductByNameAndBrandList(@RequestBody ProductSearchDto productSearchDto, Pageable pageable) {
         return responseService.getSingleResult(productService.findProductByNameInBrand(productSearchDto, pageable));
     }
@@ -62,6 +66,7 @@ public class ProductController {
      * @return 변경 성공 여부
      */
     @PostMapping("/{productId}")
+    @ResponseStatus(HttpStatus.OK)
     public Result updateProduct(@PathVariable Long productId, @RequestBody ProductSaveDto productDto) {
         productService.updateProduct(productId, productDto);
         return responseService.getSuccessResult();
@@ -75,6 +80,7 @@ public class ProductController {
      * @return 등록 성공 여부
      */
     @PostMapping("/images")
+    @ResponseStatus(HttpStatus.CREATED)
     public Result addImageProduct(@RequestBody ProductImageAddDto productImageAddDto) {
         productService.addProductImage(productImageAddDto);
         return responseService.getSuccessResult();
@@ -87,6 +93,7 @@ public class ProductController {
      * @return 등록 완료된 상품 정보
      */
     @DeleteMapping("/images/{productImageId}")
+    @ResponseStatus(HttpStatus.OK)
     public Result deleteProductImage(@PathVariable Long productImageId) {
         productService.deleteProductImage(productImageId);
         return responseService.getSuccessResult();
@@ -99,6 +106,7 @@ public class ProductController {
      * @return 검색 결과
      */
     @GetMapping("/{productId}")
+    @ResponseStatus(HttpStatus.OK)
     public Result findProductDetail(@PathVariable Long productId){
         return responseService.getSingleResult(productService.findProductDetailById(productId));
     }

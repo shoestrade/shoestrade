@@ -197,11 +197,10 @@ public class InterestServiceTest {
         product.addInterest(1);
 
         // mocking
-        given(interestProductRepository.findOneInterest("email", 3L, 100L)).willReturn(Optional.of(interestProduct));
-        given(productRepository.findById(3L)).willReturn(Optional.of(product));
+        given(interestProductRepository.findOneInterest("email", 100L)).willReturn(Optional.of(interestProduct));
 
         // when
-        interestService.deleteInterestProduct("email", 3L, 100L);
+        interestService.deleteInterestProduct("email", 100L);
         
         // then
         assertThat(product.getInterest()).isEqualTo(0);

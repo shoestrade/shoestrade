@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,6 +30,7 @@ public class InterestController {
      * @return
      */
     @PostMapping("/products/{productId}/interests")
+    @ResponseStatus(HttpStatus.CREATED)
     public Result addWishList(@LoginMember String email, @PathVariable("productId") Long productId, @RequestBody InterestProductRequestDto requestDto){
         interestService.addWishList(email, productId, requestDto);
         return responseService.getSuccessResult();
@@ -41,6 +43,7 @@ public class InterestController {
      * @return
      */
     @GetMapping("/products/{productId}/interests")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<InterestProductResponseDto> getProductWishList(@LoginMember String email, @PathVariable("productId") Long productId){
         InterestProductResponseDto responseDto = interestService.getProductWishList(email, productId);
         return responseService.getSingleResult(responseDto);
@@ -53,6 +56,7 @@ public class InterestController {
      * @return
      */
     @GetMapping("/member/interests")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<Page<MyInterest>> getMyWishList(@LoginMember String email, @PageableDefault(size = 10) Pageable pageable){
         Page<MyInterest> responseDto = interestService.getMyWishList(email, pageable);
         return responseService.getSingleResult(responseDto);
@@ -65,6 +69,7 @@ public class InterestController {
      * @return
      */
     @DeleteMapping("/member/interests/{interestId}")
+    @ResponseStatus(HttpStatus.OK)
     public Result deleteInterestProduct(@LoginMember String email, @PathVariable("interestId") Long interestId){
         interestService.deleteInterestProduct(email, interestId);
         return responseService.getSuccessResult();

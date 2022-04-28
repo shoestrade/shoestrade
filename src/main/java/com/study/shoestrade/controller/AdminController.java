@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/admin/members")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<Page<PageMemberDto>> getMembers(@RequestParam("email") @Nullable String email,
                                                         @PageableDefault(size = 20) Pageable pageable) {
         Page<PageMemberDto> responseDto = adminService.getMembers(email, pageable);
@@ -50,6 +52,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/admin/members/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<MemberDetailDto> getMemberDetail(@PathVariable("id") Long id) {
         MemberDetailDto responseDto = adminService.getMemberDetail(id);
         return responseService.getSingleResult(responseDto);
@@ -63,6 +66,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/admin/members/{id}/addresses")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<AddressListResponseDto> getMemberAddressList(@PathVariable("id") Long id, @PageableDefault(size = 10) Pageable pageable) {
         String email = adminService.getMemberEmail(id);
         AddressListResponseDto responseDto = memberService.getAddressList(email, pageable);
@@ -77,6 +81,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/admin/members/{id}/wishes")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<Page<MyInterest>> getMemberWishList(@PathVariable("id") Long id, @PageableDefault(size = 10) Pageable pageable) {
         String email = adminService.getMemberEmail(id);
         Page<MyInterest> responseDto = interestService.getMyWishList(email, pageable);
@@ -91,6 +96,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/admin/members/{id}/trades/{tradeType}/count")
+    @ResponseStatus(HttpStatus.OK)
     public Result getMemberBreakdownCount(@PathVariable("id") Long id, @PathVariable("tradeType") String tradeType) {
         String email = adminService.getMemberEmail(id);
         return responseService.getSingleResult(tradeService.getBreakdownCount(email, tradeType));
@@ -106,6 +112,7 @@ public class AdminController {
      * @return
      */
     @GetMapping("/admin/members/{id}/trades/{tradeType}/{state}")
+    @ResponseStatus(HttpStatus.OK)
     public Result getMemberBreakdown(@PathVariable("id") Long id, @PathVariable("tradeType") String tradeType,
                                      @PathVariable("state") String state, Pageable pageable) {
         String email = adminService.getMemberEmail(id);
@@ -120,6 +127,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/admin/members/{id}/ban")
+    @ResponseStatus(HttpStatus.OK)
     public Result banMember(@PathVariable("id") Long id, @RequestParam("day") int day) {
         adminService.banMember(id, day);
         return responseService.getSuccessResult();
@@ -132,6 +140,7 @@ public class AdminController {
      * @return
      */
     @PostMapping("/admin/members/{id}/release")
+    @ResponseStatus(HttpStatus.OK)
     public Result releaseMember(@PathVariable("id") Long id) {
         adminService.releaseMember(id);
         return responseService.getSuccessResult();

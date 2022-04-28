@@ -18,6 +18,7 @@ import com.study.shoestrade.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -37,6 +38,7 @@ public class MemberController {
      * @return
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<MemberDto> join(@RequestBody MemberJoinDto memberJoinDto){
         MemberDto memberDto = loginService.joinMember(memberJoinDto);
         return responseService.getSingleResult(memberDto);
@@ -44,6 +46,7 @@ public class MemberController {
 
     // 인증번호 이메일 발송
     @PostMapping("/join/send-mail")
+    @ResponseStatus(HttpStatus.OK)
     public Result mail(@RequestParam("email") String email){
         String key = mailService.sendMail(email);
         mailService.saveKey(email, key);
@@ -52,6 +55,7 @@ public class MemberController {
 
     // 인증번호 확인
     @PostMapping("/join/check-mail")
+    @ResponseStatus(HttpStatus.OK)
     public Result mailCheck(@RequestParam("email") String email, @RequestParam("key") String key){
         mailService.checkKey(email, key);
         // 삭제 추가
@@ -64,6 +68,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<MemberLoginResponseDto> login(@RequestBody MemberLoginRequestDto requestDto){
         MemberLoginResponseDto responseDto = loginService.login(requestDto);
         return responseService.getSingleResult(responseDto);
@@ -75,6 +80,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/token/reissuance")
+    @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<MemberLoginResponseDto> reIssue(@RequestBody TokenRequestDto requestDto){
         MemberLoginResponseDto responseDto = loginService.reIssue(requestDto);
         return responseService.getSingleResult(responseDto);
@@ -85,6 +91,7 @@ public class MemberController {
      * @param email
      */
     @DeleteMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
     public Result logout(@LoginMember String email){
         loginService.logout(email);
         return responseService.getSuccessResult();
@@ -92,6 +99,7 @@ public class MemberController {
 
     // 이메일 찾기
     @PostMapping("/find-email")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<MemberFindResponseDto> findEmail(@RequestBody MemberFindRequestDto requestDto){
         MemberFindResponseDto responseDto = loginService.findEmail(requestDto);
         return responseService.getSingleResult(responseDto);
@@ -99,6 +107,7 @@ public class MemberController {
 
     // 비밀번호 찾기
     @PostMapping("/find-password")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<MemberFindResponseDto> findPassword(@RequestBody MemberFindRequestDto requestDto){
         MemberFindResponseDto responseDto = loginService.findPassword(requestDto);
         return responseService.getSingleResult(responseDto);
@@ -106,6 +115,7 @@ public class MemberController {
 
     // 회원 탈퇴
     @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
     public Result withdrawalMember(@LoginMember String email, @RequestBody MemberLoginRequestDto requestDto){
         loginService.deleteMember(email, requestDto);
 //        loginService.logout(email);
@@ -114,6 +124,7 @@ public class MemberController {
 
     // 주소 등록
     @PostMapping("/addresses")
+    @ResponseStatus(HttpStatus.CREATED)
     public Result addAddress(@LoginMember String email, @RequestBody AddressDto requestDto){
         memberService.addAddress(email, requestDto);
         return responseService.getSuccessResult();
@@ -126,6 +137,7 @@ public class MemberController {
      * @return
      */
     @GetMapping("/addresses")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<AddressListResponseDto> getAddressList(@LoginMember String email, @PageableDefault(size = 10) Pageable pageable){
         AddressListResponseDto responseDto = memberService.getAddressList(email, pageable);
         return responseService.getSingleResult(responseDto);
@@ -138,6 +150,7 @@ public class MemberController {
      */
     // 기본 주소 변경
     @PostMapping("/addresses/base-address/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Result changeBaseAddress(@LoginMember String email, @PathVariable("id") Long id){
         memberService.changeBaseAddress(email, id);
         return responseService.getSuccessResult();
@@ -150,6 +163,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/addresses/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Result updateAddress(@LoginMember String email, @PathVariable("id") Long id, @RequestBody AddressDto requestDto){
         memberService.updateAddress(email, id, requestDto);
         return responseService.getSuccessResult();
@@ -162,6 +176,7 @@ public class MemberController {
      * @return
      */
     @DeleteMapping("/addresses/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Result deleteAddress(@PathVariable("id") Long id){
         memberService.deleteAddress(id);
         return responseService.getSuccessResult();
@@ -172,6 +187,7 @@ public class MemberController {
      * @return
      */
     @GetMapping("/accounts")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<AccountDto> getAccount(@LoginMember String email){
         AccountDto responseDto = memberService.getAccount(email);
         return responseService.getSingleResult(responseDto);
@@ -183,6 +199,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/accounts")
+    @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<AccountDto> addAccount(@LoginMember String email, @RequestBody AccountDto requestDto){
         AccountDto responseDto = memberService.addAccount(email, requestDto);
         return responseService.getSingleResult(responseDto);
@@ -193,6 +210,7 @@ public class MemberController {
      * @return
      */
     @DeleteMapping("/accounts")
+    @ResponseStatus(HttpStatus.OK)
     public Result deleteAccount(@LoginMember String email){
         memberService.deleteAccount(email);
         return responseService.getSuccessResult();
@@ -203,6 +221,7 @@ public class MemberController {
      * @return
      */
     @GetMapping("/point")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<PointDto> getPoint(@LoginMember String email){
         PointDto responseDto = memberService.getPoint(email);
         return responseService.getSingleResult(responseDto);
@@ -213,6 +232,7 @@ public class MemberController {
      * @return
      */
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<MemberDto> getProfile(@LoginMember String email){
         MemberDto responseDto = memberService.getProfile(email);
         return responseService.getSingleResult(responseDto);
@@ -225,6 +245,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/password")
+    @ResponseStatus(HttpStatus.OK)
     public Result changePassword(@LoginMember String email, @RequestBody PasswordDto requestDto){
         memberService.changePassword(email, requestDto);
         return responseService.getSuccessResult();
@@ -237,6 +258,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/phone")
+    @ResponseStatus(HttpStatus.OK)
     public Result changePhone(@LoginMember String email, @RequestParam("number") String number){
         memberService.changePhone(email, number);
         return responseService.getSuccessResult();
@@ -249,6 +271,7 @@ public class MemberController {
      * @return
      */
     @PostMapping("/shoe-size")
+    @ResponseStatus(HttpStatus.OK)
     public Result changeShoeSize(@LoginMember String email, @RequestParam("size") String size){
         memberService.changeShoeSize(email, size);
         return responseService.getSuccessResult();
