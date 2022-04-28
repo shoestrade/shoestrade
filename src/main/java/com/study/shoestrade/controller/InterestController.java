@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,7 +29,8 @@ public class InterestController {
      * @param requestDto : 관심 상품으로 등록할 productSize id들
      * @return
      */
-    @PostMapping("/product/{productId}/wish")
+    @PostMapping("/products/{productId}/interests")
+    @ResponseStatus(HttpStatus.CREATED)
     public Result addWishList(@LoginMember String email, @PathVariable("productId") Long productId, @RequestBody InterestProductRequestDto requestDto){
         interestService.addWishList(email, productId, requestDto);
         return responseService.getSuccessResult();
@@ -40,7 +42,8 @@ public class InterestController {
      * @param productId : product id
      * @return
      */
-    @GetMapping("/product/{productId}/wish")
+    @GetMapping("/products/{productId}/interests")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<InterestProductResponseDto> getProductWishList(@LoginMember String email, @PathVariable("productId") Long productId){
         InterestProductResponseDto responseDto = interestService.getProductWishList(email, productId);
         return responseService.getSingleResult(responseDto);
@@ -52,7 +55,8 @@ public class InterestController {
      * @param pageable : page 상태
      * @return
      */
-    @GetMapping("/my/wish")
+    @GetMapping("/member/interests")
+    @ResponseStatus(HttpStatus.OK)
     public SingleResult<Page<MyInterest>> getMyWishList(@LoginMember String email, @PageableDefault(size = 10) Pageable pageable){
         Page<MyInterest> responseDto = interestService.getMyWishList(email, pageable);
         return responseService.getSingleResult(responseDto);
@@ -61,14 +65,13 @@ public class InterestController {
     /**
      * 마이페이제에서 관심 상품 삭제
      * @param email : accessToken email
-     * @param productId : 상품 id
      * @param interestId : 관심 상품 id
      * @return
      */
-    @DeleteMapping("/my/wish/{productId}/{interestId}")
-    public Result deleteInterestProduct(@LoginMember String email, @PathVariable("productId") Long productId,
-                                        @PathVariable("interestId") Long interestId){
-        interestService.deleteInterestProduct(email, productId, interestId);
+    @DeleteMapping("/member/interests/{interestId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Result deleteInterestProduct(@LoginMember String email, @PathVariable("interestId") Long interestId){
+        interestService.deleteInterestProduct(email, interestId);
         return responseService.getSuccessResult();
     }
 

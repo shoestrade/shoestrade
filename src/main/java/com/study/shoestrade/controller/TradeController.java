@@ -8,12 +8,13 @@ import com.study.shoestrade.service.trade.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @Slf4j
-@RequestMapping("/trade")
+@RequestMapping("/trades")
 @RequiredArgsConstructor
 public class TradeController {
 
@@ -29,6 +30,7 @@ public class TradeController {
      * @return 성공 결과
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Result salesTradeSave(@LoginMember String email, @RequestBody TradeDto tradeDto) {
         tradeService.TradeSave(email, tradeDto);
         return responseService.getSuccessResult();
@@ -41,6 +43,7 @@ public class TradeController {
      * @return
      */
     @GetMapping("/{tradeType}/count")
+    @ResponseStatus(HttpStatus.OK)
     public Result getBreakdownCount(@LoginMember String email, @PathVariable("tradeType") String tradeType){
         return responseService.getSingleResult(tradeService.getBreakdownCount(email, tradeType));
     }
@@ -54,6 +57,7 @@ public class TradeController {
      * @return
      */
     @GetMapping("/{tradeType}/{state}")
+    @ResponseStatus(HttpStatus.OK)
     public Result getBreakdown(@LoginMember String email, @PathVariable("tradeType") String tradeType, @PathVariable("state") String state, Pageable pageable){
         return responseService.getSingleResult(tradeService.getBreakdown(email, tradeType, state, pageable));
     }
@@ -62,24 +66,25 @@ public class TradeController {
      * 입찰 금액 수정
      *
      * @param email    사용자 이메일
+     * @param tradeId  거래 id
      * @param tradeDto 수정할 입찰 정보
      * @return 성공 결과
      */
-    @PostMapping("/{id}")
-    public Result updateTrade(@LoginMember String email, @PathVariable("id") Long id, @RequestBody TradeDto tradeDto) {
-        tradeService.updateTrade(email, id, tradeDto);
+    @PostMapping("/{tradeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Result updateTrade(@LoginMember String email, @PathVariable("tradeId") Long tradeId, @RequestBody TradeDto tradeDto) {
+        tradeService.updateTrade(email, tradeId, tradeDto);
         return responseService.getSuccessResult();
     }
 
     /**
      * 입찰 삭제
      *
-     * @param email    사용자 이메일
-     * @param tradeDto 삭제할 입찰 정보
      * @return 성공 결과
      */
-    @DeleteMapping
-    public Result deleteTrade(@LoginMember String email, @RequestBody TradeDto tradeDto) {
+    @DeleteMapping("/{tradeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Result deleteTrade(@LoginMember String email, @PathVariable("tradeId") Long tradeId, @RequestBody TradeDto tradeDto) {
         tradeService.deleteTrade(email, tradeDto);
         return responseService.getSuccessResult();
     }
@@ -91,7 +96,8 @@ public class TradeController {
      * @param pageable  페이지 정보
      * @return 검색 결과
      */
-    @GetMapping("/product/{productId}/done")
+    @GetMapping("/products/{productId}/done")
+    @ResponseStatus(HttpStatus.OK)
     public Result findDoneTrade(@PathVariable("productId") Long productId, Pageable pageable) {
         return responseService.getSingleResult(tradeService.findDoneTrade(productId, pageable));
     }
@@ -104,7 +110,8 @@ public class TradeController {
      * @param pageable   페이지 정보
      * @return 검색 결과
      */
-    @GetMapping("/product/{productId}/{tradeState}")
+    @GetMapping("/products/{productId}/{tradeState}")
+    @ResponseStatus(HttpStatus.OK)
     public Result findTransactionTrade(@PathVariable("productId") Long productId, @PathVariable("tradeState") String tradeState, Pageable pageable) {
         return responseService.getSingleResult(tradeService.findTransactionTrade(productId, tradeState, pageable));
     }
@@ -115,7 +122,8 @@ public class TradeController {
      * @param tradeState 입찰 상태(판매, 구매)
      * @return 검색 결과
      */
-    @GetMapping("/instant/{productId}/{tradeState}")
+    @GetMapping("/products/{productId}/{tradeState}/instant")
+    @ResponseStatus(HttpStatus.OK)
     public Result findInstantTrade(@PathVariable("productId") Long productId, @PathVariable("tradeState") String tradeState) {
         return responseService.getSingleResult(tradeService.findInstantTrade(productId, tradeState));
     }

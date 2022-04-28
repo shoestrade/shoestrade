@@ -6,12 +6,13 @@ import com.study.shoestrade.dto.brand.BrandDto;
 import com.study.shoestrade.service.brand.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/brand")
+@RequestMapping("/brands")
 @RequiredArgsConstructor
 public class BrandController {
 
@@ -26,6 +27,7 @@ public class BrandController {
      * @return 검색된 브랜드 리스트
      */
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Result findBrandByName(@RequestParam(value = "name") @Nullable String brandName, Pageable pageable) {
         return responseService.getSingleResult(brandService.findByBrandName(brandName, pageable));
     }
@@ -37,6 +39,7 @@ public class BrandController {
      * @return 등록완료 결과
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Result saveBrand(@RequestBody BrandDto brandDto) {
         return responseService.getSingleResult(brandService.saveBrand(brandDto));
     }
@@ -48,6 +51,7 @@ public class BrandController {
      * @return 삭제 결과
      */
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Result deleteBrand(@PathVariable Long id) {
         brandService.deleteByBrandId(id);
         return responseService.getSuccessResult();
@@ -61,6 +65,7 @@ public class BrandController {
      * @return 수정 결과
      */
     @PostMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Result updateBrand(@PathVariable Long id, @RequestBody BrandDto brandDto) {
         brandService.updateBrand(id, brandDto);
         return responseService.getSuccessResult();

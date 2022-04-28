@@ -156,11 +156,9 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
         else if(state.equals("progress")){
             return progressTrade();
         }
-        else if(state.equals("done")){
+        else{
             return List.of(TradeState.DONE);
         }
-
-        throw new WrongStateException(state);
     }
 
     private TradeState getTradeState(TradeType tradeType){
