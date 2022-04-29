@@ -13,7 +13,7 @@ C2C e커머스의 플랫폼 중 하나인 KREAM을 모티브로 거래 물품을
  - Spring Boot
  - Spring Security & JWT
  - MySQL
- - JPA
+ - Spring Data JPA
  - QueryDSL
  - JUnit
  - AWS
