@@ -17,6 +17,8 @@ C2C e커머스의 플랫폼 중 하나인 KREAM을 모티브로 거래 물품을
  - QueryDSL
  - JUnit
  - AWS
+<img width="982" alt="기술스택" src="https://user-images.githubusercontent.com/81504973/165868731-bb111456-a4f3-427c-85d9-06f825a3fc17.png">
+
 
 ## WIKI
 프로젝트의 모든 정보는 [WIKI](https://github.com/shoestrade/shoestrade/wiki)를 통해 참고하실 수 있습니다.
