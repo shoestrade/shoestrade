@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    
+
     // 이메일 인증
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     // spring security
@@ -42,6 +42,16 @@ dependencies {
 
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // swagger
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+    implementation "io.springfox:springfox-boot-starter:3.0.0"
+    // https://mvnrepository.com/artifact/io.swagger/swagger-models
+    implementation 'io.swagger:swagger-models:1.6.6'
+    // https://mvnrepository.com/artifact/io.swagger/swagger-annotations
+    implementation 'io.swagger:swagger-annotations:1.6.6'
+
+
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
