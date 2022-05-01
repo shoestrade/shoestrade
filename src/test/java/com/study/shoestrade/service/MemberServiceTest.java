@@ -225,7 +225,7 @@ class MemberServiceTest {
                 .build();
 
         // given
-        given(addressRepository.findById(any())).willReturn(Optional.of(newBaseAddress));
+        given(addressRepository.findAddressByIdAndEmail(any(), any())).willReturn(Optional.of(newBaseAddress));
         given(addressRepository.findBaseAddress(any())).willReturn(Optional.of(preBaseAddress));
 
         // when
@@ -261,7 +261,7 @@ class MemberServiceTest {
                 .build();
 
         // given
-        given(addressRepository.findById(any())).willReturn(Optional.of(address2));
+        given(addressRepository.findAddressByIdAndEmail(any(), any())).willReturn(Optional.of(address2));
 
         // when
         AddressDto newAddress = memberService.updateAddress("email", 2L, updateAddress);
@@ -294,7 +294,7 @@ class MemberServiceTest {
                 .build();
 
         // given
-        given(addressRepository.findById(any())).willReturn(Optional.of(address2));
+        given(addressRepository.findAddressByIdAndEmail(any(), any())).willReturn(Optional.of(address2));
         given(addressRepository.findBaseAddress(any())).willReturn(Optional.of(address1));
 
         // when
@@ -324,7 +324,7 @@ class MemberServiceTest {
                 .build();
 
         // given
-        given(addressRepository.findById(any())).willReturn(Optional.of(address1));
+        given(addressRepository.findAddressByIdAndEmail(any(), any())).willReturn(Optional.of(address1));
         given(addressRepository.findBaseAddress(any())).willReturn(Optional.empty());
 
         // when, then
@@ -350,7 +350,7 @@ class MemberServiceTest {
                 .build();
 
         // given
-        given(addressRepository.findById(any())).willReturn(Optional.of(address1));
+        given(addressRepository.findAddressByIdAndEmail(any(), any())).willReturn(Optional.of(address1));
 
         // when, then
         assertThatThrownBy(() -> memberService.updateAddress("email", 1L, updateAddress))
@@ -369,10 +369,10 @@ class MemberServiceTest {
                 .build();
 
         // given
-        given(addressRepository.findById(any())).willReturn(Optional.of(address1));
+        given(addressRepository.findAddressByIdAndEmail(any(), any())).willReturn(Optional.of(address1));
 
         // when
-        AddressDto addressDto = memberService.deleteAddress(1L);
+        AddressDto addressDto = memberService.deleteAddress("aaa",1L);
 
         // then
         assertThat(addressDto.getName()).isEqualTo("aaa");
@@ -390,10 +390,10 @@ class MemberServiceTest {
                 .build();
 
         // given
-        given(addressRepository.findById(any())).willReturn(Optional.of(address1));
+        given(addressRepository.findAddressByIdAndEmail(any(), any())).willReturn(Optional.of(address1));
 
         // when, then
-        assertThatThrownBy(() -> memberService.deleteAddress(1L))
+        assertThatThrownBy(() -> memberService.deleteAddress("aaa", 1L))
                 .isInstanceOf(BaseAddressNotDeleteException.class);
     }
 

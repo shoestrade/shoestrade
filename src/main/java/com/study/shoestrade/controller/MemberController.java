@@ -234,8 +234,8 @@ public class MemberController {
     })
     @DeleteMapping("/addresses/{addressId}")
     @ResponseStatus(HttpStatus.OK)
-    public Result deleteAddress(@PathVariable("addressId") Long id) {
-        memberService.deleteAddress(id);
+    public Result deleteAddress(@LoginMember String email, @PathVariable("addressId") Long id) {
+        memberService.deleteAddress(email, id);
         return responseService.getSuccessResult();
     }
 

@@ -1,5 +1,6 @@
 package com.study.shoestrade.dto.trade.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
 import com.study.shoestrade.domain.trade.TradeState;
 import io.swagger.annotations.ApiModelProperty;
@@ -26,6 +27,7 @@ public class TradeLoadDto {
     private int price;
 
     @ApiModelProperty(example = "2022-03-22 12:31:23", value = "거래 완료 날짜")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime tradeCompletionDate;
 
     @ApiModelProperty(example = "SELL", value = "거래 진행 상태")
