@@ -32,7 +32,7 @@ public class MemberDetailDto {
     @ApiModelProperty(example = "1000", value = "포인트")
     private int point;
 
-    private AccountDto accountDto;
+    private AccountDto account;
 
     @ApiModelProperty(example = "ROLE_MEMBER", value = "회원 권한")
     private Role role;
@@ -48,7 +48,7 @@ public class MemberDetailDto {
                 .shoeSize(member.getShoeSize())
                 .grade(member.getGrade())
                 .point(member.getPoint())
-                .accountDto(AccountDto.create(member.getAccount()))
+                .account(AccountDto.create(member.getAccount()))
                 .role(member.getRole())
                 .banReleaseTime(member.getBanReleaseTime())
                 .build();
