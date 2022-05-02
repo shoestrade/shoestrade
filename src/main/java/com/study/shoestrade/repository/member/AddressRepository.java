@@ -17,8 +17,11 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 //    @Query("select a from Address a join fetch a.member m where m.email = :email order by a.baseAddress desc")
 //    List<Address> findAddressList(@Param("email") String email);
 
+    @Query("select a from Address a join a.member m where m.email = :email and a.id = :id")
+    Optional<Address> findAddressByIdAndEmail(@Param("email") String email, @Param("id") Long id);
+
     @Query("select a from Address a join a.member m where m.email = :email and a.baseAddress = true")
-    Optional<Address> findBaseAddress(String email);
+    Optional<Address> findBaseAddress(@Param("email") String email);
 
     @Query("select a from Address a join a.member m where m.email = :email and a.baseAddress = false")
     Page<Address> findAddressList(@Param("email") String email, Pageable pageable);

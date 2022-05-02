@@ -129,7 +129,7 @@ public class AdminController {
     })
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "정지할 회원 id", dataTypeClass = Long.class),
-            @ApiImplicitParam(name = "day", value = "정지할 기간(일)", dataTypeClass = Integer.class)
+            @ApiImplicitParam(name = "day", value = "정지할 기간(일, -1이면 회원 탈퇴)", dataTypeClass = Integer.class)
     })
     @PostMapping("/admin/members/{id}/ban")
     @ResponseStatus(HttpStatus.OK)

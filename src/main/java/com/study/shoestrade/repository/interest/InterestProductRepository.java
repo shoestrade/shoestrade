@@ -12,6 +12,6 @@ import java.util.Optional;
 @Repository
 public interface InterestProductRepository extends JpaRepository<InterestProduct, Long>, InterestProductRepositoryCustom {
 
-    @Query("select i from InterestProduct i join i.member m join i.productSize p where m.email = :email and i.id = :interestId")
+    @Query("select i from InterestProduct i join i.member m join fetch i.productSize p join fetch p.product pp where m.email = :email and i.id = :interestId")
     Optional<InterestProduct> findOneInterest(@Param("email") String email, @Param("interestId") Long interestId);
 }

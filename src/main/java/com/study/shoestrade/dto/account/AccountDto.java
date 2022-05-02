@@ -29,6 +29,11 @@ public class AccountDto {
     }
 
     public static AccountDto create(Account account){
+        if(account == null){
+            return null;
+//            return AccountDto.builder().build();
+        }
+
         return AccountDto.builder()
                 .accountHolder(account.getAccountHolder())
                 .accountNumber(account.getAccountNumber())

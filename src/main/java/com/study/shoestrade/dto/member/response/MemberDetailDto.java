@@ -1,8 +1,8 @@
 package com.study.shoestrade.dto.member.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.study.shoestrade.domain.member.*;
 import com.study.shoestrade.dto.account.AccountDto;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -32,12 +32,13 @@ public class MemberDetailDto {
     @ApiModelProperty(example = "1000", value = "포인트")
     private int point;
 
-    private AccountDto accountDto;
+    private AccountDto account;
 
     @ApiModelProperty(example = "ROLE_MEMBER", value = "회원 권한")
     private Role role;
 
-    @ApiModelProperty(example = "2022-04-30 12:12:12", value = "정지 해제 날짜")
+    @ApiModelProperty(example = "2022-04-30T12:12:12", value = "정지 해제 날짜")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime banReleaseTime;
 
     public static MemberDetailDto create(Member member){
@@ -48,7 +49,7 @@ public class MemberDetailDto {
                 .shoeSize(member.getShoeSize())
                 .grade(member.getGrade())
                 .point(member.getPoint())
-                .accountDto(AccountDto.create(member.getAccount()))
+                .account(AccountDto.create(member.getAccount()))
                 .role(member.getRole())
                 .banReleaseTime(member.getBanReleaseTime())
                 .build();

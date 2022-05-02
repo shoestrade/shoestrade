@@ -75,7 +75,7 @@ public class MemberService {
 
     // 기본 주소 변경
     public AddressDto changeBaseAddress(String email, Long id){
-        Address newBaseAddress = addressRepository.findById(id)
+        Address newBaseAddress = addressRepository.findAddressByIdAndEmail(email, id)
                 .orElseThrow(AddressNotFoundException::new);
 
         preBaseAddressToFalse(email);
@@ -86,7 +86,7 @@ public class MemberService {
 
     // 주소 수정
     public AddressDto updateAddress(String email, Long id, AddressDto requestDto){
-        Address findAddress = addressRepository.findById(id)
+        Address findAddress = addressRepository.findAddressByIdAndEmail(email, id)
                 .orElseThrow(AddressNotFoundException::new);
 
         if(requestDto.getBaseAddress()){
@@ -103,8 +103,8 @@ public class MemberService {
     }
 
     // 주소 삭제
-    public AddressDto deleteAddress(Long id){
-        Address findAddress = addressRepository.findById(id)
+    public AddressDto deleteAddress(String email, Long id){
+        Address findAddress = addressRepository.findAddressByIdAndEmail(email, id)
                 .orElseThrow(AddressNotFoundException::new);
 
         if(findAddress.getBaseAddress()){
