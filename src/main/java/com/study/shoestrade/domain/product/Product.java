@@ -40,7 +40,6 @@ public class Product extends BaseEntity {
     private List<ProductSize> productSizeList = new ArrayList<>();
 
     public void changeProduct(ProductSaveDto productDto) {
-        this.id = productDto.getId();
         this.korName = productDto.getKorName();
         this.engName = productDto.getEngName();
         this.code = productDto.getCode();

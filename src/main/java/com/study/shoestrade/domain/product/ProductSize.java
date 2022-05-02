@@ -23,7 +23,7 @@ public class ProductSize {
 
     private int size;
 
-    @OneToMany(mappedBy = "productSize")
+    @OneToMany(mappedBy = "productSize", cascade = CascadeType.ALL)
     private List<Trade> tradeList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

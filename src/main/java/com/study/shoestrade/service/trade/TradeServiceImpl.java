@@ -9,11 +9,13 @@ import com.study.shoestrade.dto.trade.response.TradeDoneDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.product.ProductEmptyResultDataAccessException;
 import com.study.shoestrade.exception.product.ProductSizeNoSuchElementException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
 import com.study.shoestrade.exception.trade.WrongStateException;
 import com.study.shoestrade.exception.trade.WrongTradeTypeException;
 import com.study.shoestrade.repository.member.MemberRepository;
+import com.study.shoestrade.repository.product.ProductRepository;
 import com.study.shoestrade.repository.product.ProductSizeRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,8 @@ import java.util.List;
 public class TradeServiceImpl implements TradeService {
 
     private final TradeRepository tradeRepository;
+
+    private final ProductRepository productRepository;
 
     private final MemberRepository memberRepository;
 
@@ -119,6 +123,10 @@ public class TradeServiceImpl implements TradeService {
      */
     @Override
     public Page<TradeDoneDto> findDoneTrade(Long productId, Pageable pageable) {
+        productRepository.findById(productId).orElseThrow(() ->
+                new ProductEmptyResultDataAccessException(productId.toString(), 1)
+        );
+
         return tradeRepository.findDoneTrade(productId, pageable);
     }
 
@@ -132,6 +140,9 @@ public class TradeServiceImpl implements TradeService {
      */
     @Override
     public Page<TradeTransactionDto> findTransactionTrade(Long productId, String tradeState, Pageable pageable) {
+        productRepository.findById(productId).orElseThrow(() ->
+                new ProductEmptyResultDataAccessException(productId.toString(), 1)
+        );
         return tradeRepository.findTransactionTrade(productId, getTradeState(tradeState), pageable);
     }
 
@@ -144,6 +155,9 @@ public class TradeServiceImpl implements TradeService {
      */
     @Override
     public List<TradeLoadDto> findInstantTrade(Long productId, String tradeState) {
+        productRepository.findById(productId).orElseThrow(() ->
+                new ProductEmptyResultDataAccessException(productId.toString(), 1)
+        );
         return tradeRepository.findInstantTrade(productId, getTradeState(tradeState));
     }
 

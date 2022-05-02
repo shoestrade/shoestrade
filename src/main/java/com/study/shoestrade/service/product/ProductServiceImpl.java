@@ -105,13 +105,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductLoadDto> findProductByNameInBrand(ProductSearchDto productSearchDto, Pageable pageable) {
         return productRepository.findProduct(productSearchDto.getName(),
-                        productSearchDto.getBrandIdList(), pageable);
+                productSearchDto.getBrandIdList(), pageable);
     }
 
     /**
      * 상품 정보 변경
      *
-     * @param id         변경할 상품 id
+     * @param id             변경할 상품 id
      * @param productSaveDto 변경할 정보
      */
     @Override
@@ -126,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if (!product.getEngName().equals(productSaveDto.getEngName())) {
-            DuplicateProductEngName(product.getEngName());
+            DuplicateProductEngName(productSaveDto.getEngName());
         }
 
         Brand brand = brandRepository.findById(productSaveDto.getBrandId()).orElseThrow(() ->
@@ -141,18 +141,17 @@ public class ProductServiceImpl implements ProductService {
     /**
      * 상품 이미지 등록
      *
-     * @param productImageAddDto 등록할 상품 id, 이미지 정보
+     * @param productId          등록할 상품 id
+     * @param productImageAddDto 이미지 정보
      */
     @Override
     @Transactional
-    public void addProductImage(ProductImageAddDto productImageAddDto) {
-        Product product = productRepository.findById(productImageAddDto.getProductId()).orElseThrow(() ->
-                new ProductEmptyResultDataAccessException(productImageAddDto.getProductId().toString(), 1)
+    public void addProductImage(Long productId, ProductImageAddDto productImageAddDto) {
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new ProductEmptyResultDataAccessException(productId.toString(), 1)
         );
 
-        duplicateProductImage(productImageAddDto.getImageNameList(),
-                product.getId()
-        );
+        duplicateProductImage(productImageAddDto.getImageNameList(), product.getId());
 
         jdbcRepository.saveAllImage(
                 productImageAddDto.getImageNameList()

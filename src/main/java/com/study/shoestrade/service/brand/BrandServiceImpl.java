@@ -43,7 +43,7 @@ public class BrandServiceImpl implements BrandService {
     public void updateBrand(Long id, BrandDto brandDto) {
 
         Brand findBrand = brandRepository.findById(id).orElseThrow(
-                () -> new BrandEmptyResultDataAccessException(brandDto.getId().toString(), 1)
+                () -> new BrandEmptyResultDataAccessException(id.toString(), 1)
         );
 
         if(!brandDto.getEngName().equals(findBrand.getEngName())){
