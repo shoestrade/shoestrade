@@ -1,5 +1,6 @@
 package com.study.shoestrade.dto.trade.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class TradeDoneDto {
     @ApiModelProperty(example = "120000", value = "거래가격")
     int price;
 
-    @ApiModelProperty(example = "2022-03-22 12:31:23", value = "거래 완료 날짜")
+    @ApiModelProperty(example = "2022-03-22T12:31:23", value = "거래 완료 날짜")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime tradeDate;
 }

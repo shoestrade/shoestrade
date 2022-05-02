@@ -82,7 +82,7 @@ public class TradeController {
             @ApiImplicitParam(name = "tradeId", value = "입찰 id", dataTypeClass = Long.class),
             @ApiImplicitParam(name = "tradeDto", value = "수정할 입찰 정보(수정할 가격, 기존 입찰 타입만 입력)", dataTypeClass = TradeDto.class),
     })
-    @PostMapping("/{tradeId}")
+    @PostMapping("/{tradeId}/price")
     @ResponseStatus(HttpStatus.OK)
     public Result updateTrade(@LoginMember String email, @PathVariable("tradeId") Long tradeId, @RequestBody TradeDto tradeDto) {
         tradeService.updateTrade(email, tradeId, tradeDto);
