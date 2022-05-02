@@ -98,9 +98,9 @@ public class ProductController {
             @ApiImplicitParam(name = "productImageAddDto", value = "등록할 이미지 이름", dataTypeClass = ProductImageAddDto.class)
     })
     @PostMapping("/{productId}/images")
-    @ResponseStatus(HttpStatus.CREATED)                         // 여기 수정 productImageAddDto -> list로
+    @ResponseStatus(HttpStatus.CREATED)
     public Result addImageProduct(@PathVariable Long productId, @RequestBody ProductImageAddDto productImageAddDto) {
-        productService.addProductImage(productImageAddDto);
+        productService.addProductImage(productId, productImageAddDto);
         return responseService.getSuccessResult();
     }
 
@@ -128,7 +128,7 @@ public class ProductController {
     })
     @GetMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
-    public SingleResult<ProductDetailDto> findProductDetail(@PathVariable Long productId){
+    public SingleResult<ProductDetailDto> findProductDetail(@PathVariable Long productId) {
         return responseService.getSingleResult(productService.findProductDetailById(productId));
     }
 

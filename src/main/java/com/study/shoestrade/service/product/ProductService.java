@@ -8,6 +8,8 @@ import com.study.shoestrade.dto.product.response.ProductLoadDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 
 public interface ProductService {
 
@@ -44,9 +46,10 @@ public interface ProductService {
     /**
      * 상품 이미지 등록
      *
-     * @param productImageAddDto 등록할 상품 id, 이미지 정보
+     * @param productId 등록할 상품 id
+     * @param productImageAddDto 이미지 정보
      */
-    void addProductImage(ProductImageAddDto productImageAddDto);
+    void addProductImage(Long productId, ProductImageAddDto productImageAddDto);
 
     /**
      * 이미지 삭제

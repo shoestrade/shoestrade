@@ -171,7 +171,6 @@ class ProductServiceTest {
                 .build();
 
         ProductImageAddDto productImageAddDto = ProductImageAddDto.builder()
-                .productId(1L)
                 .imageNameList(new ArrayList<>(Arrays.asList("이미지1", "이미지2")))
                 .build();
 
@@ -179,7 +178,7 @@ class ProductServiceTest {
         given(productRepository.findById(any())).willReturn(Optional.ofNullable(product));
         willDoNothing().given(jdbcRepository).saveAllImage(any());
         // when
-        assertThatCode(() -> productService.addProductImage(productImageAddDto))
+        assertThatCode(() -> productService.addProductImage(1L, productImageAddDto))
                 .doesNotThrowAnyException();
     }
 

@@ -3,12 +3,11 @@ package com.study.shoestrade.dto.member.request;
 
 import com.study.shoestrade.domain.member.*;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class MemberJoinDto {
     @ApiModelProperty(example = "cjswltjr159@naver.com",value = "email")
