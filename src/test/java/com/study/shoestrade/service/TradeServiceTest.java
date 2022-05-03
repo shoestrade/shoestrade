@@ -1,6 +1,7 @@
 package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.member.Member;
+import com.study.shoestrade.domain.product.Product;
 import com.study.shoestrade.domain.product.ProductSize;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
@@ -11,6 +12,7 @@ import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
 import com.study.shoestrade.repository.member.MemberRepository;
+import com.study.shoestrade.repository.product.ProductRepository;
 import com.study.shoestrade.repository.product.ProductSizeRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
 import com.study.shoestrade.service.trade.TradeServiceImpl;
@@ -45,6 +47,9 @@ class TradeServiceTest {
 
     @Mock
     private ProductSizeRepository productSizeRepository;
+
+    @Mock
+    private ProductRepository productRepository;
 
     @Mock
     private MemberRepository memberRepository;
@@ -151,6 +156,7 @@ class TradeServiceTest {
         Page<TradeDoneDto> page = new PageImpl<>(new ArrayList<>(List.of(tradeDoneDto)), pageRequest, 1);
 
         given(tradeRepository.findDoneTrade(any(), any())).willReturn(page);
+        given(productRepository.findById(any())).willReturn(Optional.ofNullable(Product.builder().id(1L).build()));
 
         // when
         Page<TradeDoneDto> resultPage = tradeService.findDoneTrade(1L, pageRequest);
@@ -173,6 +179,7 @@ class TradeServiceTest {
         Page<TradeTransactionDto> page = new PageImpl<>(new ArrayList<>(List.of(tradeTransactionDto)), pageRequest, 1);
 
         given(tradeRepository.findTransactionTrade(any(), any(), any())).willReturn(page);
+        given(productRepository.findById(any())).willReturn(Optional.ofNullable(Product.builder().id(1L).build()));
 
         // when
         Page<TradeTransactionDto> resultPage = tradeService.findTransactionTrade(1L, "sell", pageRequest);
