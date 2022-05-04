@@ -20,7 +20,6 @@ import com.study.shoestrade.repository.jdbc.JdbcRepository;
 import com.study.shoestrade.repository.product.ProductImageRepository;
 import com.study.shoestrade.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -138,6 +136,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+    @Override
+    public List<ProductImageDto> findProductImageByProductId(Long productId) {
+        productRepository.findById(productId).orElseThrow(() ->
+                new ProductEmptyResultDataAccessException(productId.toString(), 1)
+        );
+
+        return productImageRepository.findByProductId(productId)
+                .stream()
+                .map(ProductImageDto::create)
+                .collect(Collectors.toList());
+    }
+
     /**
      * 상품 이미지 등록
      *
@@ -178,6 +188,8 @@ public class ProductServiceImpl implements ProductService {
 
 
     /**
+     * 상품 상세 검색
+     *
      * @param productId 검색할 상품 id
      * @return 검색 결과
      */
