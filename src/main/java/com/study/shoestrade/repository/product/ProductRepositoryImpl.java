@@ -90,11 +90,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 )
                 .from(product)
                 .join(productSize).on(product.eq(productSize.product))
-                .join(trade).on(productSize.eq(trade.productSize))
-                .where(product.id.eq(productId), trade.tradeState.eq(TradeState.DONE))
+                .leftJoin(trade).on(productSize.eq(trade.productSize), trade.tradeState.eq(TradeState.DONE))
+                .where(product.id.eq(productId))
                 .orderBy(trade.lastModifiedDate.desc())
                 .limit(1)
                 .fetch();
+
 
         return Optional.ofNullable(content.size() != 0 ? content.get(0) : null);
     }
