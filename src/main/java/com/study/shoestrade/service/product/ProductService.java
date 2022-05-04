@@ -1,5 +1,6 @@
 package com.study.shoestrade.service.product;
 
+import com.study.shoestrade.dto.product.ProductImageDto;
 import com.study.shoestrade.dto.product.request.ProductSaveDto;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
@@ -42,6 +43,13 @@ public interface ProductService {
      * @param productDto 변경할 정보
      */
     void updateProduct(Long id, ProductSaveDto productDto);
+
+    /**
+     * 상품 이미지 검색
+     *
+     * @param productId 검색할 상품 id
+     */
+    List<ProductImageDto> findProductImageByProductId(Long productId);
 
     /**
      * 상품 이미지 등록

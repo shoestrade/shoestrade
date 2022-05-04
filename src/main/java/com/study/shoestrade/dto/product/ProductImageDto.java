@@ -17,10 +17,18 @@ public class ProductImageDto {
     @ApiModelProperty(example = "이미지.png", value = "이미지 이름")
     String name;
 
+    public static ProductImageDto create(ProductImage productImage) {
+        return ProductImageDto.builder()
+                .id(productImage.getId())
+                .name(productImage.getName())
+                .build();
+
+    }
+
     public ProductImage toEntity(Product product) {
         return ProductImage.builder()
-                .id(this.id)
                 .name(this.name)
+                .id(this.id)
                 .product(product)
                 .build();
     }

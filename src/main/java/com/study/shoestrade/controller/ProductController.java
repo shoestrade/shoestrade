@@ -3,8 +3,6 @@ package com.study.shoestrade.controller;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
-import com.study.shoestrade.domain.product.Product;
-import com.study.shoestrade.dto.interest.request.InterestProductRequestDto;
 import com.study.shoestrade.dto.product.request.ProductSaveDto;
 import com.study.shoestrade.dto.product.ProductImageAddDto;
 import com.study.shoestrade.dto.product.request.ProductSearchDto;
@@ -27,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ProductController {
 
     private final ResponseService responseService;
@@ -87,6 +86,19 @@ public class ProductController {
     public Result updateProduct(@PathVariable Long productId, @RequestBody ProductSaveDto productDto) {
         productService.updateProduct(productId, productDto);
         return responseService.getSuccessResult();
+    }
+
+    @ApiOperation(value = "상품 이미지 검색", notes = "상품의 이미지를 검색합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "상품 이미지 검색 정상 처리")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "productId", value = "이미지 검색할 상품 id", dataTypeClass = Long.class),
+    })
+    @GetMapping("/{productId}/images")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Result findProductImage(@PathVariable Long productId) {
+        return responseService.getSingleResult(productService.findProductImageByProductId(productId));
     }
 
     @ApiOperation(value = "상품 이미지 등록", notes = "상품의 이미지를 등록합니다.")

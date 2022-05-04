@@ -17,4 +17,13 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Long
      * @return 검색 결과
      */
     List<ProductImage> findByProductIdAndNameIn(Long productId, List<String> names);
+
+
+    /**
+     * 상품 이미지 검색
+     *
+     * @param productId 상품 id
+     * @return 검색 결과
+     */
+    List<ProductImage> findByProductId(Long productId);
 }
