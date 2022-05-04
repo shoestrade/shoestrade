@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/trades")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class TradeController {
 
     private final ResponseService responseService;

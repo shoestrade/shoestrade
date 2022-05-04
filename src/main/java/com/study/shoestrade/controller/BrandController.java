@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/brands")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class BrandController {
 
     private final BrandService brandService;
