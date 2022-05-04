@@ -7,6 +7,7 @@ import com.study.shoestrade.common.config.security.authenticationEntryPoint.Cust
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -47,11 +48,39 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // jwt로 인증하므로 세션 미사용
                 .and()
                 .authorizeRequests()
-//                .antMatchers("/admin/**").hasRole("ADMIN")
-//                .antMatchers("/brand/**").hasRole("ADMIN")
-////                .antMatchers("/product/**").hasAnyRole("ADMIN", "MEMBER")
-//                .antMatchers("/member/**").hasRole("MEMBER")
-//                .antMatchers("/my/**").hasRole("MEMBER")
+                // AdminController
+                .antMatchers("/admin/**").hasRole("ADMIN")
+
+                // BrandController
+                .antMatchers(HttpMethod.GET,"/brands").hasAnyRole("ADMIN", "MEMBER")
+                .antMatchers("/brands/**").hasRole("ADMIN")
+
+                // InterestController
+                .antMatchers("/products/*/interests").hasRole("MEMBER")
+                .antMatchers("/member/interests/**").hasRole("MEMBER")
+
+                // MemberController
+                .antMatchers(HttpMethod.POST, "/member",
+                        "/member/join/send-mail",
+                        "/member/join/check-mail",
+                        "/member/login",
+                        "/member/find-email",
+                        "/member/find-password").permitAll()
+                .antMatchers("member/token/reissuance").hasAnyRole("ADMIN", "MEMBER")
+                .antMatchers("/member/**").hasRole("MEMBER")
+
+                // ProductController
+                .antMatchers(HttpMethod.GET, "/products").permitAll()
+                .antMatchers(HttpMethod.GET, "/products/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/products/*").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/products/*").hasRole("ADMIN")
+                .antMatchers("/products/*/images").hasRole("ADMIN")
+                .antMatchers("/products/*/trades/**").hasAnyRole("ADMIN", "MEMBER")
+
+                // TradeController
+                .antMatchers("/trades").hasRole("MEMBER")
+
                 .antMatchers("/**").permitAll()
                 .and()
                 .exceptionHandling()
