@@ -10,6 +10,8 @@ import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.interest.InterestNotFoundException;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
 import com.study.shoestrade.exception.member.*;
+import com.study.shoestrade.exception.payment.InsufficientPointException;
+import com.study.shoestrade.exception.payment.MyTradeException;
 import com.study.shoestrade.exception.product.*;
 import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
@@ -195,5 +197,17 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     protected Result tradeEmptyResultDataAccessException(TradeEmptyResultDataAccessException e) {
         return responseService.getFailureResult(-121, e.getMessage() + " : 해당 입찰 내역을 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(InsufficientPointException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result insufficientPointException(InsufficientPointException e){
+        return responseService.getFailureResult(-122, "포인트가 부족합니다.");
+    }
+
+    @ExceptionHandler(MyTradeException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result myTradeException(MyTradeException e){
+        return responseService.getFailureResult(-123, "자신이 등록한 입찰은 거래할 수 없습니다.");
     }
 }

@@ -44,4 +44,8 @@ public class Trade extends BaseEntity {
     public void changePrice(int price) {
         this.price = price;
     }
+
+    public void changeState(TradeState state){
+        this.tradeState = state;
+    }
 }

@@ -4,15 +4,12 @@ import com.study.shoestrade.common.annotation.LoginMember;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
-import com.study.shoestrade.domain.trade.Trade;
-import com.study.shoestrade.dto.product.response.ProductLoadDto;
 import com.study.shoestrade.dto.trade.request.TradeDto;
 import com.study.shoestrade.dto.trade.response.TradeBreakdownCountDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.service.trade.TradeService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@Slf4j
 @RequestMapping("/trades")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
@@ -105,4 +101,5 @@ public class TradeController {
         tradeService.deleteTrade(email, tradeDto);
         return responseService.getSuccessResult();
     }
+
 }
