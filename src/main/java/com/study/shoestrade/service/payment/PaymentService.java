@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Slf4j
@@ -35,7 +36,7 @@ public class PaymentService {
     public String createPayment(String email, PaymentRequestDto requestDto){
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         Trade trade = tradeRepository.findById(requestDto.getTradeId()).orElseThrow(() -> new TradeEmptyResultDataAccessException(requestDto.getTradeId().toString(), 1));
-        String orderId = member.getName() + "_" + Objects.hashCode(requestDto.getName()+ member.getName()+LocalDateTime.now());
+        String orderId =createOrderId(member.getName(), requestDto.getName());
 
         if(trade.getSeller().equals(member)){
             throw new MyTradeException();
@@ -62,6 +63,17 @@ public class PaymentService {
 
         paymentRepository.save(payment);
         return orderId;
+    }
+
+    protected String createOrderId(String memberName, String orderName){
+        LocalDateTime now = LocalDateTime.now();
+        int hash = 17;
+        hash = 31 * hash + memberName.hashCode();
+        hash = 31 * hash + orderName.hashCode();
+        hash = 31 * hash + now.hashCode();
+        hash = hash & 0x7fffffff;
+
+        return "ST" + now.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "_" + hash;
     }
 
 
