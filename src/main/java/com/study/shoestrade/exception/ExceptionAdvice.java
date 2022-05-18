@@ -12,6 +12,7 @@ import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
 import com.study.shoestrade.exception.member.*;
 import com.study.shoestrade.exception.payment.InsufficientPointException;
 import com.study.shoestrade.exception.payment.MyTradeException;
+import com.study.shoestrade.exception.payment.PaymentNotMatchedException;
 import com.study.shoestrade.exception.product.*;
 import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
@@ -209,5 +210,11 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     protected Result myTradeException(MyTradeException e){
         return responseService.getFailureResult(-123, "자신이 등록한 입찰은 거래할 수 없습니다.");
+    }
+
+    @ExceptionHandler(PaymentNotMatchedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result paymentNotMatchedException(PaymentNotMatchedException e){
+        return responseService.getFailureResult(-124, "가격이 일치하지 않습니다.");
     }
 }

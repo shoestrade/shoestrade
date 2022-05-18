@@ -8,17 +8,20 @@ import com.study.shoestrade.dto.payment.request.PaymentRequestDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.exception.payment.InsufficientPointException;
 import com.study.shoestrade.exception.payment.MyTradeException;
+import com.study.shoestrade.exception.payment.PaymentNotMatchedException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.payment.PaymentRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -40,6 +43,10 @@ public class PaymentService {
 
         if(member.getPoint() < requestDto.getPoint()){
             throw new InsufficientPointException();
+        }
+
+        if(trade.getPrice() != requestDto.getPrice() + requestDto.getPoint()){
+            throw new PaymentNotMatchedException();
         }
 
         trade.changeState(TradeState.READY);
