@@ -8,6 +8,7 @@ import com.study.shoestrade.dto.payment.request.PaymentRequestDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
 import com.study.shoestrade.exception.payment.InsufficientPointException;
 import com.study.shoestrade.exception.payment.MyTradeException;
+import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.payment.PaymentRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
@@ -30,7 +31,7 @@ public class PaymentService {
     // 결제 정보 생성
     public String createPayment(String email, PaymentRequestDto requestDto){
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
-        Trade trade = tradeRepository.getById(requestDto.getTradeId());
+        Trade trade = tradeRepository.findById(requestDto.getTradeId()).orElseThrow(() -> new TradeEmptyResultDataAccessException(requestDto.getTradeId().toString(), 1));
         String orderId = member.getName() + "_" + Objects.hashCode(requestDto.getName()+ member.getName()+LocalDateTime.now());
 
         if(trade.getSeller().equals(member)){
