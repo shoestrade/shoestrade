@@ -12,7 +12,6 @@ import com.study.shoestrade.dto.member.response.MemberDto;
 import com.study.shoestrade.dto.member.response.MemberFindResponseDto;
 import com.study.shoestrade.dto.member.response.MemberLoginResponseDto;
 import com.study.shoestrade.dto.member.response.PointDto;
-import com.study.shoestrade.dto.product.request.ProductSaveDto;
 import com.study.shoestrade.service.member.MailService;
 import com.study.shoestrade.service.member.LoginService;
 import com.study.shoestrade.service.member.MemberService;
@@ -59,7 +58,7 @@ public class MemberController {
     @PostMapping("/join/send-mail")
     @ResponseStatus(HttpStatus.OK)
     public Result mail(@RequestParam("email") String email) {
-        String key = mailService.sendMail(email);
+        String key = mailService.sendAuthMail(email);
         mailService.saveKey(email, key);
         return responseService.getSuccessResult();
     }

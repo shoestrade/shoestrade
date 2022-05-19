@@ -22,6 +22,7 @@ public class Trade extends BaseEntity {
 
     private int price;
     private LocalDateTime tradeCompletionDate;
+    private LocalDateTime claimDueDate;
 
     @Enumerated(EnumType.STRING)
     private TradeType tradeType;
@@ -47,5 +48,13 @@ public class Trade extends BaseEntity {
 
     public void changeState(TradeState state){
         this.tradeState = state;
+    }
+
+    public void changeSeller(Member member){
+        this.seller = member;
+    }
+
+    public void changeClaimDueDate(LocalDateTime deadline){
+        this.claimDueDate = deadline;
     }
 }

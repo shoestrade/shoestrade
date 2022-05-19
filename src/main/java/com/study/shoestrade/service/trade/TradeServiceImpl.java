@@ -1,5 +1,6 @@
 package com.study.shoestrade.service.trade;
 
+import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
@@ -9,6 +10,7 @@ import com.study.shoestrade.dto.trade.response.TradeDoneDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
 import com.study.shoestrade.dto.trade.response.TradeTransactionDto;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.payment.MyTradeException;
 import com.study.shoestrade.exception.product.ProductEmptyResultDataAccessException;
 import com.study.shoestrade.exception.product.ProductSizeNoSuchElementException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
@@ -18,6 +20,7 @@ import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.product.ProductRepository;
 import com.study.shoestrade.repository.product.ProductSizeRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
+import com.study.shoestrade.service.member.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -40,6 +46,7 @@ public class TradeServiceImpl implements TradeService {
     private final MemberRepository memberRepository;
 
     private final ProductSizeRepository productSizeRepository;
+    private final MailService mailService;
 
     /**
      * 입찰 등록
@@ -181,6 +188,35 @@ public class TradeServiceImpl implements TradeService {
     private void checkState(String state){
         if(!state.equals("bid") && !state.equals("progress") && !state.equals("done")){
             throw new WrongStateException(state);
+        }
+    }
+
+    // 즉시 판매 체결
+    @Override
+    @Transactional
+    public void sellTrade(String email, Long tradeId){
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        Trade trade = tradeRepository.findById(tradeId).orElseThrow(() -> new TradeEmptyResultDataAccessException(tradeId.toString(), 1));
+
+        checkTradeStateAndTradeType(trade);
+
+        if(trade.getPurchaser().equals(member)){
+            throw new MyTradeException();
+        }
+
+        LocalDate now = LocalDate.now();
+        LocalDateTime deadline = LocalDateTime.of(now.plusDays(2), LocalTime.MAX.minusSeconds(1));
+
+        trade.changeState(TradeState.READY);
+        trade.changeSeller(member);
+        trade.changeClaimDueDate(deadline);
+
+        mailService.sendClaimMail(email, deadline);
+    }
+
+    private void checkTradeStateAndTradeType(Trade trade) {
+        if(!trade.getTradeState().equals(TradeState.PURCHASE) || !trade.getTradeType().equals(TradeType.PURCHASE)){
+            throw new WrongTradeTypeException();
         }
     }
 
