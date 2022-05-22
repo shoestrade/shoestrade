@@ -8,7 +8,6 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SequenceGenerator(name = "TOKEN_SEQ_GENERATOR", sequenceName = "TOKEN_SEQ")
 @Builder
 public class Token {
 
@@ -16,7 +15,7 @@ public class Token {
     private Long id;
     private String refreshToken;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 

@@ -211,7 +211,7 @@ public class TradeServiceImpl implements TradeService {
         trade.changeSeller(member);
         trade.changeClaimDueDate(deadline);
 
-        mailService.sendClaimMail(email, deadline);
+        mailService.sendClaimMail(trade.getPurchaser().getEmail(), deadline);
     }
 
     private void checkTradeStateAndTradeType(Trade trade) {

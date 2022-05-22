@@ -52,10 +52,13 @@ public class Member extends BaseEntity {
     // 정지 해제 시간
     private LocalDateTime banReleaseTime;
 
-    @OneToMany(mappedBy = "seller")
+    private Long warningCount;
+    private Long banCount;
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<Trade> sellList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "purchaser")
+    @OneToMany(mappedBy = "purchaser", cascade = CascadeType.ALL)
     private List<Trade> purchaseList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -95,4 +98,13 @@ public class Member extends BaseEntity {
         this.role = role;
     }
 
+    public Member banningMember(int day, LocalDateTime now){
+        if(day != 0 && day != -1){
+            this.banCount += 1;
+            this.role = Role.BAN;
+            this.banReleaseTime = now.plusDays(day);
+        }
+
+        return this;
+    }
 }
