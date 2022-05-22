@@ -29,7 +29,7 @@ public class SchedulerService {
     private final TokenRepository tokenRepository;
 
     @Scheduled(cron = "00 00 00 * * *", zone = "Asia/Seoul")
-    public void notPaidScheduler() { 
+    public void notPaidScheduler() {
         LocalDateTime now = LocalDateTime.now();
         List<Long> overdueTrades = tradeRepository.findOverdueTrade(now);
         List<OverdueMember> overdueMembers = tradeRepository.findOverdueMember(now);
