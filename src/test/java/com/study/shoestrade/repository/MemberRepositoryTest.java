@@ -20,6 +20,8 @@ class MemberRepositoryTest {
             .email("0tkk@naver.com")
             .password("1234")
             .shoeSize(255)
+            .banCount(0L)
+            .warningCount(0L)
             .build();
 
 

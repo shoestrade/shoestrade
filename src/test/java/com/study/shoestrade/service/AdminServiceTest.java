@@ -1,10 +1,12 @@
 package com.study.shoestrade.service;
 
 import com.study.shoestrade.domain.member.Member;
+import com.study.shoestrade.domain.member.Token;
 import com.study.shoestrade.dto.admin.PageMemberDto;
 import com.study.shoestrade.dto.member.response.MemberDetailDto;
 import com.study.shoestrade.repository.interest.InterestProductRepository;
 import com.study.shoestrade.repository.member.MemberRepository;
+import com.study.shoestrade.repository.member.TokenRepository;
 import com.study.shoestrade.service.admin.AdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +38,9 @@ class AdminServiceTest {
     AdminService adminService;
     @Mock
     MemberRepository memberRepository;
+
+    @Mock
+    TokenRepository tokenRepository;
 
     List<Member> members;
 
@@ -121,9 +126,14 @@ class AdminServiceTest {
     public void 회원_정지_성공2() {
         // given
         Member member = members.get(1);
+        Token token = Token.builder()
+                .id(1L)
+                .refreshToken("token")
+                .build();
 
         // mocking
         given(memberRepository.findById(any())).willReturn(Optional.of(member));
+        given(tokenRepository.findByMember(any())).willReturn(Optional.of(token));
 
         // when, then
         assertThatCode(() ->  adminService.banMember(1L, -1))

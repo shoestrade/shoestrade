@@ -53,6 +53,7 @@ class PaymentServiceTest {
         member1 = Member.builder()
                 .id(1L)
                 .email("member1")
+                .name("member1")
                 .password("PW1")
                 .point(100)
                 .build();
@@ -60,6 +61,7 @@ class PaymentServiceTest {
         member2 = Member.builder()
                 .id(2L)
                 .email("member2")
+                .name("member2")
                 .password("PW2")
                 .build();
 
