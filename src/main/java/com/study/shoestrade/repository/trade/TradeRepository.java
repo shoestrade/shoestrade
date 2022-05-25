@@ -1,5 +1,6 @@
 package com.study.shoestrade.repository.trade;
 
+import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.dto.scheduler.OverdueMember;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long>, TradeRepositoryCustom {
@@ -59,4 +61,6 @@ public interface TradeRepository extends JpaRepository<Trade, Long>, TradeReposi
     @Modifying(clearAutomatically = true)
     @Query("update Trade t set t.tradeState = 'FAIL' where t.id in :list")
     void updateTradeStatesFromReadyToFail(@Param("list") List<Long> list);
+
+    Optional<Trade> findByIdAndPurchaser(Long tradeId, Member member);
 }

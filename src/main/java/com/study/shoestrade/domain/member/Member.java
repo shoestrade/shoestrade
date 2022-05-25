@@ -52,8 +52,8 @@ public class Member extends BaseEntity {
     // 정지 해제 시간
     private LocalDateTime banReleaseTime;
 
-    private Long warningCount;
-    private Long banCount;
+    private Long warningCount = 0L;
+    private Long banCount = 0L;
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<Trade> sellList = new ArrayList<>();

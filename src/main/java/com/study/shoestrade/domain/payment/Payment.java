@@ -28,7 +28,7 @@ public class Payment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PaymentMethod method;  // 결제 수단
 
-    private String name;  // 결제 이름??
+    private String name;  // 상품 이름
 
     private int price;  // 결제 금액
     private int point;  // 포인트 사용 금액
@@ -37,4 +37,11 @@ public class Payment extends BaseEntity {
     private PaymentStatus status = PaymentStatus.READY;  // 상태
 
     private LocalDateTime paidAt;  // 결제 완료 일시
+
+    public void successPayment(String impId, PaymentMethod method, PaymentStatus status, LocalDateTime paidAt){
+        this.impId = impId;
+        this.method = method;
+        this.status = status;
+        this.paidAt = paidAt;
+    }
 }

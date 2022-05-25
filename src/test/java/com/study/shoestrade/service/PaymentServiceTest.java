@@ -1,20 +1,24 @@
 package com.study.shoestrade.service;
 
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.study.shoestrade.domain.member.Member;
+import com.study.shoestrade.domain.payment.Payment;
 import com.study.shoestrade.domain.payment.PaymentMethod;
+import com.study.shoestrade.domain.payment.PaymentStatus;
 import com.study.shoestrade.domain.trade.Trade;
 import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.domain.trade.TradeType;
 import com.study.shoestrade.dto.payment.request.PaymentRequestDto;
+import com.study.shoestrade.dto.payment.request.PaymentVerifyRequestDto;
 import com.study.shoestrade.exception.payment.InsufficientPointException;
 import com.study.shoestrade.exception.payment.MyTradeException;
-import com.study.shoestrade.exception.payment.PaymentNotMatchedException;
+import com.study.shoestrade.exception.payment.PaymentPriceNotMatchedException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.payment.PaymentRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
 import com.study.shoestrade.service.payment.PaymentService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,12 +27,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -202,7 +205,39 @@ class PaymentServiceTest {
 
         // when, then
         assertThatThrownBy(() -> paymentService.createPayment(member1.getEmail(), requestDto))
-                .isInstanceOf(PaymentNotMatchedException.class);
+                .isInstanceOf(PaymentPriceNotMatchedException.class);
     }
 
+    /*
+    @Test
+    public void 결제_정보_검증_성공() throws IamportResponseException, IOException {
+        // given
+        PaymentVerifyRequestDto requestDto = PaymentVerifyRequestDto.builder()
+                .orderId("orderId")
+                .impId("impId")
+                .tradeId(sell.getId())
+                .build();
+
+        Payment payment = Payment.builder()
+                .id(201L)
+                .orderId("orderId")
+                .method(PaymentMethod.CARD)
+                .price(sell.getPrice())
+                .trade(sell)
+                .status(PaymentStatus.READY)
+                .build();
+
+
+
+        // mocking
+        given(memberRepository.findByEmail("member1")).willReturn(Optional.of(member1));
+        given(tradeRepository.findByIdAndPurchaser(101L, member1)).willReturn(Optional.of(sell));
+        given(paymentRepository.findByOrderIdAndTrade("orderId", sell)).willReturn(Optional.of(payment));
+
+        // when
+        paymentService.verifyPayment("member1", requestDto);
+
+        // then
+    }
+    */
 }
