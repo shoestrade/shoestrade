@@ -69,4 +69,6 @@ public interface TradeService {
      * @return 검색 결과
      */
     List<TradeLoadDto> findInstantTrade(Long productId, String tradeState);
+
+    void sellTrade(String email, Long tradeId);
 }

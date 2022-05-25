@@ -2,12 +2,15 @@ package com.study.shoestrade.service.admin;
 
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.member.Role;
+import com.study.shoestrade.domain.member.Token;
 import com.study.shoestrade.dto.member.response.MemberDetailDto;
 import com.study.shoestrade.dto.admin.PageMemberDto;
 import com.study.shoestrade.dto.interest.response.MyInterest;
 import com.study.shoestrade.exception.member.MemberNotFoundException;
+import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
 import com.study.shoestrade.repository.interest.InterestProductRepository;
 import com.study.shoestrade.repository.member.MemberRepository;
+import com.study.shoestrade.repository.member.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,7 @@ import java.util.List;
 public class  AdminService {
 
     private final MemberRepository memberRepository;
+    private final TokenRepository tokenRepository;
 
     @Transactional(readOnly = true)
     public String getMemberEmail(Long id){
@@ -50,6 +54,9 @@ public class  AdminService {
         LocalDateTime now = LocalDateTime.now();
 
         if(day == -1){
+            Token token = tokenRepository.findByMember(findMember.getId())
+                    .orElseThrow(InvalidRefreshTokenException::new);
+            tokenRepository.delete(token);
             memberRepository.delete(findMember);
         } else {
             findMember.changeRole(Role.BAN);

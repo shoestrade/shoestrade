@@ -23,6 +23,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven {url "https://jitpack.io"}
 }
 
 dependencies {
@@ -51,7 +52,8 @@ dependencies {
     // https://mvnrepository.com/artifact/io.swagger/swagger-annotations
     implementation 'io.swagger:swagger-annotations:1.6.6'
 
-
+    // 아임포트
+    implementation 'com.github.iamport:iamport-rest-client-java:0.2.17'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'

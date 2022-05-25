@@ -4,15 +4,13 @@ import com.study.shoestrade.common.annotation.LoginMember;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
-import com.study.shoestrade.domain.trade.Trade;
-import com.study.shoestrade.dto.product.response.ProductLoadDto;
 import com.study.shoestrade.dto.trade.request.TradeDto;
 import com.study.shoestrade.dto.trade.response.TradeBreakdownCountDto;
 import com.study.shoestrade.dto.trade.response.TradeLoadDto;
+import com.study.shoestrade.service.member.MailService;
 import com.study.shoestrade.service.trade.TradeService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@Slf4j
 @RequestMapping("/trades")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
@@ -103,6 +100,21 @@ public class TradeController {
     @ResponseStatus(HttpStatus.OK)
     public Result deleteTrade(@LoginMember String email, @PathVariable("tradeId") Long tradeId, @RequestBody TradeDto tradeDto) {
         tradeService.deleteTrade(email, tradeDto);
+        return responseService.getSuccessResult();
+    }
+
+    @ApiOperation(value = "즉시 판매 체결", notes = "구매 입찰에 올라온 거래에 판매 체결을 합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "입찰 삭제 정상 처리")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "email", value = "로그인된 사용자 이메일", dataTypeClass = String.class, paramType = "header"),
+            @ApiImplicitParam(name = "tradeId", value = "입찰 id", dataTypeClass = Long.class),
+    })
+    @PostMapping("/{tradeId}/sell")
+    @ResponseStatus(HttpStatus.OK)
+    public Result sellTrade(@LoginMember String email, @PathVariable("tradeId") Long tradeId){
+        tradeService.sellTrade(email, tradeId);
         return responseService.getSuccessResult();
     }
 }

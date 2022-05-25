@@ -1,5 +1,6 @@
 package com.study.shoestrade.exception;
 
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.exception.address.AddressNotFoundException;
@@ -10,6 +11,7 @@ import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.interest.InterestNotFoundException;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
 import com.study.shoestrade.exception.member.*;
+import com.study.shoestrade.exception.payment.*;
 import com.study.shoestrade.exception.product.*;
 import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
@@ -195,5 +197,53 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     protected Result tradeEmptyResultDataAccessException(TradeEmptyResultDataAccessException e) {
         return responseService.getFailureResult(-121, e.getMessage() + " : 해당 입찰 내역을 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(InsufficientPointException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result insufficientPointException(InsufficientPointException e){
+        return responseService.getFailureResult(-122, "포인트가 부족합니다.");
+    }
+
+    @ExceptionHandler(MyTradeException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result myTradeException(MyTradeException e){
+        return responseService.getFailureResult(-123, "자신이 등록한 입찰은 거래할 수 없습니다.");
+    }
+
+    @ExceptionHandler(PaymentPriceNotMatchedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result paymentNotMatchedException(PaymentPriceNotMatchedException e){
+        return responseService.getFailureResult(-124, "가격이 일치하지 않습니다.");
+    }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    protected Result paymentNotFoundException(PaymentNotFoundException e){
+        return responseService.getFailureResult(-125, e.getMessage() + "인 결제 내역을 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(IamportResponseException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    protected Result iamportResponseException(IamportResponseException e){
+        return responseService.getFailureResult(-126, e.getMessage());
+    }
+
+    @ExceptionHandler(PaymentOrderIdNotConsistException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result paymentOrderIdNotConsistException(PaymentOrderIdNotConsistException e){
+        return responseService.getFailureResult(-127, "주문 번호가 일치하지 않습니다.");
+    }
+
+    @ExceptionHandler(PaymentUnpaidException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result paymentUnpaidException(PaymentUnpaidException e){
+        return responseService.getFailureResult(-128, "결제가 이루어지지 않았습니다.");
+    }
+
+    @ExceptionHandler(PaymentMethodNotConsistException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result paymentMethodNotConsistException(PaymentMethodNotConsistException e){
+        return responseService.getFailureResult(-129, "결제 수단이 일치하지 않습니다.");
     }
 }

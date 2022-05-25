@@ -9,6 +9,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Random;
 
@@ -20,8 +22,8 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final MailAuthRepository mailAuthRepository;
 
-    public String sendMail(String email){
-        String key = makeKey(email);
+    public String sendAuthMail(String email){
+        String key = makeKey();
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
@@ -55,7 +57,18 @@ public class MailService {
                 .orElseThrow(() -> new MailAuthNotEqualException("인증번호가 틀렸습니다."));
     }
 
-    private String makeKey(String email){
+    // 청구 메일 전송
+    public void sendClaimMail(String email, LocalDateTime deadline){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("구매 입찰 상품 체결"); // 메일 제목
+        message.setText("구매 입찰하신 상품이 체결되었습니다.");
+        message.setText(deadline.format(DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss")) + "까지 청구하셔야합니다.");
+
+        javaMailSender.send(message);
+    }
+
+    private String makeKey(){
         Random random = new Random();  // 난수 생성
         String key = "";  // 인증 번호
 
