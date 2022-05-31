@@ -79,7 +79,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/products/*/trades/**").hasAnyRole("ADMIN", "MEMBER")
 
                 // TradeController
-                .antMatchers("/trades").hasRole("MEMBER")
+                .antMatchers("/trades/**").hasRole("MEMBER")
+
+                // PaymentController
+                .antMatchers("/payments/**").hasRole("MEMBER")
 
                 .antMatchers("/**").permitAll()
                 .and()
