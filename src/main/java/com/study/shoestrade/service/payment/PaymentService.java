@@ -113,6 +113,7 @@ public class PaymentService {
 
         LocalDateTime paidAt = paymentData.getPaidAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         payment.successPayment(requestDto.getImpId(), method, status, paidAt);
+        trade.changeState(TradeState.COMPLETE);
     }
 
     protected String createOrderId(String memberName, String orderName){
