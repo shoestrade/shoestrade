@@ -10,6 +10,7 @@ import com.study.shoestrade.exception.brand.BrandDuplicationException;
 import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.interest.InterestNotFoundException;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
+import com.study.shoestrade.exception.mailAuth.MailNotValidException;
 import com.study.shoestrade.exception.member.*;
 import com.study.shoestrade.exception.payment.*;
 import com.study.shoestrade.exception.product.*;
@@ -17,6 +18,7 @@ import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
 import com.study.shoestrade.exception.token.TokenNotFoundException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
+import com.study.shoestrade.exception.trade.TradeNotCompletedException;
 import com.study.shoestrade.exception.trade.WrongStateException;
 import com.study.shoestrade.exception.trade.WrongTradeTypeException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -245,5 +247,17 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     protected Result paymentMethodNotConsistException(PaymentMethodNotConsistException e){
         return responseService.getFailureResult(-129, "결제 수단이 일치하지 않습니다.");
+    }
+
+    @ExceptionHandler(TradeNotCompletedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result tradeNotCompletedException(TradeNotCompletedException e){
+        return responseService.getFailureResult(-130, "결제가 완료되지 않은 거래의 상태는 수정할 수 없습니다.");
+    }
+
+    @ExceptionHandler(MailNotValidException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result mailNotValidException(MailNotValidException e){
+        return responseService.getFailureResult(-131, "올바르지 못한 이메일 형식입니다.");
     }
 }
