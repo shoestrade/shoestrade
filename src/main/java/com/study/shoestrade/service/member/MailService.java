@@ -2,7 +2,9 @@ package com.study.shoestrade.service.member;
 
 import com.study.shoestrade.domain.mailAuth.MailAuth;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
+import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
 import com.study.shoestrade.repository.member.MailAuthRepository;
+import com.study.shoestrade.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,8 +23,18 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
     private final MailAuthRepository mailAuthRepository;
+    private final MemberRepository memberRepository;
+
+    @Transactional(readOnly = true)
+    public boolean checkEmailDuplication(String email) {
+        return memberRepository.existsByEmail(email);
+    }
 
     public String sendAuthMail(String email){
+        if (checkEmailDuplication(email)) {
+            throw new MemberDuplicationEmailException("이미 회원가입된 이메일 입니다.");
+        }
+
         String key = makeKey();
 
         SimpleMailMessage message = new SimpleMailMessage();
