@@ -3,6 +3,7 @@ package com.study.shoestrade.controller;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
+import com.study.shoestrade.domain.trade.TradeState;
 import com.study.shoestrade.dto.address.response.AddressListResponseDto;
 import com.study.shoestrade.dto.interest.response.MyInterest;
 import com.study.shoestrade.dto.member.response.MemberDetailDto;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/admin")
 @CrossOrigin(origins = "*")
 public class AdminController {
 
@@ -40,7 +42,7 @@ public class AdminController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "email", value = "검색할 회원 이메일", example = "cjswltjr159@naver.com", dataTypeClass = String.class)
     })
-    @GetMapping("/admin/members")
+    @GetMapping("/members")
     @ResponseStatus(HttpStatus.OK)
     public SingleResult<Page<PageMemberDto>> getMembers(@RequestParam(value = "email", required = false) @Nullable String email,
                                                         @PageableDefault(size = 20) Pageable pageable) {
@@ -55,7 +57,7 @@ public class AdminController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "검색할 회원 id", dataTypeClass = Long.class)
     })
-    @GetMapping("/admin/members/{id}")
+    @GetMapping("/members/{id}")
     @ResponseStatus(HttpStatus.OK)
     public SingleResult<MemberDetailDto> getMemberDetail(@PathVariable("id") Long id) {
         MemberDetailDto responseDto = adminService.getMemberDetail(id);
@@ -69,7 +71,7 @@ public class AdminController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "검색할 회원 id", dataTypeClass = Long.class)
     })
-    @GetMapping("/admin/members/{id}/addresses")
+    @GetMapping("/members/{id}/addresses")
     @ResponseStatus(HttpStatus.OK)
     public SingleResult<AddressListResponseDto> getMemberAddressList(@PathVariable("id") Long id, @PageableDefault(size = 10) Pageable pageable) {
         String email = adminService.getMemberEmail(id);
@@ -84,7 +86,7 @@ public class AdminController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "검색할 회원 id", dataTypeClass = Long.class)
     })
-    @GetMapping("/admin/members/{id}/wishes")
+    @GetMapping("/members/{id}/wishes")
     @ResponseStatus(HttpStatus.OK)
     public SingleResult<Page<MyInterest>> getMemberWishList(@PathVariable("id") Long id, @PageableDefault(size = 10) Pageable pageable) {
         String email = adminService.getMemberEmail(id);
@@ -100,7 +102,7 @@ public class AdminController {
             @ApiImplicitParam(name = "id", value = "검색할 회원 id", dataTypeClass = Long.class),
             @ApiImplicitParam(name = "tradeType", value = "거래 형태(sell : 구매 거래 내역, purchase : 판매 거래 내역)", example = "'sell' or 'purchase'", dataTypeClass = String.class)
     })
-    @GetMapping("/admin/members/{id}/trades/{tradeType}/count")
+    @GetMapping("/members/{id}/trades/{tradeType}/count")
     @ResponseStatus(HttpStatus.OK)
     public SingleResult<TradeBreakdownCountDto> getMemberBreakdownCount(@PathVariable("id") Long id, @PathVariable("tradeType") String tradeType) {
         String email = adminService.getMemberEmail(id);
@@ -116,7 +118,7 @@ public class AdminController {
             @ApiImplicitParam(name = "tradeType", value = "거래 형태('sell' or 'purchase')", example = "'sell' or 'purchase'", dataTypeClass = String.class),
             @ApiImplicitParam(name = "state", value = "거래 상태(bid : 입찰, progress : 진행 중, done : 종료(완료))", example = "'bid' or 'progress' or 'done'", dataTypeClass = String.class)
     })
-    @GetMapping("/admin/members/{id}/trades/{tradeType}/{state}")
+    @GetMapping("/members/{id}/trades/{tradeType}/{state}")
     @ResponseStatus(HttpStatus.OK)
     public SingleResult<Page<TradeLoadDto>> getMemberBreakdown(@PathVariable("id") Long id, @PathVariable("tradeType") String tradeType,
                                                                @PathVariable("state") String state, Pageable pageable) {
@@ -132,7 +134,7 @@ public class AdminController {
             @ApiImplicitParam(name = "id", value = "정지할 회원 id", dataTypeClass = Long.class),
             @ApiImplicitParam(name = "day", value = "정지할 기간(일, -1이면 회원 탈퇴)", dataTypeClass = Integer.class)
     })
-    @PostMapping("/admin/members/{id}/ban")
+    @PostMapping("/members/{id}/ban")
     @ResponseStatus(HttpStatus.OK)
     public Result banMember(@PathVariable("id") Long id, @RequestParam("day") int day) {
         adminService.banMember(id, day);
@@ -146,10 +148,17 @@ public class AdminController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "정지 해제할 회원 id", dataTypeClass = Long.class)
     })
-    @PostMapping("/admin/members/{id}/release")
+    @PostMapping("/members/{id}/release")
     @ResponseStatus(HttpStatus.OK)
     public Result releaseMember(@PathVariable("id") Long id) {
         adminService.releaseMember(id);
+        return responseService.getSuccessResult();
+    }
+
+    @PostMapping("/trades/{tradeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Result changeTradeState(@PathVariable("tradeId") Long tradeId, @RequestBody TradeState tradeState){
+        adminService.changeTradeState(tradeId, tradeState);
         return responseService.getSuccessResult();
     }
 }

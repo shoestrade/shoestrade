@@ -57,4 +57,8 @@ public class Trade extends BaseEntity {
     public void changeClaimDueDate(LocalDateTime deadline){
         this.claimDueDate = deadline;
     }
+
+    public void finishTrade(LocalDateTime tradeCompletionDate){
+        this.tradeCompletionDate = tradeCompletionDate;
+    }
 }

@@ -252,7 +252,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(TradeNotCompletedException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     protected Result tradeNotCompletedException(TradeNotCompletedException e){
-        return responseService.getFailureResult(-130, "결제가 완료되지 않은 거래의 상태는 수정할 수 없습니다.");
+        return responseService.getFailureResult(-130, "거래를 수정할 수 없는 단계입니다.");
     }
 
     @ExceptionHandler(MailNotValidException.class)

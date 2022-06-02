@@ -37,7 +37,7 @@ public class SchedulerService {
         log.info("list = {}", overdueTrades);
 
         tradeRepository.updateTradeStatesFromReadyToFail(overdueTrades);
-        overdueMembers.forEach(i -> memberRepository.updateMemberWaringCount(i.getCount(), i.getMemberId()));
+        overdueMembers.forEach(i -> memberRepository.updateMemberWaringCount(i.getCount().intValue(), i.getMemberId()));
 
         List<Long> memberIds = overdueMembers.stream()
                 .map(OverdueMember::getMemberId)
@@ -45,8 +45,8 @@ public class SchedulerService {
 
         List<Member> warnedMembers = memberRepository.findWarnedMembers(memberIds);
         warnedMembers.stream()
-                .map(member -> member.banningMember(Ban.getBanDay(Math.min((int)(member.getWarningCount() / 3), 4)), now))
-                .filter(member -> Ban.getBanDay(Math.min((int)(member.getWarningCount() / 3), 4)) == -1)
+                .map(member -> member.banningMember(Ban.getBanDay(Math.min((member.getWarningCount() / 3), 4)), now))
+                .filter(member -> Ban.getBanDay(Math.min((member.getWarningCount() / 3), 4)) == -1)
                 .forEach(member -> {
                     Token token = tokenRepository.findByMember(member.getId()).orElseThrow(InvalidRefreshTokenException::new);
                     tokenRepository.delete(token);
