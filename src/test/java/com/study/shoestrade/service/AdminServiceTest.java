@@ -1,13 +1,25 @@
 package com.study.shoestrade.service;
 
+import com.study.shoestrade.domain.member.Grade;
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.member.Token;
+import com.study.shoestrade.domain.payment.Payment;
+import com.study.shoestrade.domain.payment.PaymentStatus;
+import com.study.shoestrade.domain.trade.Trade;
+import com.study.shoestrade.domain.trade.TradeState;
+import com.study.shoestrade.domain.trade.TradeType;
 import com.study.shoestrade.dto.admin.PageMemberDto;
 import com.study.shoestrade.dto.member.response.MemberDetailDto;
-import com.study.shoestrade.repository.interest.InterestProductRepository;
+import com.study.shoestrade.exception.payment.PaymentNotFoundException;
+import com.study.shoestrade.exception.payment.PaymentUnpaidException;
+import com.study.shoestrade.exception.trade.TradeNotCompletedException;
 import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.member.TokenRepository;
+import com.study.shoestrade.repository.payment.PaymentRepository;
+import com.study.shoestrade.repository.trade.TradeRepository;
 import com.study.shoestrade.service.admin.AdminService;
+import com.study.shoestrade.service.policy.grade.GradePolicy;
+import com.study.shoestrade.service.policy.point.PointPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,9 +50,16 @@ class AdminServiceTest {
     AdminService adminService;
     @Mock
     MemberRepository memberRepository;
-
     @Mock
     TokenRepository tokenRepository;
+    @Mock
+    TradeRepository tradeRepository;
+    @Mock
+    PaymentRepository paymentRepository;
+    @Mock
+    PointPolicy pointPolicy;
+    @Mock
+    GradePolicy gradePolicy;
 
     List<Member> members;
 
@@ -52,7 +71,9 @@ class AdminServiceTest {
                 .name("aaa")
                 .phone("01011111111")
                 .point(123)
+                .tradeCount(0)
                 .shoeSize(250)
+                .grade(Grade.BRONZE)
                 .role(ROLE_MEMBER)
                 .banReleaseTime(LocalDateTime.of(2022, 4, 18, 13, 13, 13))
                 .build();
@@ -63,7 +84,9 @@ class AdminServiceTest {
                 .name("bbb")
                 .phone("01022222222")
                 .point(29)
+                .tradeCount(5)
                 .shoeSize(255)
+                .grade(Grade.SILVER)
                 .role(ROLE_MEMBER)
                 .banReleaseTime(LocalDateTime.now())
                 .build();
@@ -171,6 +194,195 @@ class AdminServiceTest {
 
         // then
         assertThat(responseDto.getEmail()).isEqualTo(member.getEmail());
+    }
+
+    @Test
+    @DisplayName("관리자가 거래의 상태를 할 수 있다.")
+    public void 거래_상태_변경_성공1() {
+        // given
+        Trade trade = Trade.builder()
+                .id(11L)
+                .price(10000)
+                .tradeType(TradeType.PURCHASE)
+                .tradeState(TradeState.CENTER_DELIVERY)
+                .seller(members.get(0))
+                .purchaser(members.get(1))
+                .build();
+
+        // mocking
+        given(tradeRepository.findTradeAndMembers(trade.getId())).willReturn(Optional.of(trade));
+
+        // when
+        adminService.changeTradeState(trade.getId(), TradeState.REAL);
+
+        // then
+        assertThat(trade.getTradeState()).isEqualTo(TradeState.REAL);
+    }
+
+    @Test
+    @DisplayName("거래가 완료되어 상태가 DONE이 되면 회원의 tradeCount가 증가한다.")
+    public void 거래_상태_변경_성공2() {
+        // given
+        Trade trade = Trade.builder()
+                .id(11L)
+                .price(10000)
+                .tradeType(TradeType.PURCHASE)
+                .tradeState(TradeState.COMPLETE)
+                .seller(members.get(0))
+                .purchaser(members.get(1))
+                .build();
+
+        Payment payment = Payment.builder()
+                .id(21L)
+                .trade(trade)
+                .price(10000)
+                .point(0)
+                .status(PaymentStatus.PAID)
+                .build();
+
+        // mocking
+        given(tradeRepository.findTradeAndMembers(trade.getId())).willReturn(Optional.of(trade));
+        given(paymentRepository.findByTrade(trade)).willReturn(Optional.of(payment));
+
+        // when
+        adminService.changeTradeState(trade.getId(), TradeState.DONE);
+
+        // then
+        assertThat(members.get(0).getTradeCount()).isEqualTo(1);
+        assertThat(members.get(1).getTradeCount()).isEqualTo(6);
+        assertThat(trade.getTradeCompletionDate()).isNotNull();
+        assertThat(trade.getTradeState()).isEqualTo(TradeState.DONE);
+    }
+
+    @Test
+    @DisplayName("거래가 완료되면 포인트가 적립된다.")
+    public void 거래_상태_변경_성공3() {
+        // given
+        Trade trade = Trade.builder()
+                .id(11L)
+                .price(10000)
+                .tradeType(TradeType.PURCHASE)
+                .tradeState(TradeState.COMPLETE)
+                .seller(members.get(0))
+                .purchaser(members.get(1))
+                .build();
+
+        Payment payment = Payment.builder()
+                .id(21L)
+                .trade(trade)
+                .price(9900)
+                .point(100)
+                .status(PaymentStatus.PAID)
+                .build();
+
+        // mocking
+        given(tradeRepository.findTradeAndMembers(trade.getId())).willReturn(Optional.of(trade));
+        given(paymentRepository.findByTrade(trade)).willReturn(Optional.of(payment));
+        given(pointPolicy.savePoint(members.get(1), payment.getPrice())).willReturn(9900 * 1 / 100);
+
+        // when
+        adminService.changeTradeState(trade.getId(), TradeState.DONE);
+
+        // then
+        assertThat(members.get(0).getTradeCount()).isEqualTo(1);
+        assertThat(members.get(1).getTradeCount()).isEqualTo(6);
+        assertThat(members.get(1).getPoint()).isEqualTo(29 + 9900 * 1 / 100);
+        assertThat(trade.getTradeCompletionDate()).isNotNull();
+        assertThat(trade.getTradeState()).isEqualTo(TradeState.DONE);
+    }
+
+    @Test
+    @DisplayName("거래가 아직 결제가 되지 않으면 관리자는 거래 상태를 변경할 수 없다.")
+    public void 거래_상태_변경_실패1() {
+        // given
+        Trade trade = Trade.builder()
+                .id(11L)
+                .price(10000)
+                .tradeType(TradeType.PURCHASE)
+                .tradeState(TradeState.READY)
+                .seller(members.get(0))
+                .purchaser(members.get(1))
+                .build();
+
+        // mocking
+        given(tradeRepository.findTradeAndMembers(trade.getId())).willReturn(Optional.of(trade));
+
+        // when, then
+        assertThatThrownBy(() -> adminService.changeTradeState(trade.getId(), TradeState.DONE))
+                .isInstanceOf(TradeNotCompletedException.class);
+    }
+
+    @Test
+    @DisplayName("실패한 거래는 관리자는 거래 상태를 변경할 수 없다.")
+    public void 거래_상태_변경_실패2() {
+        // given
+        Trade trade = Trade.builder()
+                .id(11L)
+                .price(10000)
+                .tradeType(TradeType.SELL)
+                .tradeState(TradeState.FAIL)
+                .seller(members.get(0))
+                .purchaser(members.get(1))
+                .build();
+
+        // mocking
+        given(tradeRepository.findTradeAndMembers(trade.getId())).willReturn(Optional.of(trade));
+
+        // when, then
+        assertThatThrownBy(() -> adminService.changeTradeState(trade.getId(), TradeState.SELL))
+                .isInstanceOf(TradeNotCompletedException.class);
+    }
+
+    @Test
+    @DisplayName("결제 정보를 찾을 수 없으면 PaymentNotFoundException 예외가 발생한다.")
+    public void 거래_상태_변경_실패3() {
+        // given
+        Trade trade = Trade.builder()
+                .id(11L)
+                .price(10000)
+                .tradeType(TradeType.PURCHASE)
+                .tradeState(TradeState.COMPLETE)
+                .seller(members.get(0))
+                .purchaser(members.get(1))
+                .build();
+
+        // mocking
+        given(tradeRepository.findTradeAndMembers(trade.getId())).willReturn(Optional.of(trade));
+        given(paymentRepository.findByTrade(trade)).willReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> adminService.changeTradeState(trade.getId(), TradeState.DONE))
+                .isInstanceOf(PaymentNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("거래에 대한 결제가 이루어지지 않았으면 ")
+    public void 거래_상태_변경_실패4() {
+        // given
+        Trade trade = Trade.builder()
+                .id(11L)
+                .price(10000)
+                .tradeType(TradeType.PURCHASE)
+                .tradeState(TradeState.COMPLETE)
+                .seller(members.get(0))
+                .purchaser(members.get(1))
+                .build();
+
+        Payment payment = Payment.builder()
+                .id(21L)
+                .trade(trade)
+                .price(9900)
+                .point(100)
+                .status(PaymentStatus.READY)
+                .build();
+
+        // mocking
+        given(tradeRepository.findTradeAndMembers(trade.getId())).willReturn(Optional.of(trade));
+        given(paymentRepository.findByTrade(trade)).willReturn(Optional.of(payment));
+
+        // when, then
+        assertThatThrownBy(() -> adminService.changeTradeState(trade.getId(), TradeState.DONE))
+                .isInstanceOf(PaymentUnpaidException.class);
     }
 
 }
