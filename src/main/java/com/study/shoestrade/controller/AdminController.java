@@ -155,6 +155,14 @@ public class AdminController {
         return responseService.getSuccessResult();
     }
 
+    @ApiOperation(value = "거래 상태 변경", notes = "거래 상태를 변경합니다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "거래 상태 변경 정상 처리")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tradeId", value = "거래 상태를 변경할 거래 id", dataTypeClass = Long.class),
+            @ApiImplicitParam(name = "tradeState", value = "변경할 거래 상태", dataTypeClass = TradeState.class)
+    })
     @PostMapping("/trades/{tradeId}")
     @ResponseStatus(HttpStatus.OK)
     public Result changeTradeState(@PathVariable("tradeId") Long tradeId, @RequestBody TradeState tradeState){
