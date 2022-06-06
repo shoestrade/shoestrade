@@ -63,4 +63,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long>, TradeReposi
     void updateTradeStatesFromReadyToFail(@Param("list") List<Long> list);
 
     Optional<Trade> findByIdAndPurchaser(Long tradeId, Member member);
+
+    @Query("select t from Trade t join fetch t.purchaser p join fetch t.seller s where t.id = :tradeId")
+    Optional<Trade> findTradeAndMembers(@Param("tradeId") Long tradeId);
 }

@@ -55,6 +55,9 @@ dependencies {
     // 아임포트
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.17'
 
+    // JSON 라이브러리
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'

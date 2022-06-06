@@ -10,6 +10,7 @@ import com.study.shoestrade.exception.brand.BrandDuplicationException;
 import com.study.shoestrade.exception.brand.BrandEmptyResultDataAccessException;
 import com.study.shoestrade.exception.interest.InterestNotFoundException;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
+import com.study.shoestrade.exception.mailAuth.MailNotValidException;
 import com.study.shoestrade.exception.member.*;
 import com.study.shoestrade.exception.payment.*;
 import com.study.shoestrade.exception.product.*;
@@ -17,6 +18,7 @@ import com.study.shoestrade.exception.token.ExpiredRefreshTokenException;
 import com.study.shoestrade.exception.token.InvalidRefreshTokenException;
 import com.study.shoestrade.exception.token.TokenNotFoundException;
 import com.study.shoestrade.exception.trade.TradeEmptyResultDataAccessException;
+import com.study.shoestrade.exception.trade.TradeNotCompletedException;
 import com.study.shoestrade.exception.trade.WrongStateException;
 import com.study.shoestrade.exception.trade.WrongTradeTypeException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -245,5 +247,35 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     protected Result paymentMethodNotConsistException(PaymentMethodNotConsistException e){
         return responseService.getFailureResult(-129, "결제 수단이 일치하지 않습니다.");
+    }
+
+    @ExceptionHandler(TradeNotCompletedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result tradeNotCompletedException(TradeNotCompletedException e){
+        return responseService.getFailureResult(-130, "거래를 수정할 수 없는 단계입니다.");
+    }
+
+    @ExceptionHandler(MailNotValidException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result mailNotValidException(MailNotValidException e){
+        return responseService.getFailureResult(-131, "올바르지 못한 이메일 형식입니다.");
+    }
+
+    @ExceptionHandler(PaymentRestTemplateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected Result paymentRestTemplateException(PaymentRestTemplateException e){
+        return responseService.getFailureResult(-132, "api 호출 시 에러가 발생했습니다.");
+    }
+
+    @ExceptionHandler(PaymentCanceledException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result paymentCanceledException(PaymentCanceledException e){
+        return responseService.getFailureResult(-133, "이미 전액 환불된 주문입니다.");
+    }
+
+    @ExceptionHandler(PaymentCancelFailureException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected Result paymentCancelFailureException(PaymentCancelFailureException e){
+        return responseService.getFailureResult(-134, "환불에 실패하였습니다.");
     }
 }

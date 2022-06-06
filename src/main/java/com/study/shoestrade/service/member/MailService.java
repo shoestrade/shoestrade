@@ -2,8 +2,12 @@ package com.study.shoestrade.service.member;
 
 import com.study.shoestrade.domain.mailAuth.MailAuth;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
+import com.study.shoestrade.exception.mailAuth.MailNotValidException;
+import com.study.shoestrade.exception.member.MemberDuplicationEmailException;
 import com.study.shoestrade.repository.member.MailAuthRepository;
+import com.study.shoestrade.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -13,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -21,14 +27,32 @@ public class MailService {
 
     private final JavaMailSender javaMailSender;
     private final MailAuthRepository mailAuthRepository;
+    private final MemberRepository memberRepository;
+
+    @Value("${spring.mail.username}")
+    private String fromEmail;
+
+    @Transactional(readOnly = true)
+    public boolean checkEmailDuplication(String email) {
+        return memberRepository.existsByEmail(email);
+    }
 
     public String sendAuthMail(String email){
+        if(!isValidEmail(email)){
+            throw new MailNotValidException();
+        }
+
+        if (checkEmailDuplication(email)) {
+            throw new MemberDuplicationEmailException("이미 회원가입된 이메일 입니다.");
+        }
+
         String key = makeKey();
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("ShoesTrade 회원가입 이메일 인증"); // 메일 제목
         message.setText("인증번호 : " + key);
+        message.setFrom(fromEmail);
 
         javaMailSender.send(message);
 
@@ -81,5 +105,16 @@ public class MailService {
         int numIdx = random.nextInt(9999) + 1000;
         key += numIdx;
         return key;
+    }
+
+    private boolean isValidEmail(String email){
+        boolean err = false;
+        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(email);
+        if(m.matches()) {
+            err = true;
+        }
+        return err;
     }
 }

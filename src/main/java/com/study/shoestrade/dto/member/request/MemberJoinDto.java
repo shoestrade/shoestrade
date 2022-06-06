@@ -35,8 +35,9 @@ public class MemberJoinDto {
                 .grade(Grade.BRONZE)
                 .shoeSize(shoeSize)
                 .role(Role.ROLE_MEMBER)
-                .warningCount(0L)
-                .banCount(0L)
+                .warningCount(0)
+                .banCount(0)
+                .tradeCount(0)
                 .build();
     }
 }

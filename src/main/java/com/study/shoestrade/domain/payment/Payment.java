@@ -44,4 +44,8 @@ public class Payment extends BaseEntity {
         this.status = status;
         this.paidAt = paidAt;
     }
+
+    public void changeStatus(PaymentStatus status){
+        this.status = status;
+    }
 }

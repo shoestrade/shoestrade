@@ -3,6 +3,7 @@ package com.study.shoestrade.service;
 import com.study.shoestrade.domain.mailAuth.MailAuth;
 import com.study.shoestrade.exception.mailAuth.MailAuthNotEqualException;
 import com.study.shoestrade.repository.member.MailAuthRepository;
+import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.service.member.MailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,12 +30,14 @@ class MailServiceTest {
     MailAuthRepository mailAuthRepository;
     @Mock
     JavaMailSender javaMailSender;  // 이건 테스트때 필요없을꺼 같은데?
+    @Mock
+    MemberRepository memberRepository;
 
     private MailAuth mailAuth;
 
     @BeforeEach
     public void init(){
-        mailService = new MailService(javaMailSender, mailAuthRepository);
+        mailService = new MailService(javaMailSender, mailAuthRepository, memberRepository);
 
         mailAuth = MailAuth.builder()
                 .email("tkk@gamil.com")

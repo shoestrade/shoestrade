@@ -24,7 +24,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 
     @Modifying(clearAutomatically = true)
     @Query("update Member m set m.warningCount = m.warningCount + :count where m.id = :memberId")
-    void updateMemberWaringCount(@Param("count") Long count, @Param("memberId") Long memberId);
+    void updateMemberWaringCount(@Param("count") int count, @Param("memberId") Long memberId);
 
     @Query("select m from Member m where m.id in :list")
     List<Member> findWarnedMembers(@Param("list") List<Long> list);
