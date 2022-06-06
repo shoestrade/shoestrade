@@ -1,5 +1,6 @@
 package com.study.shoestrade.service.admin;
 
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.member.Role;
 import com.study.shoestrade.domain.member.Token;
@@ -19,6 +20,7 @@ import com.study.shoestrade.repository.member.MemberRepository;
 import com.study.shoestrade.repository.member.TokenRepository;
 import com.study.shoestrade.repository.payment.PaymentRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
+import com.study.shoestrade.service.payment.PaymentService;
 import com.study.shoestrade.service.policy.grade.GradePolicy;
 import com.study.shoestrade.service.policy.point.PointPolicy;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static com.study.shoestrade.domain.trade.TradeState.*;
@@ -44,6 +47,7 @@ public class  AdminService {
     private final PaymentRepository paymentRepository;
     private final PointPolicy pointPolicy;
     private final GradePolicy gradePolicy;
+    private final PaymentService paymentService;
 
 
     @Transactional(readOnly = true)
@@ -90,20 +94,18 @@ public class  AdminService {
     }
 
     // 거래 상태 변경
-    public void changeTradeState(Long tradeId, TradeState tradeState){
+    public void changeTradeState(Long tradeId, TradeState tradeState) throws IamportResponseException, IOException {
         Trade trade = tradeRepository.findTradeAndMembers(tradeId)
                 .orElseThrow(() -> new TradeEmptyResultDataAccessException(tradeId.toString(), 1));
 
         checkTradeState(trade);
 
-        if(tradeState.equals(DONE)){
-            Member seller = trade.getSeller();
-            Member purchaser = trade.getPurchaser();
+        Member seller = trade.getSeller();
+        Member purchaser = trade.getPurchaser();
+        Payment payment = paymentRepository.findByTrade(trade).orElseThrow(PaymentNotFoundException::new);
 
-            Payment payment = paymentRepository.findByTrade(trade).orElseThrow(PaymentNotFoundException::new);
-            if(!payment.getStatus().equals(PaymentStatus.PAID)){
-                throw new PaymentUnpaidException();
-            }
+        if(tradeState.equals(DONE)){
+            checkPaid(payment);
 
             int savedPoint = pointPolicy.savePoint(purchaser, payment.getPrice());
 
@@ -116,8 +118,20 @@ public class  AdminService {
 
             trade.finishTrade(LocalDateTime.now());
         }
+        else if(tradeState.equals(FAKE)){
+            checkPaid(payment);
+
+            int point = paymentService.cancelPayment(payment);
+            purchaser.addPoint(point);
+        }
 
         trade.changeState(tradeState);
+    }
+
+    private void checkPaid(Payment payment) {
+        if(!payment.getStatus().equals(PaymentStatus.PAID)){
+            throw new PaymentUnpaidException();
+        }
     }
 
     private void checkTradeState(Trade trade) {

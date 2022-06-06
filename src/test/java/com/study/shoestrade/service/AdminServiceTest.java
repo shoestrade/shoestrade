@@ -1,5 +1,6 @@
 package com.study.shoestrade.service;
 
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.study.shoestrade.domain.member.Grade;
 import com.study.shoestrade.domain.member.Member;
 import com.study.shoestrade.domain.member.Token;
@@ -32,6 +33,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -198,7 +200,7 @@ class AdminServiceTest {
 
     @Test
     @DisplayName("관리자가 거래의 상태를 할 수 있다.")
-    public void 거래_상태_변경_성공1() {
+    public void 거래_상태_변경_성공1() throws IamportResponseException, IOException {
         // given
         Trade trade = Trade.builder()
                 .id(11L)
@@ -221,7 +223,7 @@ class AdminServiceTest {
 
     @Test
     @DisplayName("거래가 완료되어 상태가 DONE이 되면 회원의 tradeCount가 증가한다.")
-    public void 거래_상태_변경_성공2() {
+    public void 거래_상태_변경_성공2() throws IamportResponseException, IOException {
         // given
         Trade trade = Trade.builder()
                 .id(11L)
@@ -256,7 +258,7 @@ class AdminServiceTest {
 
     @Test
     @DisplayName("거래가 완료되면 포인트가 적립된다.")
-    public void 거래_상태_변경_성공3() {
+    public void 거래_상태_변경_성공3() throws IamportResponseException, IOException {
         // given
         Trade trade = Trade.builder()
                 .id(11L)

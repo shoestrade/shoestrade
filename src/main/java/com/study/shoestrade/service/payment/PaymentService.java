@@ -19,15 +19,23 @@ import com.study.shoestrade.repository.payment.PaymentRepository;
 import com.study.shoestrade.repository.trade.TradeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+
+import java.util.HashMap;
 import java.util.Objects;
 
 @Slf4j
@@ -64,6 +72,7 @@ public class PaymentService {
         }
 
         trade.changeState(TradeState.READY);
+        trade.changePurchaser(member);
 
         Payment payment = Payment.builder()
                 .trade(trade)
@@ -90,13 +99,10 @@ public class PaymentService {
         IamportResponse<com.siot.IamportRestClient.response.Payment> paymentResponse = iamportClient.paymentByImpUid(requestDto.getImpId());
 
         com.siot.IamportRestClient.response.Payment paymentData = paymentResponse.getResponse();
-        if(Objects.isNull(paymentData)) {
-            throw new PaymentNotFoundException("impId가 " + requestDto.getImpId());
-        }
 
-        if(!payment.getOrderId().equals(paymentData.getMerchantUid())) {
-            throw new PaymentOrderIdNotConsistException();
-        }
+        IamportPaymentIsNotNull(paymentData, requestDto.getImpId());
+        checkPaymentOrderId(paymentData, payment);
+
         if(payment.getPrice() != paymentData.getAmount().intValue()) {
             throw new InsufficientPointException();
         }
@@ -113,10 +119,76 @@ public class PaymentService {
 
         LocalDateTime paidAt = paymentData.getPaidAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         payment.successPayment(requestDto.getImpId(), method, status, paidAt);
+        member.usePoint(payment.getPoint());
         trade.changeState(TradeState.COMPLETE);
     }
 
-    protected String createOrderId(String memberName, String orderName){
+    // 결제 취소
+    public int cancelPayment(Payment payment) throws IamportResponseException, IOException {
+        IamportClient iamportClient = new IamportClient(apiKey, apiSecret);
+        IamportResponse<com.siot.IamportRestClient.response.Payment> paymentResponse = iamportClient.paymentByImpUid(payment.getImpId());
+
+        com.siot.IamportRestClient.response.Payment paymentData = paymentResponse.getResponse();
+
+        IamportPaymentIsNotNull(paymentData, payment.getImpId());
+        checkPaymentOrderId(paymentData, payment);
+
+        if(payment.getPrice() - paymentData.getCancelAmount().intValue() <= 0){
+            throw new PaymentCanceledException();
+        }
+
+        try{
+            String accessToken = requestToken();
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", accessToken);
+
+            JSONObject body = new JSONObject();
+            body.put("imp_uid", payment.getImpId());
+            body.put("checksum", (double)payment.getPrice());
+
+            HttpEntity<JSONObject> entity = new HttpEntity<>(body, headers);
+            ResponseEntity<JSONObject> response = restTemplate.postForEntity("https://api.iamport.kr/payments/cancel", entity, JSONObject.class);
+
+            int code = (int)response.getBody().get("code");
+
+            if(code == 0){
+                payment.changeStatus(PaymentStatus.CANCELLED);
+                return payment.getPoint();
+            }else{
+                throw new PaymentCancelFailureException();
+            }
+
+        } catch (RestClientException e){
+            throw new PaymentRestTemplateException();
+        }
+    }
+
+    // 토큰 발급 요청
+    private String requestToken(){
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            JSONObject body = new JSONObject();
+            body.put("imp_key", apiKey);
+            body.put("imp_secret", apiSecret);
+
+            HttpEntity<JSONObject> entity = new HttpEntity<>(body, headers);
+            ResponseEntity<JSONObject> token = restTemplate.postForEntity("https://api.iamport.kr/users/getToken", entity, JSONObject.class);
+
+            return (String) ((HashMap<?, ?>) token.getBody().get("response")).get("access_token");
+        } catch (RestClientException e){
+            throw new PaymentRestTemplateException();
+        }
+    }
+
+    private String createOrderId(String memberName, String orderName){
         LocalDateTime now = LocalDateTime.now();
         int hash = 17;
         hash = 31 * hash + memberName.hashCode();
@@ -125,6 +197,18 @@ public class PaymentService {
         hash = hash & 0x7fffffff;
 
         return "ST" + now.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "_" + hash;
+    }
+
+    private void IamportPaymentIsNotNull(com.siot.IamportRestClient.response.Payment paymentData, String impId){
+        if(Objects.isNull(paymentData)) {
+            throw new PaymentNotFoundException("impId가 " + impId);
+        }
+    }
+
+    private void checkPaymentOrderId(com.siot.IamportRestClient.response.Payment paymentData, Payment payment){
+        if(!payment.getOrderId().equals(paymentData.getMerchantUid())) {
+            throw new PaymentOrderIdNotConsistException();
+        }
     }
 
 

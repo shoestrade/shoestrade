@@ -1,5 +1,6 @@
 package com.study.shoestrade.controller;
 
+import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.study.shoestrade.common.response.ResponseService;
 import com.study.shoestrade.common.result.Result;
 import com.study.shoestrade.common.result.SingleResult;
@@ -22,6 +23,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
@@ -165,7 +168,7 @@ public class AdminController {
     })
     @PostMapping("/trades/{tradeId}")
     @ResponseStatus(HttpStatus.OK)
-    public Result changeTradeState(@PathVariable("tradeId") Long tradeId, @RequestBody TradeState tradeState){
+    public Result changeTradeState(@PathVariable("tradeId") Long tradeId, @RequestBody TradeState tradeState) throws IamportResponseException, IOException {
         adminService.changeTradeState(tradeId, tradeState);
         return responseService.getSuccessResult();
     }

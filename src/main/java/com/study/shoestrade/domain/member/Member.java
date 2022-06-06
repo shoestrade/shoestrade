@@ -118,6 +118,10 @@ public class Member extends BaseEntity {
         this.point += point;
     }
 
+    public void usePoint(int point){
+        this.point -= point;
+    }
+
     public void upgradeGrade(Grade grade){
         this.grade = grade;
     }

@@ -260,4 +260,22 @@ public class ExceptionAdvice {
     protected Result mailNotValidException(MailNotValidException e){
         return responseService.getFailureResult(-131, "올바르지 못한 이메일 형식입니다.");
     }
+
+    @ExceptionHandler(PaymentRestTemplateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected Result paymentRestTemplateException(PaymentRestTemplateException e){
+        return responseService.getFailureResult(-132, "api 호출 시 에러가 발생했습니다.");
+    }
+
+    @ExceptionHandler(PaymentCanceledException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    protected Result paymentCanceledException(PaymentCanceledException e){
+        return responseService.getFailureResult(-133, "이미 전액 환불된 주문입니다.");
+    }
+
+    @ExceptionHandler(PaymentCancelFailureException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected Result paymentCancelFailureException(PaymentCancelFailureException e){
+        return responseService.getFailureResult(-134, "환불에 실패하였습니다.");
+    }
 }
